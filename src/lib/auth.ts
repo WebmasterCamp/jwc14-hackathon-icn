@@ -12,12 +12,14 @@ declare module "next-auth" {
       email: string;
       name: string | null;
       role: Role;
+      isProvider: boolean;
       image?: string | null;
     };
   }
 
   interface User {
     role: Role;
+    isProvider: boolean;
   }
 }
 
@@ -25,6 +27,7 @@ declare module "@auth/core/jwt" {
   interface JWT {
     id: string;
     role: Role;
+    isProvider: boolean;
     email?: string;
     name?: string | null;
     picture?: string | null;
@@ -80,6 +83,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           email: user.email,
           name: user.name,
           role: user.role,
+          isProvider: user.isProvider,
           image: user.avatar,
         };
       },
@@ -125,9 +129,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             });
             user.id = newUser.id;
             user.role = newUser.role;
+            user.isProvider = newUser.isProvider;
           } else {
             user.id = existingUser.id;
             user.role = existingUser.role;
+            user.isProvider = existingUser.isProvider;
           }
         } catch (error) {
           console.error("Error in signIn callback:", error);
@@ -141,6 +147,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       if (user) {
         token.id = user.id as string;
         token.role = user.role;
+        token.isProvider = user.isProvider;
         token.email = user.email ?? undefined;
         token.name = user.name;
         token.picture = user.image;
@@ -156,6 +163,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           if (dbUser) {
             token.id = dbUser.id;
             token.role = dbUser.role;
+            token.isProvider = dbUser.isProvider;
             token.name = dbUser.name;
             token.picture = dbUser.avatar;
           }
@@ -171,6 +179,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       if (token && session.user) {
         session.user.id = token.id;
         session.user.role = token.role;
+        session.user.isProvider = token.isProvider;
         session.user.email = token.email as string;
         session.user.name = token.name as string | null;
         session.user.image = token.picture as string | null;

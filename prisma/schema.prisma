@@ -104,6 +104,7 @@ model User {
   password      String?
   name          String?
   role          Role      @default(USER)
+  isProvider    Boolean   @default(false) @map("is_provider")
   phone         String?   @db.VarChar(20)
   avatar        String?
   emailVerified DateTime?
@@ -120,6 +121,7 @@ model User {
 
   @@index([email])
   @@index([role])
+  @@index([isProvider])
 }
 
 model Account {

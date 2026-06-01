@@ -36,6 +36,38 @@ export const getCategories = cache(async () => {
   });
 });
 
+// Featured products for the landing page. Mirrors the offering-collapse
+// shaping used by the equipment listing (equipment/page.tsx) so the result
+// drops straight into <ProductCard /> without further mapping.
+export const getFeaturedProducts = cache(async () => {
+  const products = await prisma.product.findMany({
+    where: { isActive: true },
+    include: {
+      category: true,
+      equipment: {
+        where: { isActive: true, provider: { verified: true } },
+        select: { rentPriceMonthly: true },
+      },
+    },
+    orderBy: { createdAt: "desc" },
+    take: 10,
+  });
+
+  return products.map((p) => ({
+    slug: p.slug,
+    name: p.name,
+    nameTh: p.nameTh,
+    description: p.descriptionTh || p.description,
+    images: p.images,
+    category: p.category,
+    offeringCount: p.equipment.length,
+    fromPrice: p.equipment.reduce(
+      (min, o) => Math.min(min, o.rentPriceMonthly),
+      Infinity
+    ),
+  }));
+});
+
 // Get equipment by ID with all relations
 export const getEquipmentById = cache(async (id: string) => {
   return prisma.equipment.findUnique({
