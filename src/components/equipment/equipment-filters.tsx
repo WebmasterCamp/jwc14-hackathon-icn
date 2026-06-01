@@ -21,6 +21,7 @@ interface Category {
 
 interface EquipmentFiltersProps {
   categories: Category[];
+  /** Route the filters navigate to. Defaults to the public listing. */
   basePath?: string;
 }
 
@@ -32,7 +33,10 @@ const priceRanges = [
   { label: "มากกว่า 5,000 บาท", min: "5000", max: "" },
 ];
 
-export function EquipmentFilters({ categories, basePath = "/equipment" }: EquipmentFiltersProps) {
+export function EquipmentFilters({
+  categories,
+  basePath = "/equipment",
+}: EquipmentFiltersProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [search, setSearch] = useState(searchParams.get("search") || "");

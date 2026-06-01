@@ -52,6 +52,7 @@ interface CartItem {
 
 interface CustomerBrowseClientProps {
   equipment: BrowseEquipment[];
+  totalCount?: number;
 }
 
 const CART_STORAGE_KEY = "jwc-customer-equipment-cart";
@@ -71,7 +72,7 @@ const conditionLabels: Record<string, string> = {
   FAIR: "พอใช้",
 };
 
-export function CustomerBrowseClient({ equipment }: CustomerBrowseClientProps) {
+export function CustomerBrowseClient({ equipment, totalCount = equipment.length }: CustomerBrowseClientProps) {
   const [cart, setCart] = useState<CartItem[]>(() => {
     if (typeof window === "undefined") return [];
 
@@ -175,7 +176,7 @@ export function CustomerBrowseClient({ equipment }: CustomerBrowseClientProps) {
     <div className="space-y-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-muted-foreground">
-          พบ <span className="font-medium text-foreground">{equipment.length}</span> รายการ
+          พบ <span className="font-medium text-foreground">{totalCount}</span> รายการ
         </p>
         <Sheet open={cartOpen} onOpenChange={setCartOpen}>
           <SheetTrigger asChild>

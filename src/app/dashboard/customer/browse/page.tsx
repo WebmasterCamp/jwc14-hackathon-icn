@@ -7,48 +7,41 @@ import { CustomerBrowseClient } from "@/components/customer/customer-browse-clie
 
 export const dynamic = "force-dynamic";
 
-interface CustomerBrowsePageProps {
+const BASE_PATH = "/dashboard/customer/browse";
+
+interface BrowsePageProps {
   searchParams: Promise<{
     category?: string;
     province?: string;
     minPrice?: string;
     maxPrice?: string;
     search?: string;
+    page?: string;
   }>;
 }
 
 async function CustomerEquipmentList({
   searchParams,
 }: {
-  searchParams: {
-    category?: string;
-    province?: string;
-    minPrice?: string;
-    maxPrice?: string;
-    search?: string;
-  };
+  searchParams: Awaited<BrowsePageProps["searchParams"]>;
 }) {
+  const page = parseInt(searchParams.page || "1");
+  const pageSize = 12;
+
   const where = {
     isActive: true,
+    provider: {
+      verified: true,
+      ...(searchParams.province && { province: searchParams.province }),
+    },
     ...(searchParams.category && {
-      category: {
-        slug: searchParams.category,
-      },
-    }),
-    ...(searchParams.province && {
-      provider: {
-        province: searchParams.province,
-      },
+      category: { slug: searchParams.category },
     }),
     ...(searchParams.minPrice && {
-      rentPriceMonthly: {
-        gte: parseFloat(searchParams.minPrice),
-      },
+      rentPriceMonthly: { gte: parseFloat(searchParams.minPrice) },
     }),
     ...(searchParams.maxPrice && {
-      rentPriceMonthly: {
-        lte: parseFloat(searchParams.maxPrice),
-      },
+      rentPriceMonthly: { lte: parseFloat(searchParams.maxPrice) },
     }),
     ...(searchParams.search && {
       OR: [
@@ -60,22 +53,52 @@ async function CustomerEquipmentList({
     }),
   };
 
-  const equipment = await prisma.equipment.findMany({
-    where,
-    include: {
-      category: true,
-      provider: {
-        select: {
-          companyName: true,
-          province: true,
-          rating: true,
+  const [equipment, totalCount] = await Promise.all([
+    prisma.equipment.findMany({
+      where,
+      include: {
+        category: true,
+        provider: {
+          select: { companyName: true, province: true, rating: true },
         },
       },
-    },
-    orderBy: { createdAt: "desc" },
-  });
+      orderBy: { createdAt: "desc" },
+      skip: (page - 1) * pageSize,
+      take: pageSize,
+    }),
+    prisma.equipment.count({ where }),
+  ]);
 
-  return <CustomerBrowseClient equipment={equipment} />;
+  const totalPages = Math.ceil(totalCount / pageSize);
+
+  return (
+    <>
+      <CustomerBrowseClient equipment={equipment} totalCount={totalCount} />
+
+      {totalPages > 1 && (
+        <div className="mt-8 flex justify-center">
+          <nav className="flex items-center gap-2">
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+              <a
+                key={p}
+                href={`${BASE_PATH}?${new URLSearchParams({
+                  ...searchParams,
+                  page: p.toString(),
+                }).toString()}`}
+                className={`rounded-lg px-4 py-2 ${
+                  p === page
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-muted hover:bg-muted/80"
+                }`}
+              >
+                {p}
+              </a>
+            ))}
+          </nav>
+        </div>
+      )}
+    </>
+  );
 }
 
 function EquipmentListSkeleton() {
@@ -97,9 +120,7 @@ function EquipmentListSkeleton() {
   );
 }
 
-export default async function CustomerBrowsePage({
-  searchParams,
-}: CustomerBrowsePageProps) {
+export default async function CustomerBrowsePage({ searchParams }: BrowsePageProps) {
   const params = await searchParams;
   const categories = await getCategories();
 
@@ -112,9 +133,9 @@ export default async function CustomerBrowsePage({
         </p>
       </div>
 
-      <div className="flex flex-col gap-6 lg:flex-row">
+      <div className="flex flex-col gap-8 lg:flex-row">
         <aside className="w-full lg:w-64 lg:shrink-0">
-          <EquipmentFilters categories={categories} basePath="/dashboard/customer/browse" />
+          <EquipmentFilters categories={categories} basePath={BASE_PATH} />
         </aside>
 
         <main className="min-w-0 flex-1">
