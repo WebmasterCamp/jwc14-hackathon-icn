@@ -135,7 +135,7 @@ export default async function AdminUsersPage() {
       <div className="grid gap-4 md:grid-cols-3">
         <StatCard title="ผู้ใช้ทั้งหมด" value={users.length} icon={Users} />
         <StatCard title="ผู้ดูแลระบบ" value={adminCount} icon={Shield} />
-        <StatCard title="ผู้ใช้งาน" value={userCount} icon={User} />
+        <StatCard title="ผู้ใช้งาน" value={userCount} icon={UserCog} />
       </div>
 
       <Tabs defaultValue="all">
