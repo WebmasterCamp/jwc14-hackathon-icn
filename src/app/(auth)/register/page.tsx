@@ -13,8 +13,8 @@ export default function SignUpPage() {
           <Image
             src="/logo.png"
             alt="Spark Go"
-            width={6000}
-            height={3375}
+            width={6098}
+            height={1614}
             priority
             className="h-12 w-auto"
           />
