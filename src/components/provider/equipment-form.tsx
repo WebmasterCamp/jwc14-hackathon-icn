@@ -52,7 +52,10 @@ export function EquipmentForm({ categories, initialData }: EquipmentFormProps) {
   const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<EquipmentFormValues>({
-    resolver: zodResolver(equipmentSchema),
+    // zodResolver's inferred input/output types don't line up with z.coerce fields
+    // under zod v4; the schema is still enforced at runtime.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    resolver: zodResolver(equipmentSchema) as any,
     defaultValues: {
       categoryId: initialData?.categoryId || '',
       name: initialData?.name || '',

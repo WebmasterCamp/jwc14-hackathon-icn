@@ -222,15 +222,56 @@ model Category {
   updatedAt   DateTime @updatedAt
 
   equipment Equipment[]
+  products  Product[]
+}
+
+// ============================================
+// PRODUCT (canonical catalog — shared across providers)
+// ============================================
+
+// A Product is the shared identity of a physical item (e.g. "ESP32-DevKitC").
+// Many providers can offer the same Product; each offering is an Equipment row.
+// `matchKey` is the normalized dedupe key whose @unique constraint prevents
+// two Product rows for the same thing.
+model Product {
+  id            String   @id @default(cuid())
+  categoryId    String
+  slug          String   @unique // public URL: /products/[slug]
+  matchKey      String   @unique // normalized dedupe key (brand+model or name)
+  name          String // EN canonical
+  nameTh        String?
+  description   String?
+  descriptionTh String?
+  brand         String?
+  model         String? // e.g. "ESP32-DevKitC"
+  images        String[]
+  specs         Json?
+  curriculum    String[]
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  category  Category    @relation(fields: [categoryId], references: [id])
+  equipment Equipment[]
+
+  @@index([categoryId])
+  @@index([isActive])
 }
 
 // ============================================
 // EQUIPMENT
 // ============================================
 
+// Equipment is a per-provider OFFERING of a Product. The shared identity
+// (name, images, specs, category) lives on Product; the commercial terms that
+// legitimately differ per shop live here: price, deposit, stock, condition,
+// plus the per-offering warranty (insuranceMonths) and conditions (เงื่อนไข).
+// The legacy denormalized name/description/images/specs columns are kept
+// populated from the linked Product for backward compatibility.
 model Equipment {
   id               String             @id @default(cuid())
   providerId       String
+  productId        String
   categoryId       String
   name             String
   nameTh           String?
@@ -245,17 +286,22 @@ model Equipment {
   stock            Int                @default(1)
   availableStock   Int                @default(1)
   condition        EquipmentCondition @default(NEW)
+  insuranceMonths  Int? // warranty length in months (ประกัน)
+  conditions       String? // free-text rental terms (เงื่อนไข)
   curriculum       String[] // relevant curriculum areas
   isActive         Boolean            @default(true)
   createdAt        DateTime           @default(now())
   updatedAt        DateTime           @updatedAt
 
   provider            Provider             @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  product             Product              @relation(fields: [productId], references: [id], onDelete: Restrict)
   category            Category             @relation(fields: [categoryId], references: [id])
   contractItems       ContractItem[]
   maintenanceRequests MaintenanceRequest[]
 
+  @@unique([providerId, productId]) // a provider can't list the same product twice
   @@index([providerId])
+  @@index([productId])
   @@index([categoryId])
   @@index([isActive])
   @@index([rentPriceMonthly])
