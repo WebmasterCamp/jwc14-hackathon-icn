@@ -32,9 +32,11 @@ interface ProductCardProps {
   };
   /** Cheapest offering — when present, the cart button adds it to the quote. */
   quickAdd?: QuickAddOffering;
+  /** Prefix the price with "เริ่มต้น" to signal it is a starting/from price. */
+  showFromLabel?: boolean;
 }
 
-export function ProductCard({ product, quickAdd }: ProductCardProps) {
+export function ProductCard({ product, quickAdd, showFromLabel = false }: ProductCardProps) {
   const href = `/products/${product.slug}`;
   const title = product.nameTh || product.name;
 
@@ -78,6 +80,9 @@ export function ProductCard({ product, quickAdd }: ProductCardProps) {
 
         <div className="mt-auto flex items-end justify-between pt-3">
           <div className="leading-tight">
+            {showFromLabel && (
+              <span className="mr-1 text-xs text-muted-foreground">เริ่มต้น</span>
+            )}
             <span className="text-lg font-bold text-brand">
               {formatPrice(product.fromPrice)}
             </span>

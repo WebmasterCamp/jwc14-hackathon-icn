@@ -120,7 +120,7 @@ export function AskClient() {
       {loading && (
         <div className="space-y-4">
           <Skeleton className="h-20 w-full rounded-2xl" />
-          <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+          <div className="grid grid-cols-1 gap-4">
             {Array.from({ length: 4 }).map((_, i) => (
               <div key={i} className="space-y-3">
                 <Skeleton className="aspect-square w-full rounded-2xl" />
@@ -151,7 +151,7 @@ export function AskClient() {
               </p>
             </div>
           ) : (
-            <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+            <div className="grid grid-cols-1 gap-4">
               {result.recommendations.map((rec) => (
                 <div key={rec.product.slug} className="flex flex-col gap-2">
                   <ProductCard product={rec.product} />

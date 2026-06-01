@@ -22,6 +22,7 @@ import {
   Star,
   Percent,
   Menu,
+  Image as ImageIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -57,6 +58,7 @@ const adminNavItems: SidebarItem[] = [
   { href: "/dashboard/admin/customers", label: "สถานศึกษา", icon: GraduationCap },
   { href: "/dashboard/admin/categories", label: "หมวดหมู่สินค้า", icon: Tag },
   { href: "/dashboard/admin/products", label: "สินค้าแนะนำ", icon: Star },
+  { href: "/dashboard/admin/projects", label: "ตัวอย่างโปรเจกต์", icon: ImageIcon },
   { href: "/dashboard/admin/pricing", label: "ราคาส่วนลด", icon: Percent },
   { href: "/dashboard/admin/contracts", label: "สัญญาทั้งหมด", icon: FileText },
   { href: "/dashboard/admin/users", label: "ผู้ใช้", icon: Users },

@@ -239,6 +239,22 @@ model Category {
 }
 
 // ============================================
+// PROJECT EXAMPLE (admin-managed landing-page showcase)
+// ============================================
+
+// Customer project showcase cards rendered in the "ตัวอย่างโปรเจกต์ลูกค้าเรา"
+// section on the public landing page. Fully managed from the admin dashboard.
+model ProjectExample {
+  id        String   @id @default(cuid())
+  title     String
+  image     String
+  sortOrder Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ============================================
 // PRODUCT (canonical catalog — shared across providers)
 // ============================================
 
@@ -313,7 +329,13 @@ model Equipment {
   descriptionTh    String?
   images           String[]
   specs            Json?
+  // Per-period rental prices. rentPriceMonthly is the canonical/required rate;
+  // the others are optional explicit rates a provider may set independently
+  // (a daily rate need not equal monthly/30). Null = that period isn't offered.
+  rentPriceDaily   Float?
+  rentPriceWeekly  Float?
   rentPriceMonthly Float
+  rentPriceYearly  Float?
   leaseToOwnPrice  Float?
   leaseDuration    Int? // months for lease-to-own
   depositAmount    Float              @default(0)

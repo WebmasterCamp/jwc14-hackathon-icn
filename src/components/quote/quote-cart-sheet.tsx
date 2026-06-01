@@ -83,9 +83,6 @@ export function QuoteCartSheet() {
                       <p className="truncate text-sm font-medium">
                         {item.nameTh || item.name}
                       </p>
-                      <p className="truncate text-xs text-muted-foreground">
-                        {item.provider.companyName}
-                      </p>
                     </div>
                     <button
                       type="button"

@@ -14,6 +14,8 @@ import {
   CheckCircle2,
   Store,
   FileText,
+  ListChecks,
+  GraduationCap,
 } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { getProductBySlug } from "@/lib/queries";
@@ -203,9 +205,18 @@ export default async function ProductDetailPage({
           {/* Tabs */}
           <Tabs defaultValue="description">
             <TabsList>
-              <TabsTrigger value="description">รายละเอียด</TabsTrigger>
-              <TabsTrigger value="specs">สเปค</TabsTrigger>
-              <TabsTrigger value="curriculum">หลักสูตร</TabsTrigger>
+              <TabsTrigger value="description" className="gap-1.5">
+                <FileText className="h-4 w-4" />
+                รายละเอียด
+              </TabsTrigger>
+              <TabsTrigger value="specs" className="gap-1.5">
+                <ListChecks className="h-4 w-4" />
+                สเปค
+              </TabsTrigger>
+              <TabsTrigger value="curriculum" className="gap-1.5">
+                <GraduationCap className="h-4 w-4" />
+                หลักสูตร
+              </TabsTrigger>
             </TabsList>
 
             <TabsContent value="description" className="mt-4">

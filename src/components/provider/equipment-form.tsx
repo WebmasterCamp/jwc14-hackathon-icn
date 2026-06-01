@@ -39,7 +39,10 @@ const equipmentSchema = z.object({
   brand: z.string().optional(),
   model: z.string().optional(),
   // offering fields
+  rentPriceDaily: z.coerce.number().positive().optional(),
+  rentPriceWeekly: z.coerce.number().positive().optional(),
   rentPriceMonthly: z.coerce.number().positive('กรุณากรอกราคาเช่า'),
+  rentPriceYearly: z.coerce.number().positive().optional(),
   leaseToOwnPrice: z.coerce.number().positive().optional(),
   leaseDuration: z.coerce.number().int().positive().optional(),
   depositAmount: z.coerce.number().nonnegative().default(0),
@@ -111,7 +114,10 @@ export function EquipmentForm({
       descriptionTh: initialData?.descriptionTh || '',
       brand: initialData?.brand || '',
       model: initialData?.model || '',
+      rentPriceDaily: initialData?.rentPriceDaily || undefined,
+      rentPriceWeekly: initialData?.rentPriceWeekly || undefined,
       rentPriceMonthly: initialData?.rentPriceMonthly || 0,
+      rentPriceYearly: initialData?.rentPriceYearly || undefined,
       leaseToOwnPrice: initialData?.leaseToOwnPrice || undefined,
       leaseDuration: initialData?.leaseDuration || undefined,
       depositAmount: initialData?.depositAmount || 0,
@@ -173,7 +179,10 @@ export function EquipmentForm({
     setIsLoading(true);
     try {
       const offering = {
+        rentPriceDaily: data.rentPriceDaily,
+        rentPriceWeekly: data.rentPriceWeekly,
         rentPriceMonthly: data.rentPriceMonthly,
+        rentPriceYearly: data.rentPriceYearly,
         leaseToOwnPrice: data.leaseToOwnPrice,
         leaseDuration: data.leaseDuration,
         depositAmount: data.depositAmount,
@@ -517,20 +526,69 @@ export function EquipmentForm({
             </p>
           </div>
 
-          <div className="grid gap-4 md:grid-cols-3">
-            <FormField
-              control={form.control}
-              name="rentPriceMonthly"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>ราคาเช่า/เดือน (บาท) *</FormLabel>
-                  <FormControl>
-                    <Input type="number" placeholder="5000" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+          <div className="space-y-2">
+            <p className="text-sm font-medium">ราคาเช่าตามระยะเวลา (บาท)</p>
+            <p className="text-xs text-muted-foreground">
+              ราคา/เดือนจำเป็นต้องกรอก ส่วนรายวัน รายสัปดาห์ และรายปี
+              กรอกเฉพาะระยะเวลาที่ร้านคุณเปิดให้เช่า (เว้นว่างได้)
+            </p>
+            <div className="grid gap-4 md:grid-cols-4">
+              <FormField
+                control={form.control}
+                name="rentPriceDaily"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>ราคา/วัน</FormLabel>
+                    <FormControl>
+                      <Input type="number" placeholder="300" {...field} value={field.value ?? ''} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="rentPriceWeekly"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>ราคา/สัปดาห์</FormLabel>
+                    <FormControl>
+                      <Input type="number" placeholder="1500" {...field} value={field.value ?? ''} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="rentPriceMonthly"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>ราคา/เดือน *</FormLabel>
+                    <FormControl>
+                      <Input type="number" placeholder="5000" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="rentPriceYearly"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>ราคา/ปี</FormLabel>
+                    <FormControl>
+                      <Input type="number" placeholder="50000" {...field} value={field.value ?? ''} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-2">
             <FormField
               control={form.control}
               name="depositAmount"

@@ -51,17 +51,13 @@ export default async function CategorisePage() {
               className="group relative flex min-h-[200px] flex-col justify-end overflow-hidden rounded-2xl border p-6 transition-all hover:shadow-xl"
             >
               {/* Background image (behind the text) */}
-              {cat.image ? (
-                <Image
-                  src={cat.image}
-                  alt=""
-                  fill
-                  sizes="(max-width: 640px) 100vw, 50vw"
-                  className="object-cover transition-transform duration-500 group-hover:scale-105"
-                />
-              ) : (
-                <div className="absolute inset-0 bg-gradient-to-br from-slate-800 via-slate-900 to-slate-800" />
-              )}
+              <Image
+                src={cat.image || "/assets/placeholder.png"}
+                alt=""
+                fill
+                sizes="(max-width: 640px) 100vw, 50vw"
+                className="object-cover transition-transform duration-500 group-hover:scale-105"
+              />
 
               {/* Dark gradient overlay keeps text readable on any image */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/35 to-black/10" />

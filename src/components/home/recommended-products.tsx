@@ -37,7 +37,7 @@ export function RecommendedProducts({
         <div className="flex snap-x gap-4 overflow-x-auto px-4 pb-4 lg:px-8 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {products.map((product) => (
             <div key={product.slug} className="w-52 shrink-0 snap-start">
-              <ProductCard product={product} />
+              <ProductCard product={product} showFromLabel />
             </div>
           ))}
         </div>

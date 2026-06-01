@@ -1,10 +1,24 @@
 import { cache } from "react";
 import { prisma } from "@/lib/prisma";
+import { entryPrice } from "@/lib/pricing";
+import type { DurationUnit } from "@/lib/quote-cart";
 
 /**
  * Cached query functions using React cache() for request-level deduplication.
  * These functions ensure that identical queries within a single request are only executed once.
  */
+
+// Shape the "starting from" price for a <ProductCard />. Falls back to an
+// Infinity monthly price (matching the prior behaviour) when an offering has
+// no price at all, so cards still render.
+function entryToCard(
+  entry: { amount: number; unit: DurationUnit } | null
+): { fromPrice: number; fromUnit: DurationUnit } {
+  return {
+    fromPrice: entry?.amount ?? Infinity,
+    fromUnit: entry?.unit ?? "month",
+  };
+}
 
 /**
  * Ensure a CUSTOMER user has a Customer profile row, creating a placeholder if
@@ -29,6 +43,15 @@ export async function ensureCustomerProfile(
   });
 }
 
+// Active customer project showcase cards for the landing page, ordered as set
+// in the admin dashboard. Returns an empty list when none are configured.
+export const getProjectExamples = cache(async () => {
+  return prisma.projectExample.findMany({
+    where: { isActive: true },
+    orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }],
+  });
+});
+
 // Get all categories (used multiple times in equipment pages)
 export const getCategories = cache(async () => {
   return prisma.category.findMany({
@@ -44,7 +67,12 @@ export const getFeaturedProducts = cache(async () => {
     category: true,
     equipment: {
       where: { isActive: true, provider: { verified: true } },
-      select: { rentPriceMonthly: true },
+      select: {
+        rentPriceDaily: true,
+        rentPriceWeekly: true,
+        rentPriceMonthly: true,
+        rentPriceYearly: true,
+      },
     },
   } as const;
 
@@ -74,10 +102,7 @@ export const getFeaturedProducts = cache(async () => {
     images: p.images,
     category: p.category,
     offeringCount: p.equipment.length,
-    fromPrice: p.equipment.reduce(
-      (min, o) => Math.min(min, o.rentPriceMonthly),
-      Infinity
-    ),
+    ...entryToCard(entryPrice(p.equipment)),
   }));
 });
 

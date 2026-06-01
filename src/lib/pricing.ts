@@ -11,11 +11,61 @@ export interface PriceTier {
   discountPercent: number; // 0–100
 }
 
-/** Convert a duration expressed in days/months/years to months (matches calcRentalTotal). */
+/** Convert a duration expressed in days/weeks/months/years to months (matches calcRentalTotal). */
 export function durationToMonths(amount: number, unit: DurationUnit): number {
   if (unit === "day") return amount / 30;
+  if (unit === "week") return amount / 4.345;
   if (unit === "year") return amount * 12;
   return amount;
+}
+
+// ============================================
+// Per-period rental prices (day / week / month / year)
+// ============================================
+
+// The set of explicit per-period prices an Equipment offering may carry.
+// rentPriceMonthly is always present; the others are optional.
+export interface PeriodPrices {
+  rentPriceDaily?: number | null;
+  rentPriceWeekly?: number | null;
+  rentPriceMonthly: number;
+  rentPriceYearly?: number | null;
+}
+
+// Period price fields in ascending duration order (shortest period first).
+export const PERIOD_FIELDS: { unit: DurationUnit; field: keyof PeriodPrices }[] = [
+  { unit: "day", field: "rentPriceDaily" },
+  { unit: "week", field: "rentPriceWeekly" },
+  { unit: "month", field: "rentPriceMonthly" },
+  { unit: "year", field: "rentPriceYearly" },
+];
+
+/** Every period price actually set on an offering, shortest period first. */
+export function listPeriodPrices(
+  p: PeriodPrices
+): { unit: DurationUnit; amount: number }[] {
+  return PERIOD_FIELDS.map(({ unit, field }) => ({
+    unit,
+    amount: Number(p[field] ?? 0),
+  })).filter((x) => x.amount > 0);
+}
+
+/**
+ * The "starting from" price to advertise on a card across one or more offerings:
+ * the shortest period any offering prices, and the cheapest amount at that
+ * period. Returns null only if no offering has any price (shouldn't happen,
+ * since rentPriceMonthly is required).
+ */
+export function entryPrice(
+  offerings: PeriodPrices[]
+): { amount: number; unit: DurationUnit } | null {
+  for (const { unit, field } of PERIOD_FIELDS) {
+    const amounts = offerings
+      .map((o) => Number(o[field] ?? 0))
+      .filter((a) => a > 0);
+    if (amounts.length) return { amount: Math.min(...amounts), unit };
+  }
+  return null;
 }
 
 /**

@@ -367,6 +367,24 @@ async function main() {
     })
   }
 
+  // Create landing-page project showcase cards (idempotent on title)
+  console.log('Creating project examples...')
+  const projectExamples = [
+    { title: 'ตัวอย่าง#01', image: '/assets/iot1.png', sortOrder: 0 },
+    { title: 'ตัวอย่าง#02', image: '/assets/iot2.png', sortOrder: 1 },
+    { title: 'ตัวอย่าง#03', image: '/assets/iot3.png', sortOrder: 2 },
+  ]
+  for (const p of projectExamples) {
+    const existing = await prisma.projectExample.findFirst({
+      where: { title: p.title },
+    })
+    if (existing) {
+      await prisma.projectExample.update({ where: { id: existing.id }, data: p })
+    } else {
+      await prisma.projectExample.create({ data: p })
+    }
+  }
+
   // Create admin user
   console.log('Creating admin user...')
   const adminPassword = await bcrypt.hash('admin123', 12)

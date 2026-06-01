@@ -20,7 +20,7 @@ export function ImageUploadField({
   value?: string;
   onChange: (url: string | undefined) => void;
   /** R2 destination folder (must be allowed by /api/upload). */
-  folder?: "equipment" | "contracts" | "avatars" | "logos" | "blog" | "categories";
+  folder?: "equipment" | "contracts" | "avatars" | "logos" | "blog" | "categories" | "projects";
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [progress, setProgress] = useState<number | null>(null);

@@ -1,14 +1,15 @@
 import { JsonLd } from "@/components/seo/json-ld";
 import { generateOrganizationSchema, generateWebSiteSchema } from "@/lib/structured-data";
-import { getCategories, getFeaturedProducts } from "@/lib/queries";
+import { getCategories, getFeaturedProducts, getProjectExamples } from "@/lib/queries";
 import { HeroSection } from "@/components/home/hero-section";
 import { ProjectExamples } from "@/components/home/project-examples";
 import { RecommendedProducts } from "@/components/home/recommended-products";
 
 export default async function HomePage() {
-  const [categories, products] = await Promise.all([
+  const [categories, products, projectExamples] = await Promise.all([
     getCategories(),
     getFeaturedProducts(),
+    getProjectExamples(),
   ]);
 
   return (
@@ -29,7 +30,7 @@ export default async function HomePage() {
 
       <RecommendedProducts categories={categories} products={products} />
 
-      <ProjectExamples />
+      <ProjectExamples projects={projectExamples} />
     </>
   );
 }

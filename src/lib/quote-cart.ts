@@ -4,7 +4,7 @@
 // ("jwc-customer-equipment-cart") because this shape carries provider.id,
 // which is required to group items into one quotation per provider.
 
-export type DurationUnit = "day" | "month" | "year";
+export type DurationUnit = "day" | "week" | "month" | "year";
 
 export interface QuoteCartItem {
   equipmentId: string;
@@ -30,6 +30,7 @@ const CHANGE_EVENT = "jwc-quote-cart-change";
 
 export const unitLabels: Record<DurationUnit, string> = {
   day: "วัน",
+  week: "สัปดาห์",
   month: "เดือน",
   year: "ปี",
 };
@@ -132,6 +133,7 @@ export function calcRentalTotal(item: {
 }): number {
   const monthly = item.rentPriceMonthly * item.quantity;
   if (item.durationUnit === "day") return (monthly / 30) * item.durationAmount;
+  if (item.durationUnit === "week") return (monthly / 4.345) * item.durationAmount;
   if (item.durationUnit === "year") return monthly * 12 * item.durationAmount;
   return monthly * item.durationAmount;
 }
