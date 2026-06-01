@@ -265,12 +265,31 @@ model Product {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
-  category  Category    @relation(fields: [categoryId], references: [id])
-  equipment Equipment[]
+  category   Category           @relation(fields: [categoryId], references: [id])
+  equipment  Equipment[]
+  priceTiers ProductPriceTier[]
 
   @@index([categoryId])
   @@index([isActive])
   @@index([isFeatured])
+}
+
+// Admin-managed duration discount tiers for a Product. A longer rental matches a
+// higher tier and lowers the effective monthly price:
+//   effective = monthly × (1 − discountPercent/100)
+// Tiers are shared across all of the Product's offerings (Equipment rows).
+model ProductPriceTier {
+  id              String   @id @default(cuid())
+  productId       String
+  minMonths       Int // inclusive lower bound (>= 1)
+  maxMonths       Int? // inclusive upper bound; null = open-ended (e.g. "24+")
+  discountPercent Float // 0–100
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId])
 }
 
 // ============================================
@@ -365,9 +384,10 @@ model ContractItem {
   id            String @id @default(cuid())
   contractId    String
   equipmentId   String
-  quantity      Int    @default(1)
-  pricePerMonth Float
-  subtotal      Float
+  quantity        Int   @default(1)
+  pricePerMonth   Float
+  subtotal        Float
+  discountPercent Float @default(0) // duration discount applied to pricePerMonth
 
   contract  Contract  @relation(fields: [contractId], references: [id], onDelete: Cascade)
   equipment Equipment @relation(fields: [equipmentId], references: [id], onDelete: Restrict)
@@ -427,6 +447,7 @@ model QuotationItem {
   rentPriceMonthly Float
   depositAmount    Float
   subtotal         Float
+  discountPercent  Float   @default(0) // duration discount applied to subtotal
 
   quotation Quotation @relation(fields: [quotationId], references: [id], onDelete: Cascade)
   equipment Equipment @relation(fields: [equipmentId], references: [id], onDelete: Restrict)

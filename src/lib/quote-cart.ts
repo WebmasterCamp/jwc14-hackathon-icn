@@ -19,6 +19,10 @@ export interface QuoteCartItem {
   quantity: number;
   durationAmount: number;
   durationUnit: DurationUnit;
+  // Per-product duration discount tiers (snapshot, so the review preview matches
+  // the authoritative server total). Shape matches PriceTier in @/lib/pricing;
+  // inlined here to avoid an import cycle (pricing imports DurationUnit).
+  priceTiers?: { minMonths: number; maxMonths: number | null; discountPercent: number }[];
 }
 
 const STORAGE_KEY = "jwc-quote-cart";

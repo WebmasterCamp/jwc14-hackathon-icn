@@ -9,6 +9,11 @@ import { ensureCustomerProfile } from "@/lib/queries";
 import { uploadFile, generateFileKey } from "@/lib/r2";
 import { sendEmail } from "@/lib/email";
 import { calcRentalTotal, type DurationUnit } from "@/lib/quote-cart";
+import {
+  applyDurationDiscount,
+  durationToMonths,
+  findDurationDiscount,
+} from "@/lib/pricing";
 import { QuotationPdf } from "@/components/documents/quotation-pdf";
 
 // react-pdf + R2 need the Node runtime (not edge).
@@ -94,7 +99,15 @@ export async function POST(request: Request) {
   const offerings = await prisma.equipment.findMany({
     where: { id: { in: ids }, isActive: true, provider: { verified: true } },
     include: {
-      product: { select: { name: true, nameTh: true } },
+      product: {
+        select: {
+          name: true,
+          nameTh: true,
+          priceTiers: {
+            select: { minMonths: true, maxMonths: true, discountPercent: true },
+          },
+        },
+      },
       provider: {
         select: {
           id: true,
@@ -125,6 +138,7 @@ export async function POST(request: Request) {
         rentPriceMonthly: number;
         depositAmount: number;
         subtotal: number;
+        discountPercent: number;
       }[];
     }
   >();
@@ -132,12 +146,17 @@ export async function POST(request: Request) {
   for (const item of items) {
     const offering = byId.get(item.equipmentId);
     if (!offering) continue; // dropped: inactive / unverified / unknown
-    const subtotal = calcRentalTotal({
+    // Apply the product's duration discount to the line rental (deposit excluded).
+    const months = durationToMonths(item.durationAmount, item.durationUnit);
+    const tiers = offering.product.priceTiers;
+    const baseSubtotal = calcRentalTotal({
       rentPriceMonthly: offering.rentPriceMonthly,
       quantity: item.quantity,
       durationAmount: item.durationAmount,
       durationUnit: item.durationUnit,
     });
+    const subtotal = applyDurationDiscount(baseSubtotal, months, tiers);
+    const discountPercent = findDurationDiscount(months, tiers);
     const group = groups.get(offering.provider.id) ?? {
       provider: offering.provider,
       lines: [],
@@ -152,6 +171,7 @@ export async function POST(request: Request) {
       rentPriceMonthly: offering.rentPriceMonthly,
       depositAmount: offering.depositAmount,
       subtotal,
+      discountPercent,
     });
     groups.set(offering.provider.id, group);
   }
@@ -202,6 +222,7 @@ export async function POST(request: Request) {
           rentPriceMonthly: l.rentPriceMonthly,
           depositAmount: l.depositAmount,
           subtotal: l.subtotal,
+          discountPercent: l.discountPercent,
         })),
       },
     });

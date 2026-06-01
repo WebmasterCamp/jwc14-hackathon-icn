@@ -14,6 +14,11 @@ interface AddToQuoteButtonProps {
     rentPriceMonthly: number;
     depositAmount: number;
     provider: { id: string; companyName: string };
+    priceTiers?: {
+      minMonths: number;
+      maxMonths: number | null;
+      discountPercent: number;
+    }[];
   };
 }
 

@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/select";
 import { PriceCalculator } from "@/components/equipment/price-calculator";
 import { formatPrice } from "@/lib/format";
+import type { PriceTier } from "@/lib/pricing";
 
 export interface OfferingOption {
   id: string;
@@ -23,12 +24,17 @@ export interface OfferingOption {
 
 interface OfferingCalculatorProps {
   offerings: OfferingOption[];
+  // Per-product duration discount tiers (shared across all offerings).
+  priceTiers?: PriceTier[];
 }
 
 // Lets the buyer pick which shop's offering drives the price calculator. The
 // offerings arrive sorted cheapest-first, so the default selection is the
 // cheapest. With a single offering the selector is hidden.
-export function OfferingCalculator({ offerings }: OfferingCalculatorProps) {
+export function OfferingCalculator({
+  offerings,
+  priceTiers = [],
+}: OfferingCalculatorProps) {
   const [selectedId, setSelectedId] = useState(offerings[0]?.id);
 
   const selected =
@@ -64,6 +70,7 @@ export function OfferingCalculator({ offerings }: OfferingCalculatorProps) {
         leaseToOwnPrice={selected.leaseToOwnPrice}
         leaseDuration={selected.leaseDuration}
         depositAmount={selected.depositAmount}
+        priceTiers={priceTiers}
       />
     </div>
   );

@@ -8,12 +8,15 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Badge } from "@/components/ui/badge";
 import { formatPrice } from "@/lib/format";
+import { findDurationDiscount, type PriceTier } from "@/lib/pricing";
 
 interface PriceCalculatorProps {
   rentPriceMonthly: number;
   leaseToOwnPrice?: number | null;
   leaseDuration?: number | null;
   depositAmount: number;
+  // Per-product duration discount tiers; longer rentals lower the monthly price.
+  priceTiers?: PriceTier[];
 }
 
 // The base-ui Slider callback doesn't guarantee an array for a single thumb, so
@@ -30,6 +33,7 @@ export function PriceCalculator({
   leaseToOwnPrice,
   leaseDuration = 24,
   depositAmount,
+  priceTiers = [],
 }: PriceCalculatorProps) {
   const [rentMonths, setRentMonths] = useState(12);
   const [quantity, setQuantity] = useState(1);
@@ -44,7 +48,11 @@ export function PriceCalculator({
     const leasePrice = Number(leaseToOwnPrice) || 0;
     const leaseMonths = Number(leaseDuration) || 0;
 
-    const rentPerMonth = monthly * qty;
+    // Duration discount: longer rentals lower the effective monthly price.
+    const discountPercent = findDurationDiscount(months, priceTiers);
+    const discountedMonthly = monthly * (1 - discountPercent / 100);
+
+    const rentPerMonth = discountedMonthly * qty;
     const rentTotal = rentPerMonth * months;
     const rentDeposit = deposit * qty;
     const rentGrandTotal = rentTotal + rentDeposit;
@@ -61,6 +69,8 @@ export function PriceCalculator({
         : 0;
 
     return {
+      discountPercent,
+      fullRentPerMonth: monthly * qty,
       rentPerMonth,
       rentTotal,
       rentDeposit,
@@ -72,7 +82,7 @@ export function PriceCalculator({
       savings,
       savingsPercent,
     };
-  }, [rentPriceMonthly, rentMonths, quantity, depositAmount, leaseToOwnPrice, leaseDuration]);
+  }, [rentPriceMonthly, rentMonths, quantity, depositAmount, leaseToOwnPrice, leaseDuration, priceTiers]);
 
   return (
     <Card>
@@ -128,8 +138,21 @@ export function PriceCalculator({
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">ค่าเช่ารายเดือน</span>
-                <span>{formatPrice(calculations.rentPerMonth)}</span>
+                <span className="flex items-center gap-1.5">
+                  {calculations.discountPercent > 0 && (
+                    <span className="text-muted-foreground line-through">
+                      {formatPrice(calculations.fullRentPerMonth)}
+                    </span>
+                  )}
+                  {formatPrice(calculations.rentPerMonth)}
+                </span>
               </div>
+              {calculations.discountPercent > 0 && (
+                <div className="flex justify-between text-sm text-green-600">
+                  <span>ส่วนลดระยะยาว</span>
+                  <span>−{calculations.discountPercent}%</span>
+                </div>
+              )}
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">ระยะเวลา</span>
                 <span>{rentMonths} เดือน</span>

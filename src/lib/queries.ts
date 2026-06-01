@@ -110,6 +110,7 @@ export const getProductBySlug = cache(async (slug: string) => {
     where: { slug },
     include: {
       category: true,
+      priceTiers: { orderBy: { minMonths: "asc" } },
       equipment: {
         where: { isActive: true, provider: { verified: true } },
         include: {

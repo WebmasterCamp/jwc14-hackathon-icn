@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { z } from 'zod';
+import { applyDurationDiscount, findDurationDiscount } from '@/lib/pricing';
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -173,32 +174,43 @@ export async function PATCH(request: Request, { params }: RouteParams) {
     if (data.endDate) updateData.endDate = data.endDate;
     if (data.notes !== undefined) updateData.notes = data.notes;
 
-    // If items are updated, recalculate amounts
+    // If items are updated, recalculate amounts (with the duration discount).
     if (data.items) {
-      const monthlyAmount = data.items.reduce(
-        (sum, item) => sum + item.pricePerMonth * item.quantity,
-        0
-      );
       const startDate = data.startDate || contract.startDate;
       const endDate = data.endDate || contract.endDate;
       const months = Math.ceil(
         (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24 * 30)
       );
-      const totalAmount = monthlyAmount * months;
 
-      // Calculate new deposit
       const equipmentIds = data.items.map((item) => item.equipmentId);
       const equipment = await prisma.equipment.findMany({
         where: { id: { in: equipmentIds } },
+        include: { product: { include: { priceTiers: true } } },
       });
-      const depositAmount = data.items.reduce((sum, item) => {
+
+      const lines = data.items.map((item) => {
         const eq = equipment.find((e) => e.id === item.equipmentId);
-        return sum + (eq?.depositAmount || 0) * item.quantity;
-      }, 0);
+        const tiers = eq?.product.priceTiers ?? [];
+        const discountedPerMonth = applyDurationDiscount(
+          item.pricePerMonth,
+          months,
+          tiers
+        );
+        return {
+          equipmentId: item.equipmentId,
+          quantity: item.quantity,
+          pricePerMonth: discountedPerMonth,
+          subtotal: discountedPerMonth * item.quantity,
+          discountPercent: findDurationDiscount(months, tiers),
+          deposit: (eq?.depositAmount || 0) * item.quantity,
+        };
+      });
+
+      const monthlyAmount = lines.reduce((sum, l) => sum + l.subtotal, 0);
 
       updateData.monthlyAmount = monthlyAmount;
-      updateData.totalAmount = totalAmount;
-      updateData.depositAmount = depositAmount;
+      updateData.totalAmount = monthlyAmount * months;
+      updateData.depositAmount = lines.reduce((sum, l) => sum + l.deposit, 0);
 
       // Delete old items and create new ones
       await prisma.contractItem.deleteMany({
@@ -206,11 +218,12 @@ export async function PATCH(request: Request, { params }: RouteParams) {
       });
 
       updateData.items = {
-        create: data.items.map((item) => ({
-          equipmentId: item.equipmentId,
-          quantity: item.quantity,
-          pricePerMonth: item.pricePerMonth,
-          subtotal: item.pricePerMonth * item.quantity,
+        create: lines.map((l) => ({
+          equipmentId: l.equipmentId,
+          quantity: l.quantity,
+          pricePerMonth: l.pricePerMonth,
+          subtotal: l.subtotal,
+          discountPercent: l.discountPercent,
         })),
       };
     }

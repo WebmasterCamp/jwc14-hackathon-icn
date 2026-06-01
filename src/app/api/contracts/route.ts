@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
+import { applyDurationDiscount, findDurationDiscount } from "@/lib/pricing";
 
 // GET /api/contracts - List contracts
 export async function GET(request: Request) {
@@ -128,26 +129,41 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Customer not found" }, { status: 404 });
     }
 
-    // Calculate totals
-    const monthlyAmount = data.items.reduce(
-      (sum, item) => sum + item.pricePerMonth * item.quantity,
-      0
-    );
+    // Contract duration in months drives the per-product duration discount.
     const months = Math.ceil(
       (data.endDate.getTime() - data.startDate.getTime()) /
         (1000 * 60 * 60 * 24 * 30)
     );
-    const totalAmount = monthlyAmount * months;
 
-    // Calculate deposit
+    // Fetch each offering with its product's discount tiers (also used for deposit).
     const equipmentIds = data.items.map((item) => item.equipmentId);
     const equipment = await prisma.equipment.findMany({
       where: { id: { in: equipmentIds } },
+      include: { product: { include: { priceTiers: true } } },
     });
-    const depositAmount = data.items.reduce((sum, item) => {
+
+    // Apply the duration discount to each line's monthly price.
+    const lines = data.items.map((item) => {
       const eq = equipment.find((e) => e.id === item.equipmentId);
-      return sum + (eq?.depositAmount || 0) * item.quantity;
-    }, 0);
+      const tiers = eq?.product.priceTiers ?? [];
+      const discountedPerMonth = applyDurationDiscount(
+        item.pricePerMonth,
+        months,
+        tiers
+      );
+      return {
+        equipmentId: item.equipmentId,
+        quantity: item.quantity,
+        pricePerMonth: discountedPerMonth,
+        subtotal: discountedPerMonth * item.quantity,
+        discountPercent: findDurationDiscount(months, tiers),
+        deposit: (eq?.depositAmount || 0) * item.quantity,
+      };
+    });
+
+    const monthlyAmount = lines.reduce((sum, l) => sum + l.subtotal, 0);
+    const totalAmount = monthlyAmount * months;
+    const depositAmount = lines.reduce((sum, l) => sum + l.deposit, 0);
 
     // Generate contract number
     const count = await prisma.contract.count();
@@ -169,11 +185,12 @@ export async function POST(request: Request) {
         monthlyAmount,
         notes: data.notes,
         items: {
-          create: data.items.map((item) => ({
-            equipmentId: item.equipmentId,
-            quantity: item.quantity,
-            pricePerMonth: item.pricePerMonth,
-            subtotal: item.pricePerMonth * item.quantity,
+          create: lines.map((l) => ({
+            equipmentId: l.equipmentId,
+            quantity: l.quantity,
+            pricePerMonth: l.pricePerMonth,
+            subtotal: l.subtotal,
+            discountPercent: l.discountPercent,
           })),
         },
       },

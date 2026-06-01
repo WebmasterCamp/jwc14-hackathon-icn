@@ -36,6 +36,17 @@ import {
   type DurationUnit,
   type QuoteCartItem,
 } from "@/lib/quote-cart";
+import { applyDurationDiscount, durationToMonths } from "@/lib/pricing";
+
+// Line rental after the product's duration discount (matches the server total).
+function lineRental(item: QuoteCartItem): number {
+  const months = durationToMonths(item.durationAmount, item.durationUnit);
+  return applyDurationDiscount(
+    calcRentalTotal(item),
+    months,
+    item.priceTiers ?? []
+  );
+}
 
 interface Prefill {
   contactName: string;
@@ -87,7 +98,7 @@ export function QuoteReviewClient({ prefill }: { prefill: Prefill }) {
   const totals = useMemo(() => {
     return items.reduce(
       (acc, item) => {
-        const rental = calcRentalTotal(item);
+        const rental = lineRental(item);
         const deposit = item.depositAmount * item.quantity;
         return {
           rentalTotal: acc.rentalTotal + rental,
@@ -325,8 +336,14 @@ export function QuoteReviewClient({ prefill }: { prefill: Prefill }) {
                         <div className="ml-auto text-right">
                           <p className="text-xs text-muted-foreground">รวม</p>
                           <p className="font-semibold">
-                            {formatPrice(calcRentalTotal(item))}
+                            {formatPrice(lineRental(item))}
                           </p>
+                          {(item.priceTiers?.length ?? 0) > 0 &&
+                            lineRental(item) < calcRentalTotal(item) && (
+                              <p className="text-xs text-green-600">
+                                รวมส่วนลดแล้ว
+                              </p>
+                            )}
                         </div>
                       </div>
                     </div>

@@ -26,7 +26,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Separator } from "@/components/ui/separator";
 import { OfferingCalculator } from "@/components/equipment/offering-calculator";
 import { AddToQuoteButton } from "@/components/quote/add-to-quote-button";
 import { formatPrice } from "@/lib/format";
@@ -266,7 +265,8 @@ export default async function ProductDetailPage({
             </TabsContent>
           </Tabs>
 
-          {/* Shop list — each provider's offering with its own terms */}
+          {/* Shop list hidden per request */}
+          {false && (
           <div id="shops" className="space-y-4 scroll-mt-20">
             <h2 className="text-xl font-bold">ร้านค้าที่จำหน่ายสินค้านี้</h2>
             <p className="text-sm text-muted-foreground">
@@ -350,14 +350,19 @@ export default async function ProductDetailPage({
                         <AddToQuoteButton
                           offering={{
                             equipmentId: offering.id,
-                            name: product.name,
-                            nameTh: product.nameTh,
+                            name: product!.name,
+                            nameTh: product!.nameTh,
                             rentPriceMonthly: offering.rentPriceMonthly,
                             depositAmount: offering.depositAmount,
                             provider: {
                               id: offering.provider.id,
                               companyName: offering.provider.companyName,
                             },
+                            priceTiers: product!.priceTiers.map((t) => ({
+                              minMonths: t.minMonths,
+                              maxMonths: t.maxMonths,
+                              discountPercent: t.discountPercent,
+                            })),
                           }}
                         />
                         <Button size="sm" variant="outline" asChild>
@@ -372,6 +377,7 @@ export default async function ProductDetailPage({
               </Card>
             ))}
           </div>
+          )}
         </div>
 
         {/* Sidebar */}
@@ -390,22 +396,6 @@ export default async function ProductDetailPage({
                 </span>
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center gap-2 text-sm">
-                <Store className="h-4 w-4 text-primary" />
-                <span>
-                  มี {offerings.length} ร้านค้าให้เลือกเปรียบเทียบ
-                </span>
-              </div>
-
-              <Separator />
-
-              <div className="space-y-2">
-                <Button className="w-full" size="lg" asChild>
-                  <a href="#shops">เปรียบเทียบร้านค้า</a>
-                </Button>
-              </div>
-            </CardContent>
           </Card>
 
           {/* Price calculator with shop/offering selection (defaults cheapest) */}
@@ -417,6 +407,11 @@ export default async function ProductDetailPage({
               leaseToOwnPrice: o.leaseToOwnPrice,
               leaseDuration: o.leaseDuration,
               depositAmount: o.depositAmount,
+            }))}
+            priceTiers={product.priceTiers.map((t) => ({
+              minMonths: t.minMonths,
+              maxMonths: t.maxMonths,
+              discountPercent: t.discountPercent,
             }))}
           />
         </div>

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { GraduationCap } from "lucide-react";
+import Image from "next/image";
 
 const footerLinks = {
   platform: [
@@ -28,12 +28,16 @@ export function Footer() {
           <div className="md:col-span-1">
             <Link
               href="/"
-              className="flex items-center gap-1 text-2xl font-extrabold tracking-tight mb-4"
+              aria-label="Spark Go"
+              className="mb-4 inline-flex items-center rounded-lg bg-white px-3 py-2 shadow-sm"
             >
-              <span>Spark</span>
-              <span className="rounded-md bg-brand-foreground px-1.5 py-0.5 leading-none text-brand">
-                Go
-              </span>
+              <Image
+                src="/logo.png"
+                alt="Spark Go"
+                width={6000}
+                height={3375}
+                className="h-9 w-auto"
+              />
             </Link>
             <p className="text-sm text-brand-foreground/85 max-w-xs">
               แพลตฟอร์มเช่าอุปกรณ์ทำโปรเจกต์ Raspberry Pi, Arduino, Micro:bit
