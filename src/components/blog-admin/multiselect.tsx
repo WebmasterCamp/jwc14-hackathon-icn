@@ -50,18 +50,20 @@ export function Multiselect({
   return (
     <div className="space-y-2">
       <Popover>
-        <PopoverTrigger asChild>
-          <Button
-            type="button"
-            variant="outline"
-            role="combobox"
-            className="w-full justify-between font-normal"
-          >
-            {selected.length > 0
-              ? `เลือกแล้ว ${selected.length} รายการ`
-              : placeholder}
-            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-          </Button>
+        <PopoverTrigger
+          render={
+            <Button
+              type="button"
+              variant="outline"
+              role="combobox"
+              className="w-full justify-between font-normal"
+            />
+          }
+        >
+          {selected.length > 0
+            ? `เลือกแล้ว ${selected.length} รายการ`
+            : placeholder}
+          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </PopoverTrigger>
         <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
           <Command>

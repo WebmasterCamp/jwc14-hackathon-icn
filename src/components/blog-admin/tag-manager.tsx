@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Plus, Trash2 } from "lucide-react";
-import { toast } from "sonner";
+import { toast } from "react-hot-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -99,10 +99,15 @@ export function TagManager({ tags }: { tags: Tag[] }) {
                 <span className="text-xs text-muted-foreground">
                   ({tag._count?.posts ?? 0})
                 </span>
-                <AlertDialogTrigger asChild>
-                  <button type="button" className="text-muted-foreground hover:text-destructive">
-                    <Trash2 className="h-3.5 w-3.5" />
-                  </button>
+                <AlertDialogTrigger
+                  render={
+                    <button
+                      type="button"
+                      className="text-muted-foreground hover:text-destructive"
+                    />
+                  }
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
                 </AlertDialogTrigger>
               </Badge>
               <AlertDialogContent>

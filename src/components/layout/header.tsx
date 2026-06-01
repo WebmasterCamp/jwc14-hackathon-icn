@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 import { useState } from "react";
@@ -37,17 +38,6 @@ const publicNavItems = [
   { href: "/contact", label: "ติดต่อเรา" },
 ];
 
-function SparkGoWordmark() {
-  return (
-    <span className="flex items-center gap-1 text-2xl font-extrabold tracking-tight">
-      <span className="text-foreground">Spark</span>
-      <span className="rounded-md bg-brand px-1.5 py-0.5 leading-none text-brand-foreground">
-        Go
-      </span>
-    </span>
-  );
-}
-
 export function Header() {
   const pathname = usePathname();
   const { data: session, status } = useSession();
@@ -82,7 +72,14 @@ export function Header() {
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center" aria-label="Spark Go">
-            <SparkGoWordmark />
+            <Image
+              src="/logo.png"
+              alt="Spark Go"
+              width={6000}
+              height={3375}
+              priority
+              className="h-10 w-auto"
+            />
           </Link>
 
           {/* Desktop Navigation */}

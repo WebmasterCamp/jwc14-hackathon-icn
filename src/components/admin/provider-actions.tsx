@@ -22,7 +22,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { MoreHorizontal, Eye, CheckCircle2, XCircle, Mail } from 'lucide-react';
 import Link from 'next/link';
-import { toast } from 'sonner';
+import { toast } from 'react-hot-toast';
 
 interface ProviderActionsProps {
   providerId: string;

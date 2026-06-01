@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { IBM_Plex_Sans_Thai, Geist_Mono } from "next/font/google";
-import { Toaster } from "@/components/ui/sonner";
+import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { SessionProvider } from "@/components/providers/session-provider";
@@ -103,7 +103,7 @@ export default function RootLayout({
           >
             <TooltipProvider>
               {children}
-              <Toaster position="top-right" richColors />
+              <Toaster position="top-right" />
             </TooltipProvider>
           </ThemeProvider>
         </SessionProvider>

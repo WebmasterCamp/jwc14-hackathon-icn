@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Plus, Trash2 } from "lucide-react";
-import { toast } from "sonner";
+import { toast } from "react-hot-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -99,10 +99,10 @@ export function CategoryManager({ categories }: { categories: Category[] }) {
                 <Badge variant="secondary">{cat._count?.posts ?? 0} บทความ</Badge>
               </div>
               <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <Button variant="ghost" size="icon" className="text-destructive">
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
+                <AlertDialogTrigger
+                  render={<Button variant="ghost" size="icon" className="text-destructive" />}
+                >
+                  <Trash2 className="h-4 w-4" />
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>

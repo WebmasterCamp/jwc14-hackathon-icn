@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Copy, Check, ExternalLink, MoreVertical } from "lucide-react";
-import { toast } from "sonner";
+import { toast } from "react-hot-toast";
 
 import { Button } from "@/components/ui/button";
 import {
