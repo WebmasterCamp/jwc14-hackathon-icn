@@ -19,6 +19,7 @@ import {
   Search,
   GraduationCap,
   Newspaper,
+  ReceiptText,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -34,6 +35,7 @@ const providerNavItems: SidebarItem[] = [
   { href: "/dashboard/provider", label: "ภาพรวม", icon: LayoutDashboard },
   { href: "/dashboard/provider/equipment", label: "อุปกรณ์", icon: Package },
   { href: "/dashboard/provider/contracts", label: "สัญญา", icon: FileText },
+  { href: "/dashboard/provider/quotations", label: "ใบเสนอราคา", icon: ReceiptText },
   { href: "/dashboard/provider/payments", label: "การชำระเงิน", icon: CreditCard },
   { href: "/dashboard/provider/analytics", label: "วิเคราะห์", icon: BarChart3 },
   { href: "/dashboard/provider/blog", label: "บทความ", icon: Newspaper },

@@ -71,7 +71,17 @@ enum NotificationType {
   CONTRACT_APPROVED
   CONTRACT_EXPIRING
   MAINTENANCE_UPDATE
+  QUOTATION_RECEIVED
   SYSTEM
+}
+
+enum QuotationStatus {
+  DRAFT
+  SENT
+  VIEWED
+  ACCEPTED
+  REJECTED
+  EXPIRED
 }
 
 enum BlogPostStatus {
@@ -175,9 +185,10 @@ model Provider {
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
 
-  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  equipment Equipment[]
-  contracts Contract[]
+  user       User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  equipment  Equipment[]
+  contracts  Contract[]
+  quotations Quotation[]
 
   @@index([province])
   @@index([verified])
@@ -201,6 +212,7 @@ model Customer {
 
   user        User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
   contracts   Contract[]
+  quotations  Quotation[]
   maintenance MaintenanceRequest[]
 
   @@index([province])
@@ -297,6 +309,7 @@ model Equipment {
   product             Product              @relation(fields: [productId], references: [id], onDelete: Restrict)
   category            Category             @relation(fields: [categoryId], references: [id])
   contractItems       ContractItem[]
+  quotationItems      QuotationItem[]
   maintenanceRequests MaintenanceRequest[]
 
   @@unique([providerId, productId]) // a provider can't list the same product twice
@@ -357,6 +370,65 @@ model ContractItem {
   equipment Equipment @relation(fields: [equipmentId], references: [id], onDelete: Restrict)
 
   @@index([contractId])
+  @@index([equipmentId])
+}
+
+// ============================================
+// QUOTATIONS (ใบเสนอราคา)
+// ============================================
+
+model Quotation {
+  id          String          @id @default(cuid())
+  quoteNumber String          @unique
+  providerId  String
+  customerId  String
+  status      QuotationStatus @default(SENT)
+
+  // Contact snapshot (shown on the PDF; may differ from the customer profile)
+  contactName    String
+  contactEmail   String
+  contactPhone   String
+  organization   String?
+  billingAddress String
+
+  rentalTotal  Float
+  depositTotal Float
+  total        Float
+  notes        String?
+  validUntil   DateTime
+  pdfUrl       String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  provider Provider        @relation(fields: [providerId], references: [id])
+  customer Customer        @relation(fields: [customerId], references: [id])
+  items    QuotationItem[]
+
+  @@index([providerId])
+  @@index([customerId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model QuotationItem {
+  id          String @id @default(cuid())
+  quotationId String
+  equipmentId String
+
+  // Snapshot of the offering at quote time
+  name             String
+  nameTh           String?
+  quantity         Int     @default(1)
+  durationAmount   Int     @default(1)
+  durationUnit     String  @default("month") // day | month | year
+  rentPriceMonthly Float
+  depositAmount    Float
+  subtotal         Float
+
+  quotation Quotation @relation(fields: [quotationId], references: [id], onDelete: Cascade)
+  equipment Equipment @relation(fields: [equipmentId], references: [id], onDelete: Restrict)
+
+  @@index([quotationId])
   @@index([equipmentId])
 }
 

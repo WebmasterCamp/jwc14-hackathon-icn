@@ -29,6 +29,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { PriceCalculator } from "@/components/equipment/price-calculator";
+import { AddToQuoteButton } from "@/components/quote/add-to-quote-button";
 import { formatPrice } from "@/lib/format";
 import { JsonLd } from "@/components/seo/json-ld";
 import {
@@ -347,7 +348,19 @@ export default async function ProductDetailPage({
                         </p>
                       )}
                       <div className="flex flex-col gap-2 mt-3">
-                        <Button size="sm">ขอใบเสนอราคา</Button>
+                        <AddToQuoteButton
+                          offering={{
+                            equipmentId: offering.id,
+                            name: product.name,
+                            nameTh: product.nameTh,
+                            rentPriceMonthly: offering.rentPriceMonthly,
+                            depositAmount: offering.depositAmount,
+                            provider: {
+                              id: offering.provider.id,
+                              companyName: offering.provider.companyName,
+                            },
+                          }}
+                        />
                         <Button size="sm" variant="outline" asChild>
                           <Link href={`/providers/${offering.provider.id}`}>
                             ดูร้านค้า
