@@ -207,8 +207,8 @@ export function Header() {
                   className={cn(
                     "px-3 py-2 rounded-md text-sm font-medium transition-colors",
                     pathname === item.href
-                      ? "bg-primary/10 text-primary"
-                      : "text-muted-foreground hover:bg-accent"
+                      ? "bg-brand/10 text-brand"
+                      : "text-foreground/80 hover:bg-accent"
                   )}
                 >
                   {item.label}
@@ -237,22 +237,13 @@ export function Header() {
                   </button>
                 </>
               ) : (
-                <>
-                  <Link
-                    href="/sign-in"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className="px-3 py-2 rounded-md text-sm font-medium text-muted-foreground hover:bg-accent"
-                  >
-                    เข้าสู่ระบบ
-                  </Link>
-                  <Link
-                    href="/sign-up"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className="px-3 py-2 rounded-md text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90"
-                  >
-                    สมัครสมาชิก
-                  </Link>
-                </>
+                <Link
+                  href="/sign-in"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="px-3 py-2 rounded-full text-center text-sm font-medium bg-brand text-brand-foreground hover:bg-brand/90"
+                >
+                  เข้าสู่ระบบ
+                </Link>
               )}
             </nav>
           </div>
