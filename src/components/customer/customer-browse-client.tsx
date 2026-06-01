@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import {
+  CheckCircle2,
   Minus,
   Package,
   Plus,
@@ -53,6 +54,14 @@ interface CartItem {
 interface CustomerBrowseClientProps {
   equipment: BrowseEquipment[];
   totalCount?: number;
+}
+
+interface CartTotals {
+  itemCount: number;
+  monthlyTotal: number;
+  depositTotal: number;
+  rentalTotal: number;
+  estimatedTotal: number;
 }
 
 const CART_STORAGE_KEY = "jwc-customer-equipment-cart";
@@ -318,13 +327,7 @@ function CartPanel({
   onClear,
 }: {
   cart: CartItem[];
-  totals: {
-    itemCount: number;
-    monthlyTotal: number;
-    depositTotal: number;
-    rentalTotal: number;
-    estimatedTotal: number;
-  };
+  totals: CartTotals;
   onQuantityChange: (equipmentId: string, quantity: number) => void;
   onDurationAmountChange: (equipmentId: string, durationAmount: number) => void;
   onDurationUnitChange: (equipmentId: string, durationUnit: RentalUnit) => void;
@@ -417,7 +420,12 @@ function CartPanel({
                 <Trash2 className="mr-2 h-4 w-4" />
                 ล้างรถเข็น
               </Button>
-              <Button disabled>ขอใบเสนอราคา</Button>
+              <Button asChild>
+                <Link href="/dashboard/customer/browse/quote">
+                  <CheckCircle2 className="mr-2 h-4 w-4" />
+                  ขอใบเสนอราคา
+                </Link>
+              </Button>
             </div>
             <p className="text-xs text-muted-foreground">
               รถเข็นนี้เป็นการคำนวณบนหน้าเว็บเท่านั้น โดยประมาณรายวันจากราคาเดือน/30
