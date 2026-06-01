@@ -405,10 +405,6 @@ export default async function ProductDetailPage({
                 <Button className="w-full" size="lg" asChild>
                   <a href="#shops">เปรียบเทียบร้านค้า</a>
                 </Button>
-                <Button variant="outline" className="w-full" size="lg">
-                  <Phone className="mr-2 h-4 w-4" />
-                  ติดต่อสอบถาม
-                </Button>
               </div>
             </CardContent>
           </Card>
