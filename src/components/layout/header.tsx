@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 import { useState } from "react";
@@ -14,6 +13,7 @@ import {
   LayoutDashboard,
   Sun,
   Moon,
+  Search,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 
@@ -29,11 +29,23 @@ import {
 import { cn } from "@/lib/utils";
 
 const publicNavItems = [
-  { href: "/", label: "หน้าแรก" },
-  { href: "/equipment", label: "อุปกรณ์ทั้งหมด" },
-  { href: "/providers", label: "ผู้ให้บริการ" },
+  { href: "/", label: "หน้าหลัก" },
+  { href: "/equipment", label: "สินค้าทั้งหมด" },
+  { href: "/how-to", label: "วิธีการสั่งซื้อ" },
   { href: "/blog", label: "บทความ" },
+  { href: "/contact", label: "ติดต่อเรา" },
 ];
+
+function SparkGoWordmark() {
+  return (
+    <span className="flex items-center gap-1 text-2xl font-extrabold tracking-tight">
+      <span className="text-foreground">Spark</span>
+      <span className="rounded-md bg-brand px-1.5 py-0.5 leading-none text-brand-foreground">
+        Go
+      </span>
+    </span>
+  );
+}
 
 export function Header() {
   const pathname = usePathname();
@@ -68,28 +80,21 @@ export function Header() {
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
-          <Link href="/" className="flex items-center">
-            <Image
-              src="/logo.png"
-              alt="Sparkgo"
-              width={142}
-              height={80}
-              priority
-              className="h-9 w-auto"
-            />
+          <Link href="/" className="flex items-center" aria-label="Spark Go">
+            <SparkGoWordmark />
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-6">
+          <nav className="hidden md:flex items-center gap-7">
             {publicNavItems.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "text-sm font-medium transition-colors hover:text-primary",
+                  "text-sm font-medium transition-colors hover:text-brand",
                   pathname === item.href
-                    ? "text-primary"
-                    : "text-muted-foreground"
+                    ? "text-brand"
+                    : "text-foreground/80"
                 )}
               >
                 {item.label}
@@ -99,6 +104,13 @@ export function Header() {
 
           {/* Desktop Actions */}
           <div className="hidden md:flex items-center gap-2">
+            {/* Search */}
+            <Button variant="ghost" size="icon" aria-label="ค้นหา" asChild>
+              <Link href="/equipment">
+                <Search className="h-5 w-5" />
+              </Link>
+            </Button>
+
             {/* Theme Toggle */}
             <Button
               variant="ghost"
