@@ -9,7 +9,7 @@ import { PostsTable, type AdminPostRow } from "@/components/blog-admin/posts-tab
 
 export const dynamic = "force-dynamic";
 
-const BASE = "/dashboard/provider/blog";
+const BASE = "/provider/blog";
 
 export default async function ProviderBlogPage() {
   const session = await auth();

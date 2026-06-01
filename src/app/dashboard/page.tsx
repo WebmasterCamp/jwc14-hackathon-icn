@@ -12,10 +12,14 @@ export default async function DashboardIndex() {
     redirect("/login");
   }
 
-  // ADMIN = shop operator/platform admin; everyone else (USER) is a customer
-  // whose area lives in the public /account frontend.
+  // ADMIN = shop operator/platform admin → operator console.
+  // is_provider users → the provider console at /provider.
+  // Everyone else (plain USER) is a customer whose area lives in /account.
   if (session.user.role === "ADMIN") {
     redirect("/dashboard/admin");
+  }
+  if (session.user.isProvider) {
+    redirect("/provider");
   }
   redirect("/account");
 }

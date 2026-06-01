@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import Link from "next/link";
 import { AlertTriangle, RefreshCw, Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Header } from "@/components/layout/header";
 
 export default function Error({
   error,
@@ -18,7 +19,9 @@ export default function Error({
   }, [error]);
 
   return (
-    <section className="relative flex min-h-[80vh] items-center overflow-hidden bg-brand-soft">
+    <div className="flex min-h-screen flex-col">
+      <Header />
+      <section className="relative flex flex-1 items-center overflow-hidden bg-brand-soft">
       <div className="container relative mx-auto px-4">
         <div className="mx-auto max-w-2xl text-center">
           <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-brand/10">
@@ -60,6 +63,7 @@ export default function Error({
           </div>
         </div>
       </div>
-    </section>
+      </section>
+    </div>
   );
 }

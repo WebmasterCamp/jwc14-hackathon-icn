@@ -43,9 +43,17 @@ export function Header() {
   const { theme, setTheme } = useTheme();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  // ADMIN = staff (operator console); everyone else is a customer using /account.
+  // ADMIN = staff (operator console). is_provider users get the provider console
+  // at /provider. Everyone else is a customer using /account.
   const isStaff = session?.user?.role === "ADMIN";
-  const getDashboardLink = () => (isStaff ? "/dashboard/admin" : "/account");
+  const isProvider = !isStaff && !!session?.user?.isProvider;
+  const getDashboardLink = () =>
+    isStaff ? "/dashboard/admin" : isProvider ? "/provider" : "/account";
+  const dashboardLabel = isStaff
+    ? "แดชบอร์ด"
+    : isProvider
+    ? "แดชบอร์ดผู้ให้บริการ"
+    : "บัญชีของฉัน";
 
   const getInitials = (name: string | null | undefined) => {
     if (!name) return "U";
@@ -141,10 +149,10 @@ export function Header() {
                   <DropdownMenuItem asChild>
                     <Link href={getDashboardLink()}>
                       <LayoutDashboard className="mr-2 h-4 w-4" />
-                      {isStaff ? "แดชบอร์ด" : "บัญชีของฉัน"}
+                      {dashboardLabel}
                     </Link>
                   </DropdownMenuItem>
-                  {!isStaff && (
+                  {!isStaff && !isProvider && (
                     <DropdownMenuItem asChild>
                       <Link href="/account/settings">
                         <User className="mr-2 h-4 w-4" />
@@ -217,7 +225,7 @@ export function Header() {
                     onClick={() => setIsMobileMenuOpen(false)}
                     className="px-5 py-4 rounded-lg text-lg font-bold text-muted-foreground hover:bg-accent"
                   >
-                    {isStaff ? "แดชบอร์ด" : "บัญชีของฉัน"}
+                    {dashboardLabel}
                   </Link>
                   <button
                     onClick={() => {

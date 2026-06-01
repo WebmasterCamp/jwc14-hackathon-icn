@@ -118,7 +118,7 @@ export default async function ProviderQuotationsPage() {
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-1">
                           <Button size="icon" variant="ghost" asChild>
-                            <Link href={`/dashboard/provider/quotations/${q.id}`}>
+                            <Link href={`/provider/quotations/${q.id}`}>
                               <Eye className="h-4 w-4" />
                             </Link>
                           </Button>

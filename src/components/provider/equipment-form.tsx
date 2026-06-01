@@ -227,7 +227,7 @@ export function EquipmentForm({
       toast.success(
         isEdit ? 'อัพเดทรายการเรียบร้อยแล้ว' : 'เพิ่มรายการเรียบร้อยแล้ว'
       );
-      router.push('/dashboard/provider/product');
+      router.push('/provider/product');
       router.refresh();
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'เกิดข้อผิดพลาด');

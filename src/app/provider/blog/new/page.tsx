@@ -10,7 +10,7 @@ import { PostForm } from "@/components/blog-admin/post-form";
 
 export const dynamic = "force-dynamic";
 
-const BASE = "/dashboard/provider/blog";
+const BASE = "/provider/blog";
 
 export default async function ProviderNewBlogPostPage() {
   const session = await auth();

@@ -37,12 +37,13 @@ export default async function AccountLayout({
     );
   }
 
-  // Signed in but not a customer → point them at their own dashboard.
-  if (session.user.role !== "USER") {
+  // Signed in but not a customer (admin, or a USER with the is_provider flag)
+  // → point them at their own dashboard instead of the customer /account area.
+  if (session.user.role !== "USER" || session.user.isProvider) {
     const dashboard =
       session.user.role === "ADMIN"
         ? "/dashboard/admin"
-        : "/dashboard/provider";
+        : "/provider";
     return (
       <div className="container mx-auto max-w-lg px-4 py-20">
         <Card>

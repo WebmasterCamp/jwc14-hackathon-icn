@@ -9,7 +9,7 @@ import { PostForm, type PostFormInitialData } from "@/components/blog-admin/post
 
 export const dynamic = "force-dynamic";
 
-const BASE = "/dashboard/provider/blog";
+const BASE = "/provider/blog";
 
 export default async function ProviderEditBlogPostPage({
   params,

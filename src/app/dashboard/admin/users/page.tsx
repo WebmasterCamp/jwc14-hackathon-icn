@@ -89,9 +89,14 @@ export default async function AdminUsersPage() {
                 </div>
               </TableCell>
               <TableCell>
-                <Badge variant={ROLE_META[u.role as Role].variant}>
-                  {ROLE_META[u.role as Role].label}
-                </Badge>
+                <div className="flex flex-wrap items-center gap-1.5">
+                  <Badge variant={ROLE_META[u.role as Role].variant}>
+                    {ROLE_META[u.role as Role].label}
+                  </Badge>
+                  {u.isProvider && (
+                    <Badge variant="outline">ผู้ให้บริการ</Badge>
+                  )}
+                </div>
               </TableCell>
               <TableCell>{formatThaiDate(u.createdAt, "d MMM yyyy")}</TableCell>
               <TableCell>
@@ -99,6 +104,7 @@ export default async function AdminUsersPage() {
                   userId={u.id}
                   userName={u.name || u.email}
                   currentRole={u.role as Role}
+                  isProvider={u.isProvider}
                   isSelf={u.id === session.user.id}
                 />
               </TableCell>

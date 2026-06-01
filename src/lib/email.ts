@@ -45,7 +45,7 @@ export const emailTemplates = {
           <li>Receive payments through the platform</li>
         </ul>
         <p>Get started by logging into your dashboard and adding your first equipment.</p>
-        <a href="${process.env.NEXT_PUBLIC_APP_URL}/dashboard/provider"
+        <a href="${process.env.NEXT_PUBLIC_APP_URL}/provider"
            style="display: inline-block; background-color: #16a34a; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; margin-top: 16px;">
           Go to Dashboard
         </a>
@@ -104,7 +104,7 @@ export const emailTemplates = {
         <p>${customerName} has submitted a new maintenance request for your equipment.</p>
         <p><strong>Request ID:</strong> ${requestId}</p>
         <p>Please review the request and respond as soon as possible.</p>
-        <a href="${process.env.NEXT_PUBLIC_APP_URL}/dashboard/provider/maintenance/${requestId}"
+        <a href="${process.env.NEXT_PUBLIC_APP_URL}/provider/maintenance/${requestId}"
            style="display: inline-block; background-color: #ea580c; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; margin-top: 16px;">
           View Request
         </a>

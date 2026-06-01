@@ -2,10 +2,13 @@ import Link from "next/link";
 import Image from "next/image";
 import { Home, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Header } from "@/components/layout/header";
 
 export default function NotFound() {
   return (
-    <section className="relative flex min-h-[80vh] items-center overflow-hidden bg-brand-soft">
+    <div className="flex min-h-screen flex-col">
+      <Header />
+      <section className="relative flex flex-1 items-center overflow-hidden bg-brand-soft">
       {/* Decorative floating boards (match the homepage hero) */}
       <Image
         src="/assets/rasberrypi.png"
@@ -62,6 +65,7 @@ export default function NotFound() {
           </div>
         </div>
       </div>
-    </section>
+      </section>
+    </div>
   );
 }

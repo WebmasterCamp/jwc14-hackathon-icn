@@ -130,7 +130,7 @@ export default async function ProviderContractsPage() {
                 <DropdownMenuContent align="end">
                   <DropdownMenuItem asChild>
                     <Link
-                      href={`/dashboard/provider/contracts/${contract.id}`}
+                      href={`/provider/contracts/${contract.id}`}
                     >
                       <Eye className="mr-2 h-4 w-4" />
                       ดูรายละเอียด
@@ -148,7 +148,7 @@ export default async function ProviderContractsPage() {
                     contract.status === "PENDING_APPROVAL") && (
                     <DropdownMenuItem asChild>
                       <Link
-                        href={`/dashboard/provider/contracts/${contract.id}/edit`}
+                        href={`/provider/contracts/${contract.id}/edit`}
                       >
                         <Pencil className="mr-2 h-4 w-4" />
                         แก้ไข
@@ -174,7 +174,7 @@ export default async function ProviderContractsPage() {
           </p>
         </div>
         <Button asChild>
-          <Link href="/dashboard/provider/contracts/new">
+          <Link href="/provider/contracts/new">
             <Plus className="mr-2 h-4 w-4" />
             สร้างสัญญาใหม่
           </Link>

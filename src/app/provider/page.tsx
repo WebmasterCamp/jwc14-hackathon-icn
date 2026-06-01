@@ -154,7 +154,7 @@ export default async function ProviderDashboardPage() {
               <CardDescription>สัญญาที่เพิ่งสร้างหรืออัพเดท</CardDescription>
             </div>
             <Button variant="outline" size="sm" asChild>
-              <Link href="/dashboard/provider/contracts">
+              <Link href="/provider/contracts">
                 ดูทั้งหมด
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
@@ -217,19 +217,19 @@ export default async function ProviderDashboardPage() {
         <CardContent>
           <div className="flex flex-wrap gap-3">
             <Button asChild>
-              <Link href="/dashboard/provider/product/new">
+              <Link href="/provider/product/new">
                 <Package className="mr-2 h-4 w-4" />
                 เพิ่มอุปกรณ์ใหม่
               </Link>
             </Button>
             <Button variant="outline" asChild>
-              <Link href="/dashboard/provider/contracts/new">
+              <Link href="/provider/contracts/new">
                 <FileText className="mr-2 h-4 w-4" />
                 สร้างสัญญาใหม่
               </Link>
             </Button>
             <Button variant="outline" asChild>
-              <Link href="/dashboard/provider/payments">
+              <Link href="/provider/payments">
                 <DollarSign className="mr-2 h-4 w-4" />
                 ดูการชำระเงิน
               </Link>

@@ -12,7 +12,9 @@ export default async function ProviderDashboardLayout({
 }) {
   const session = await auth();
 
-  if (!session || session.user.role !== "ADMIN") {
+  // Provider area is gated by the is_provider flag. Admins may also enter (e.g.
+  // to inspect a provider's console); everyone else is bounced to login.
+  if (!session || !(session.user.isProvider || session.user.role === "ADMIN")) {
     redirect("/login");
   }
 

@@ -75,7 +75,7 @@ export function EquipmentActions({
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
-            <Link href={`/dashboard/provider/product/${equipmentId}/edit`}>
+            <Link href={`/provider/product/${equipmentId}/edit`}>
               <Pencil className="mr-2 h-4 w-4" />
               แก้ไข
             </Link>

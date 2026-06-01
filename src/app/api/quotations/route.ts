@@ -270,7 +270,7 @@ export async function POST(request: Request) {
             <h2>มีคำขอใบเสนอราคาใหม่</h2>
             <p>เลขที่ <strong>${quotation.quoteNumber}</strong> จาก ${contact.organization || contact.contactName}</p>
             <p>ยอดรวมประมาณการ: <strong>${total.toLocaleString("th-TH")} บาท</strong></p>
-            <p><a href="${appUrl}/dashboard/provider/quotations/${quotation.id}">ดูรายละเอียดในแดชบอร์ด</a></p>
+            <p><a href="${appUrl}/provider/quotations/${quotation.id}">ดูรายละเอียดในแดชบอร์ด</a></p>
           </div>
         `,
       });

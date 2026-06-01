@@ -39,14 +39,14 @@ interface SidebarItem {
 }
 
 const providerNavItems: SidebarItem[] = [
-  { href: "/dashboard/provider", label: "ภาพรวม", icon: LayoutDashboard },
-  { href: "/dashboard/provider/product", label: "อุปกรณ์", icon: Package },
-  { href: "/dashboard/provider/contracts", label: "สัญญา", icon: FileText },
-  { href: "/dashboard/provider/quotations", label: "ใบเสนอราคา", icon: ReceiptText },
-  { href: "/dashboard/provider/payments", label: "การชำระเงิน", icon: CreditCard },
-  { href: "/dashboard/provider/analytics", label: "วิเคราะห์", icon: BarChart3 },
-  { href: "/dashboard/provider/blog", label: "บทความ", icon: Newspaper },
-  { href: "/dashboard/provider/settings", label: "ตั้งค่า", icon: Settings },
+  { href: "/provider", label: "ภาพรวม", icon: LayoutDashboard },
+  { href: "/provider/product", label: "อุปกรณ์", icon: Package },
+  { href: "/provider/contracts", label: "สัญญา", icon: FileText },
+  { href: "/provider/quotations", label: "ใบเสนอราคา", icon: ReceiptText },
+  { href: "/provider/payments", label: "การชำระเงิน", icon: CreditCard },
+  { href: "/provider/analytics", label: "วิเคราะห์", icon: BarChart3 },
+  { href: "/provider/blog", label: "บทความ", icon: Newspaper },
+  { href: "/provider/settings", label: "ตั้งค่า", icon: Settings },
 ];
 
 const adminNavItems: SidebarItem[] = [
@@ -91,14 +91,17 @@ function SidebarNav({
 }) {
   const pathname = usePathname();
   const navItems = variant === "provider" ? providerNavItems : adminNavItems;
+  // Base/landing route per variant. Provider lives at /provider; admin at
+  // /dashboard/admin. The base must be excluded from the startsWith() check so
+  // it isn't marked active on every nested route.
+  const baseHref = variant === "provider" ? "/provider" : "/dashboard/admin";
 
   return (
     <nav className="space-y-1 px-2">
       {navItems.map((item) => {
         const isActive =
           pathname === item.href ||
-          (item.href !== `/dashboard/${variant}` &&
-            pathname.startsWith(item.href));
+          (item.href !== baseHref && pathname.startsWith(item.href));
 
         const linkContent = (
           <Link

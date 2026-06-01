@@ -62,7 +62,7 @@ export default async function ProviderQuotationDetailPage({
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <Button variant="ghost" asChild>
-          <Link href="/dashboard/provider/quotations">
+          <Link href="/provider/quotations">
             <ArrowLeft className="mr-2 h-4 w-4" />
             กลับ
           </Link>

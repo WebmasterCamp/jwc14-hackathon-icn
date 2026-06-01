@@ -11,7 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { MoreHorizontal, Shield, User } from "lucide-react";
+import { MoreHorizontal, Shield, User, Building2 } from "lucide-react";
 import { toast } from "react-hot-toast";
 
 type Role = "ADMIN" | "USER";
@@ -20,6 +20,7 @@ interface UserActionsProps {
   userId: string;
   userName: string;
   currentRole: Role;
+  isProvider: boolean;
   isSelf: boolean;
 }
 
@@ -32,24 +33,28 @@ export function UserActions({
   userId,
   userName,
   currentRole,
+  isProvider,
   isSelf,
 }: UserActionsProps) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
-  const changeRole = async (role: Role) => {
+  const patchUser = async (
+    body: { role: Role } | { isProvider: boolean },
+    successMessage: string
+  ) => {
     setIsLoading(true);
     try {
       const response = await fetch(`/api/admin/users/${userId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ role }),
+        body: JSON.stringify(body),
       });
       if (!response.ok) {
         const error = await response.json();
         throw new Error(error.error || "Failed to update user");
       }
-      toast.success(`เปลี่ยนสิทธิ์ของ ${userName} เรียบร้อยแล้ว`);
+      toast.success(successMessage);
       router.refresh();
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "เกิดข้อผิดพลาด");
@@ -57,6 +62,17 @@ export function UserActions({
       setIsLoading(false);
     }
   };
+
+  const changeRole = (role: Role) =>
+    patchUser({ role }, `เปลี่ยนสิทธิ์ของ ${userName} เรียบร้อยแล้ว`);
+
+  const toggleProvider = () =>
+    patchUser(
+      { isProvider: !isProvider },
+      isProvider
+        ? `ปิดสิทธิ์ผู้ให้บริการของ ${userName} แล้ว`
+        : `เปิดสิทธิ์ผู้ให้บริการของ ${userName} แล้ว`
+    );
 
   return (
     <DropdownMenu>
@@ -78,6 +94,13 @@ export function UserActions({
             {opt.label}
           </DropdownMenuItem>
         ))}
+        <DropdownMenuSeparator />
+        <DropdownMenuLabel>สิทธิ์ผู้ให้บริการ</DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={toggleProvider}>
+          <Building2 className="mr-2 h-4 w-4" />
+          {isProvider ? "ปิดสิทธิ์ผู้ให้บริการ" : "เปิดสิทธิ์ผู้ให้บริการ"}
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
