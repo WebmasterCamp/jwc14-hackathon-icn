@@ -1,157 +1,69 @@
 import Link from "next/link";
-import {
-  ArrowRight,
-  Cpu,
-  Bot,
-  Printer,
-  Zap,
-  Settings,
-  Plane,
-  CheckCircle2,
-  Building2,
-  GraduationCap,
-  TrendingUp,
-  Shield,
-} from "lucide-react";
+import { Cpu, CircuitBoard, Cpu as Chip, Radio, Boxes } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { JsonLd } from "@/components/seo/json-ld";
 import { generateOrganizationSchema, generateWebSiteSchema } from "@/lib/structured-data";
 
 const categories = [
-  {
-    icon: Cpu,
-    name: "IoT",
-    nameTh: "อุปกรณ์ IoT",
-    description: "Arduino, Raspberry Pi และเซ็นเซอร์ต่างๆ",
-    color: "text-blue-500",
-    bgColor: "bg-blue-500/10",
-  },
-  {
-    icon: Bot,
-    name: "Robotics",
-    nameTh: "หุ่นยนต์",
-    description: "LEGO Education, VEX และชุดหุ่นยนต์",
-    color: "text-green-500",
-    bgColor: "bg-green-500/10",
-  },
-  {
-    icon: Printer,
-    name: "3D Printer",
-    nameTh: "เครื่องพิมพ์ 3D",
-    description: "FDM และ Resin Printer สำหรับการศึกษา",
-    color: "text-purple-500",
-    bgColor: "bg-purple-500/10",
-  },
-  {
-    icon: Zap,
-    name: "Laser Cutter",
-    nameTh: "เครื่องตัดเลเซอร์",
-    description: "เครื่องตัดและแกะสลักเลเซอร์",
-    color: "text-orange-500",
-    bgColor: "bg-orange-500/10",
-  },
-  {
-    icon: Settings,
-    name: "CNC",
-    nameTh: "เครื่อง CNC",
-    description: "เครื่องกัด CNC ขนาดเล็กสำหรับการเรียน",
-    color: "text-red-500",
-    bgColor: "bg-red-500/10",
-  },
-  {
-    icon: Plane,
-    name: "Drone",
-    nameTh: "โดรน",
-    description: "โดรนเพื่อการศึกษาและเขียนโปรแกรม",
-    color: "text-cyan-500",
-    bgColor: "bg-cyan-500/10",
-  },
+  { label: "Raspberry Pi", icon: Cpu, query: "Raspberry Pi" },
+  { label: "Arduino", icon: CircuitBoard, query: "Arduino" },
+  { label: "Micro : bit", icon: Chip, query: "Micro:bit" },
+  { label: "เซนเซอร์", icon: Radio, query: "เซนเซอร์" },
+  { label: "ชุด Kit พร้อมใช้", icon: Boxes, query: "Kit" },
 ];
 
-const benefits = [
-  {
-    icon: TrendingUp,
-    title: "ประหยัดงบประมาณ",
-    description: "เช่าแทนซื้อ ลดค่าใช้จ่ายเริ่มต้นได้ถึง 70%",
-  },
-  {
-    icon: Shield,
-    title: "ไม่ต้องกังวลเรื่องซ่อมบำรุง",
-    description: "มีทีมซ่อมบำรุงและเปลี่ยนอุปกรณ์เมื่อชำรุด",
-  },
-  {
-    icon: CheckCircle2,
-    title: "อัพเกรดได้ตลอด",
-    description: "เปลี่ยนเป็นอุปกรณ์รุ่นใหม่เมื่อหมดสัญญา",
-  },
+const projectExamples = [
+  { title: "ระบบรดน้ำอัตโนมัติ", from: "from-emerald-200", to: "to-emerald-50" },
+  { title: "เครื่องวัดอุณหภูมิ IoT", from: "from-sky-200", to: "to-sky-50" },
+  { title: "หุ่นยนต์เดินตามเส้น", from: "from-amber-200", to: "to-amber-50" },
 ];
 
-const stats = [
-  { value: "500+", label: "โรงเรียนที่ใช้บริการ" },
-  { value: "50+", label: "ผู้ให้บริการ" },
-  { value: "2,000+", label: "อุปกรณ์พร้อมให้เช่า" },
-  { value: "77", label: "จังหวัดทั่วไทย" },
-];
+/** Centered section heading with the Figma cyan underline accent. */
+function SectionHeading({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="mb-10 flex flex-col items-center">
+      <h2 className="text-2xl md:text-3xl font-bold text-center">{children}</h2>
+      <span className="mt-3 h-1 w-16 rounded-full bg-brand" />
+    </div>
+  );
+}
 
 export default function HomePage() {
   return (
     <>
-      <JsonLd
-        data={[generateOrganizationSchema(), generateWebSiteSchema()]}
-      />
+      <JsonLd data={[generateOrganizationSchema(), generateWebSiteSchema()]} />
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-primary/5 via-background to-secondary/5 py-20 md:py-32">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto text-center">
-            <Badge variant="secondary" className="mb-6">
-              แพลตฟอร์มสำหรับการศึกษาไทย
-            </Badge>
-            <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6">
-              เช่าอุปกรณ์ <span className="text-primary">IoT & STEM</span>
-              <br />
-              สำหรับโรงเรียนไทย
+      <section className="relative overflow-hidden bg-brand-soft py-24 md:py-32">
+        {/* Decorative floating boards (drop real photos at /public/hero-board-*.png) */}
+        <div className="pointer-events-none absolute -left-16 top-16 hidden h-44 w-72 -rotate-12 rounded-2xl bg-gradient-to-br from-emerald-300/70 to-emerald-100/40 blur-[1px] md:block" />
+        <div className="pointer-events-none absolute -right-16 top-12 hidden h-44 w-72 rotate-12 rounded-2xl bg-gradient-to-br from-sky-300/70 to-sky-100/40 blur-[1px] md:block" />
+
+        <div className="container relative mx-auto px-4">
+          <div className="mx-auto max-w-3xl text-center">
+            <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight">
+              เช่าอุปกรณ์<span className="text-brand">ทำโปรเจกต์</span>
             </h1>
-            <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-              เข้าถึงอุปกรณ์การเรียนรู้ที่ทันสมัยโดยไม่ต้องลงทุนซื้อ
-              เริ่มต้นเช่าได้ตั้งแต่ 1,000 บาท/เดือน
+            <p className="mt-4 text-xl md:text-2xl font-semibold text-foreground/80">
+              เริ่มต้นเพียง 10 บาท
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" asChild>
-                <Link href="/equipment">
-                  ค้นหาอุปกรณ์
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Link>
+            <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
+              <Button
+                asChild
+                size="lg"
+                className="rounded-full bg-brand px-8 text-brand-foreground hover:bg-brand/90"
+              >
+                <Link href="/equipment">เลือกดูสินค้า</Link>
               </Button>
-              <Button size="lg" variant="outline" asChild>
-                <Link href="/sign-up/provider">
-                  <Building2 className="mr-2 h-5 w-5" />
-                  สมัครเป็นผู้ให้บริการ
-                </Link>
+              <Button
+                asChild
+                size="lg"
+                variant="outline"
+                className="rounded-full border-foreground/20 px-8"
+              >
+                <Link href="/how-to">เช่ายังไง</Link>
               </Button>
             </div>
-          </div>
-        </div>
-
-        {/* Decorative elements */}
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-primary/10 rounded-full blur-3xl" />
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-secondary/10 rounded-full blur-3xl" />
-      </section>
-
-      {/* Stats Section */}
-      <section className="py-12 border-b bg-muted/30">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {stats.map((stat) => (
-              <div key={stat.label} className="text-center">
-                <p className="text-3xl md:text-4xl font-bold text-primary">
-                  {stat.value}
-                </p>
-                <p className="text-sm text-muted-foreground">{stat.label}</p>
-              </div>
-            ))}
           </div>
         </div>
       </section>
@@ -159,124 +71,53 @@ export default function HomePage() {
       {/* Categories Section */}
       <section className="py-20">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              หมวดหมู่อุปกรณ์
-            </h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              อุปกรณ์ STEM และ IoT หลากหลายประเภท พร้อมให้เช่าสำหรับการเรียนการสอน
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {categories.map((category) => (
+          <SectionHeading>หมวดหมู่สินค้า</SectionHeading>
+          <div className="flex flex-wrap justify-center gap-3 md:gap-4">
+            {categories.map((cat) => (
               <Link
-                key={category.name}
-                href={`/equipment?category=${category.name.toLowerCase()}`}
+                key={cat.label}
+                href={`/equipment?search=${encodeURIComponent(cat.query)}`}
+                className="group flex items-center gap-2 rounded-full border bg-card px-5 py-2.5 text-sm font-medium shadow-sm transition-colors hover:border-brand hover:text-brand"
               >
-                <Card className="h-full hover:shadow-lg transition-shadow cursor-pointer group">
-                  <CardHeader>
-                    <div
-                      className={`w-12 h-12 rounded-lg ${category.bgColor} flex items-center justify-center mb-3 group-hover:scale-110 transition-transform`}
-                    >
-                      <category.icon className={`h-6 w-6 ${category.color}`} />
-                    </div>
-                    <CardTitle className="flex items-center justify-between">
-                      {category.nameTh}
-                      <ArrowRight className="h-5 w-5 text-muted-foreground group-hover:translate-x-1 transition-transform" />
-                    </CardTitle>
-                    <CardDescription>{category.description}</CardDescription>
-                  </CardHeader>
-                </Card>
+                <cat.icon className="h-4 w-4 text-brand" />
+                {cat.label}
               </Link>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Benefits Section */}
-      <section className="py-20 bg-muted/30">
+      {/* Customer Project Examples */}
+      <section className="pb-24">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              ทำไมต้องเช่ากับ Sparkgo?
-            </h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              ประโยชน์ที่โรงเรียนจะได้รับจากการเช่าอุปกรณ์แทนการซื้อ
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {benefits.map((benefit) => (
-              <Card key={benefit.title} className="text-center">
-                <CardContent className="pt-6">
-                  <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
-                    <benefit.icon className="h-8 w-8 text-primary" />
-                  </div>
-                  <h3 className="text-xl font-semibold mb-2">{benefit.title}</h3>
-                  <p className="text-muted-foreground">{benefit.description}</p>
-                </CardContent>
-              </Card>
+          <SectionHeading>ตัวอย่างโปรเจกต์ลูกค้าเรา</SectionHeading>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
+            {projectExamples.map((p) => (
+              <div
+                key={p.title}
+                className="group relative overflow-hidden rounded-2xl border bg-card shadow-sm transition-shadow hover:shadow-lg"
+              >
+                <div
+                  className={`relative flex h-48 items-center justify-center bg-gradient-to-br ${p.from} ${p.to}`}
+                >
+                  {/* cyan wave bottom (matches Figma) */}
+                  <svg
+                    className="absolute inset-x-0 bottom-0 h-10 w-full text-brand"
+                    viewBox="0 0 400 40"
+                    preserveAspectRatio="none"
+                    aria-hidden
+                  >
+                    <path
+                      fill="currentColor"
+                      d="M0 20 C100 0 300 40 400 12 L400 40 L0 40 Z"
+                    />
+                  </svg>
+                </div>
+                <div className="p-4">
+                  <p className="font-semibold">{p.title}</p>
+                </div>
+              </div>
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-20">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto">
-            <div className="grid md:grid-cols-2 gap-8">
-              <Card className="bg-primary text-primary-foreground">
-                <CardHeader>
-                  <div className="w-12 h-12 rounded-lg bg-primary-foreground/20 flex items-center justify-center mb-3">
-                    <GraduationCap className="h-6 w-6" />
-                  </div>
-                  <CardTitle className="text-2xl">สำหรับโรงเรียน</CardTitle>
-                  <CardDescription className="text-primary-foreground/80">
-                    ค้นหาและเช่าอุปกรณ์สำหรับการเรียนการสอน STEM ในราคาประหยัด
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Button
-                    variant="secondary"
-                    size="lg"
-                    className="w-full"
-                    asChild
-                  >
-                    <Link href="/sign-up/customer">
-                      สมัครเป็นสถานศึกษา
-                      <ArrowRight className="ml-2 h-5 w-5" />
-                    </Link>
-                  </Button>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-secondary text-secondary-foreground">
-                <CardHeader>
-                  <div className="w-12 h-12 rounded-lg bg-secondary-foreground/20 flex items-center justify-center mb-3">
-                    <Building2 className="h-6 w-6" />
-                  </div>
-                  <CardTitle className="text-2xl">สำหรับผู้ให้บริการ</CardTitle>
-                  <CardDescription className="text-secondary-foreground/80">
-                    ขยายตลาดและเข้าถึงโรงเรียนทั่วประเทศผ่านแพลตฟอร์มของเรา
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Button
-                    variant="outline"
-                    size="lg"
-                    className="w-full bg-secondary-foreground text-secondary hover:bg-secondary-foreground/90"
-                    asChild
-                  >
-                    <Link href="/sign-up/provider">
-                      สมัครเป็นผู้ให้บริการ
-                      <ArrowRight className="ml-2 h-5 w-5" />
-                    </Link>
-                  </Button>
-                </CardContent>
-              </Card>
-            </div>
           </div>
         </div>
       </section>
