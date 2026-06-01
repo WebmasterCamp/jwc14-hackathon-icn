@@ -25,7 +25,7 @@ export default async function NewMaintenanceRequestPage() {
     redirect("/sign-in");
   }
 
-  // Get equipment from active contracts
+  // Get equipment from active contracts with contract details
   const activeContracts = await prisma.contract.findMany({
     where: {
       customerId: customer.id,
@@ -37,7 +37,15 @@ export default async function NewMaintenanceRequestPage() {
           equipment: {
             include: {
               category: true,
-              provider: true,
+              provider: {
+                include: {
+                  user: {
+                    select: {
+                      name: true,
+                    },
+                  },
+                },
+              },
             },
           },
         },
@@ -45,8 +53,14 @@ export default async function NewMaintenanceRequestPage() {
     },
   });
 
+  // Flatten equipment with contract info
   const equipment = activeContracts.flatMap((contract) =>
-    contract.items.map((item) => item.equipment)
+    contract.items.map((item) => ({
+      ...item.equipment,
+      contractId: contract.id,
+      contractNumber: contract.contractNumber,
+      quantity: item.quantity,
+    }))
   );
 
   return (
@@ -75,15 +89,40 @@ export default async function NewMaintenanceRequestPage() {
         <CardContent>
           {equipment.length === 0 ? (
             <div className="text-center py-8">
-              <p className="text-muted-foreground mb-4">
+              <p className="text-muted-foreground mb-2">
                 คุณยังไม่มีสัญญาที่ใช้งานอยู่
+              </p>
+              <p className="text-sm text-muted-foreground mb-4">
+                กรุณาเช่าอุปกรณ์ก่อนเพื่อสร้างคำขอซ่อมบำรุง
               </p>
               <Button asChild>
                 <Link href="/equipment">เรียกดูอุปกรณ์</Link>
               </Button>
             </div>
           ) : (
-            <MaintenanceRequestForm equipment={equipment} />
+            <div className="space-y-6">
+              {/* Show active contracts summary */}
+              <div className="rounded-lg border bg-muted/50 p-4">
+                <h3 className="font-medium mb-3">อุปกรณ์ที่เช่าอยู่</h3>
+                <div className="space-y-2">
+                  {equipment.map((eq) => (
+                    <div key={eq.id} className="flex items-start gap-3 text-sm">
+                      <div className="flex-1">
+                        <p className="font-medium">{eq.name}</p>
+                        <p className="text-muted-foreground text-xs">
+                          {eq.category.nameTh} • {eq.provider.companyName} • จำนวน {eq.quantity} ชิ้น
+                        </p>
+                        <p className="text-muted-foreground text-xs">
+                          สัญญา: {eq.contractNumber}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <MaintenanceRequestForm equipment={equipment} />
+            </div>
           )}
         </CardContent>
       </Card>

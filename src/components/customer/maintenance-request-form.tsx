@@ -40,6 +40,8 @@ interface MaintenanceRequestFormProps {
     name: string;
     category: { name: string; nameTh: string };
     provider: { companyName: string };
+    contractNumber?: string;
+    quantity?: number;
   }>;
 }
 
@@ -92,7 +94,7 @@ export function MaintenanceRequestForm({ equipment }: MaintenanceRequestFormProp
           name="equipmentId"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>อุปกรณ์ (ถ้ามี)</FormLabel>
+              <FormLabel>อุปกรณ์ที่ต้องการแจ้งซ่อม *</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger>
@@ -100,10 +102,16 @@ export function MaintenanceRequestForm({ equipment }: MaintenanceRequestFormProp
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="">ไม่ระบุอุปกรณ์</SelectItem>
+                  <SelectItem value="">ไม่ระบุอุปกรณ์ (คำขอทั่วไป)</SelectItem>
                   {equipment.map((eq) => (
                     <SelectItem key={eq.id} value={eq.id}>
-                      {eq.name} - {eq.provider.companyName}
+                      <div className="flex flex-col">
+                        <span className="font-medium">{eq.name}</span>
+                        <span className="text-xs text-muted-foreground">
+                          {eq.category.nameTh} • {eq.provider.companyName}
+                          {eq.contractNumber && ` • สัญญา: ${eq.contractNumber}`}
+                        </span>
+                      </div>
                     </SelectItem>
                   ))}
                 </SelectContent>
