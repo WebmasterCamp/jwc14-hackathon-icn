@@ -102,7 +102,17 @@ async function EquipmentList({
   return (
     <>
       {equipment.length > 0 && (
-        <JsonLd data={generateItemListSchema(equipment)} />
+        <JsonLd
+          data={generateItemListSchema(
+            equipment.map((item) => ({
+              id: item.id,
+              name: item.name,
+              nameTh: item.nameTh ?? undefined,
+              images: item.images,
+              rentPriceMonthly: item.rentPriceMonthly,
+            }))
+          )}
+        />
       )}
       <div className="mb-6 flex items-center justify-between">
         <p className="text-muted-foreground">
