@@ -58,6 +58,40 @@ export const getEquipmentById = cache(async (id: string) => {
   });
 });
 
+// Get a catalog product by slug with its active offerings (one per shop).
+// Only offerings from verified providers are surfaced publicly.
+export const getProductBySlug = cache(async (slug: string) => {
+  return prisma.product.findUnique({
+    where: { slug },
+    include: {
+      category: true,
+      equipment: {
+        where: { isActive: true, provider: { verified: true } },
+        include: {
+          provider: {
+            include: {
+              user: {
+                select: { name: true, phone: true, email: true },
+              },
+            },
+          },
+        },
+        orderBy: { rentPriceMonthly: "asc" },
+      },
+    },
+  });
+});
+
+// Map an offering (Equipment) id to its product slug — used for legacy
+// /equipment/[id] redirects.
+export const getProductSlugByEquipmentId = cache(async (equipmentId: string) => {
+  const equipment = await prisma.equipment.findUnique({
+    where: { id: equipmentId },
+    select: { product: { select: { slug: true } } },
+  });
+  return equipment?.product?.slug ?? null;
+});
+
 // Get verified providers
 export const getVerifiedProviders = cache(async () => {
   return prisma.provider.findMany({
@@ -115,12 +149,12 @@ export const getEquipmentList = cache(
     }
 
     if (filters.minPrice !== undefined || filters.maxPrice !== undefined) {
-      where.pricePerDay = {};
+      where.rentPriceMonthly = {};
       if (filters.minPrice !== undefined) {
-        where.pricePerDay.gte = filters.minPrice;
+        where.rentPriceMonthly.gte = filters.minPrice;
       }
       if (filters.maxPrice !== undefined) {
-        where.pricePerDay.lte = filters.maxPrice;
+        where.rentPriceMonthly.lte = filters.maxPrice;
       }
     }
 

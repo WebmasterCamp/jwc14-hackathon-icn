@@ -48,62 +48,70 @@ export function generateWebSiteSchema() {
 }
 
 /**
- * Generate Product structured data for equipment
+ * Generate Product structured data for a catalog product offered by one or
+ * more shops. Emits an AggregateOffer (lowPrice/highPrice/offerCount) plus a
+ * per-seller Offer for each shop.
  */
-export function generateProductSchema(equipment: {
-  id: string;
+export function generateProductSchema(product: {
+  slug: string;
   name: string;
   nameTh?: string;
   description?: string;
   descriptionTh?: string;
   images: string[];
-  rentPriceMonthly: number;
-  leaseToOwnPrice?: number;
-  condition: string;
+  brand?: string;
   category: { name: string; nameTh: string };
-  provider: { companyName: string; rating: number };
-  availableStock: number;
+  offers: Array<{
+    price: number;
+    sellerName: string;
+    availableStock: number;
+    condition: string;
+  }>;
 }) {
-  const displayName = equipment.nameTh || equipment.name;
-  const displayDescription = equipment.descriptionTh || equipment.description || displayName;
+  const displayName = product.nameTh || product.name;
+  const displayDescription =
+    product.descriptionTh || product.description || displayName;
+
+  const prices = product.offers.map((o) => o.price);
+  const hasOffers = prices.length > 0;
+  const anyInStock = product.offers.some((o) => o.availableStock > 0);
 
   return {
     "@context": "https://schema.org",
     "@type": "Product",
     name: displayName,
     description: displayDescription,
-    image: equipment.images.map((img) => img),
-    brand: {
-      "@type": "Brand",
-      name: equipment.provider.companyName,
-    },
-    offers: {
-      "@type": "Offer",
-      price: equipment.rentPriceMonthly,
-      priceCurrency: "THB",
-      availability:
-        equipment.availableStock > 0
-          ? "https://schema.org/InStock"
-          : "https://schema.org/OutOfStock",
-      priceSpecification: {
-        "@type": "UnitPriceSpecification",
-        price: equipment.rentPriceMonthly,
-        priceCurrency: "THB",
-        unitText: "เดือน",
-      },
-      seller: {
-        "@type": "Organization",
-        name: equipment.provider.companyName,
-      },
-    },
-    aggregateRating: equipment.provider.rating > 0 ? {
-      "@type": "AggregateRating",
-      ratingValue: equipment.provider.rating,
-      bestRating: 5,
-    } : undefined,
-    category: equipment.category.nameTh || equipment.category.name,
-    itemCondition: `https://schema.org/${equipment.condition === "NEW" ? "NewCondition" : "UsedCondition"}`,
-    url: `${SITE_URL}/equipment/${equipment.id}`,
+    image: product.images.map((img) => img),
+    brand: product.brand
+      ? { "@type": "Brand", name: product.brand }
+      : undefined,
+    offers: hasOffers
+      ? {
+          "@type": "AggregateOffer",
+          priceCurrency: "THB",
+          lowPrice: Math.min(...prices),
+          highPrice: Math.max(...prices),
+          offerCount: product.offers.length,
+          availability: anyInStock
+            ? "https://schema.org/InStock"
+            : "https://schema.org/OutOfStock",
+          offers: product.offers.map((o) => ({
+            "@type": "Offer",
+            price: o.price,
+            priceCurrency: "THB",
+            availability:
+              o.availableStock > 0
+                ? "https://schema.org/InStock"
+                : "https://schema.org/OutOfStock",
+            itemCondition: `https://schema.org/${
+              o.condition === "NEW" ? "NewCondition" : "UsedCondition"
+            }`,
+            seller: { "@type": "Organization", name: o.sellerName },
+          })),
+        }
+      : undefined,
+    category: product.category.nameTh || product.category.name,
+    url: `${SITE_URL}/products/${product.slug}`,
   };
 }
 
@@ -112,11 +120,11 @@ export function generateProductSchema(equipment: {
  */
 export function generateItemListSchema(
   items: Array<{
-    id: string;
+    slug: string;
     name: string;
     nameTh?: string;
     images: string[];
-    rentPriceMonthly: number;
+    fromPrice: number;
   }>,
   listName: string = "อุปกรณ์การศึกษา"
 ) {
@@ -132,10 +140,10 @@ export function generateItemListSchema(
         "@type": "Product",
         name: item.nameTh || item.name,
         image: item.images[0],
-        url: `${SITE_URL}/equipment/${item.id}`,
+        url: `${SITE_URL}/products/${item.slug}`,
         offers: {
           "@type": "Offer",
-          price: item.rentPriceMonthly,
+          price: item.fromPrice,
           priceCurrency: "THB",
         },
       },

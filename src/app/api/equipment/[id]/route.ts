@@ -59,6 +59,8 @@ const updateEquipmentSchema = z.object({
   depositAmount: z.number().min(0).optional(),
   stock: z.number().int().positive().optional(),
   condition: z.enum(["NEW", "EXCELLENT", "GOOD", "FAIR"]).optional(),
+  insuranceMonths: z.number().int().min(0).nullable().optional(),
+  conditions: z.string().nullable().optional(),
   curriculum: z.array(z.string()).optional(),
   isActive: z.boolean().optional(),
 });

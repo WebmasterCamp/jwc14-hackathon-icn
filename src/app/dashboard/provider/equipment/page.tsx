@@ -42,6 +42,7 @@ export default async function ProviderEquipmentPage() {
       equipment: {
         include: {
           category: true,
+          product: { select: { slug: true } },
         },
         orderBy: { createdAt: "desc" },
       },
@@ -161,7 +162,7 @@ export default async function ProviderEquipmentPage() {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                           <DropdownMenuItem asChild>
-                            <Link href={`/equipment/${equipment.id}`}>
+                            <Link href={`/products/${equipment.product.slug}`}>
                               <Eye className="mr-2 h-4 w-4" />
                               ดูหน้าสาธารณะ
                             </Link>
