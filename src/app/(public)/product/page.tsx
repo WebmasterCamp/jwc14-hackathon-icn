@@ -86,7 +86,10 @@ async function EquipmentList({
           where: offeringFilter,
           select: {
             id: true,
+            rentPriceDaily: true,
+            rentPriceWeekly: true,
             rentPriceMonthly: true,
+            rentPriceYearly: true,
             depositAmount: true,
             provider: { select: { id: true, companyName: true } },
           },
