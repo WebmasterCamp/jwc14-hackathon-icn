@@ -27,7 +27,7 @@ import {
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
-import { PriceCalculator } from "@/components/equipment/price-calculator";
+import { OfferingCalculator } from "@/components/equipment/offering-calculator";
 import { AddToQuoteButton } from "@/components/quote/add-to-quote-button";
 import { formatPrice } from "@/lib/format";
 import { JsonLd } from "@/components/seo/json-ld";
@@ -408,12 +408,16 @@ export default async function ProductDetailPage({
             </CardContent>
           </Card>
 
-          {/* Price calculator for the cheapest offering */}
-          <PriceCalculator
-            rentPriceMonthly={cheapest.rentPriceMonthly}
-            leaseToOwnPrice={cheapest.leaseToOwnPrice}
-            leaseDuration={cheapest.leaseDuration}
-            depositAmount={cheapest.depositAmount}
+          {/* Price calculator with shop/offering selection (defaults cheapest) */}
+          <OfferingCalculator
+            offerings={offerings.map((o) => ({
+              id: o.id,
+              providerName: o.provider.companyName,
+              rentPriceMonthly: o.rentPriceMonthly,
+              leaseToOwnPrice: o.leaseToOwnPrice,
+              leaseDuration: o.leaseDuration,
+              depositAmount: o.depositAmount,
+            }))}
           />
         </div>
       </div>
