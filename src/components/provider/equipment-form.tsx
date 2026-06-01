@@ -25,7 +25,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { toast } from 'sonner';
+import { toast } from 'react-hot-toast';
 
 // Offering fields (always required) + new-product fields (only used when
 // creating a brand-new catalog product rather than attaching to an existing one).

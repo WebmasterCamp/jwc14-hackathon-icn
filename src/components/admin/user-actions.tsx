@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { MoreHorizontal, Shield, Building2, GraduationCap } from "lucide-react";
-import { toast } from "sonner";
+import { toast } from "react-hot-toast";
 
 type Role = "ADMIN" | "PROVIDER" | "CUSTOMER";
 
