@@ -72,7 +72,10 @@ export async function generateMetadata({
       publishedTime: post.publishedAt?.toISOString(),
       modifiedTime: post.updatedAt.toISOString(),
       authors: post.author.name ? [post.author.name] : undefined,
-      images: post.featuredImage ? [{ url: post.featuredImage }] : undefined,
+      // Only set images when there is an explicit featured image. Omitting the
+      // key lets the file-based opengraph-image.tsx in this route be used as the
+      // default; setting it to `undefined` would suppress that injection.
+      ...(post.featuredImage ? { images: [{ url: post.featuredImage }] } : {}),
     },
   };
 }
