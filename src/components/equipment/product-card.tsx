@@ -1,9 +1,20 @@
 "use client";
 
 import Link from "next/link";
+import toast from "react-hot-toast";
 import { ShoppingCart, Store } from "lucide-react";
 import { formatPrice } from "@/lib/format";
 import { ImageWithFallback } from "@/components/ui/image-with-fallback";
+import { addItem } from "@/lib/quote-cart";
+
+interface QuickAddOffering {
+  equipmentId: string;
+  name: string;
+  nameTh?: string | null;
+  rentPriceMonthly: number;
+  depositAmount: number;
+  provider: { id: string; companyName: string };
+}
 
 interface ProductCardProps {
   product: {
@@ -19,11 +30,19 @@ interface ProductCardProps {
     fromPrice: number;
     offeringCount: number;
   };
+  /** Cheapest offering — when present, the cart button adds it to the quote. */
+  quickAdd?: QuickAddOffering;
 }
 
-export function ProductCard({ product }: ProductCardProps) {
+export function ProductCard({ product, quickAdd }: ProductCardProps) {
   const href = `/products/${product.slug}`;
   const title = product.nameTh || product.name;
+
+  const handleQuickAdd = () => {
+    if (!quickAdd) return;
+    addItem(quickAdd);
+    toast.success("เพิ่มลงใบเสนอราคาแล้ว");
+  };
 
   return (
     <div className="group flex flex-col overflow-hidden rounded-2xl border bg-card shadow-sm transition-shadow hover:shadow-lg">
