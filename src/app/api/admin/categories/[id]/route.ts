@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { ZodError } from "zod";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { generateSlug } from "@/lib/seo";
@@ -45,12 +46,12 @@ export async function PATCH(
     });
 
     return NextResponse.json(category);
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error updating category:", error);
 
-    if (error.name === "ZodError") {
+    if (error instanceof ZodError) {
       return NextResponse.json(
-        { error: "Validation error", details: error.errors },
+        { error: "Validation error", details: error.issues },
         { status: 400 }
       );
     }

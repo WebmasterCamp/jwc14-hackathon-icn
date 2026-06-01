@@ -223,7 +223,7 @@ export function CategoryManager({ categories }: { categories: Category[] }) {
                   <AlertDialogContent>
                     <AlertDialogHeader>
                       <AlertDialogTitle>
-                        ลบหมวดหมู่ "{cat.nameTh || cat.name}"?
+                        ลบหมวดหมู่ “{cat.nameTh || cat.name}”?
                       </AlertDialogTitle>
                       <AlertDialogDescription>
                         {(cat._count?.products ?? 0) > 0
