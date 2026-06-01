@@ -104,7 +104,7 @@ export default async function ProviderEquipmentPage() {
                           <Image
                             src={
                               equipment.images[0] ||
-                              "/images/placeholder-equipment.jpg"
+                              "/images/placeholder-equipment.svg"
                             }
                             alt={equipment.name}
                             fill

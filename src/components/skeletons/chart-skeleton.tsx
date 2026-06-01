@@ -10,10 +10,10 @@ export function ChartSkeleton() {
       </CardHeader>
       <CardContent>
         <div className="space-y-2">
-          {Array.from({ length: 6 }).map((_, i) => (
+          {[72, 95, 60, 84, 68, 90].map((width, i) => (
             <div key={i} className="flex items-center gap-4">
               <Skeleton className="h-3 w-12" />
-              <Skeleton className="h-8 flex-1" style={{ width: `${Math.random() * 40 + 60}%` }} />
+              <Skeleton className="h-8 flex-1" style={{ width: `${width}%` }} />
             </div>
           ))}
         </div>

@@ -22,7 +22,7 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product }: ProductCardProps) {
-  const imageUrl = product.images[0] || "/images/placeholder-equipment.jpg";
+  const imageUrl = product.images[0] || "/images/placeholder-equipment.svg";
   const href = `/products/${product.slug}`;
   const title = product.nameTh || product.name;
 

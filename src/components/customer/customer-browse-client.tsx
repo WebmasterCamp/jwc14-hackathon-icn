@@ -240,7 +240,7 @@ function BrowseCard({
   equipment: BrowseEquipment;
   onAddToCart: (equipment: BrowseEquipment) => void;
 }) {
-  const imageUrl = equipment.images[0] || "/images/placeholder-equipment.jpg";
+  const imageUrl = equipment.images[0] || "/images/placeholder-equipment.svg";
   const unavailable = equipment.availableStock <= 0;
 
   return (
@@ -334,7 +334,7 @@ function CartPanel({
                 <div className="flex gap-3">
                   <div className="relative h-16 w-20 shrink-0 overflow-hidden rounded-md bg-muted">
                     <Image
-                      src={item.equipment.images[0] || "/images/placeholder-equipment.jpg"}
+                      src={item.equipment.images[0] || "/images/placeholder-equipment.svg"}
                       alt={item.equipment.nameTh || item.equipment.name}
                       fill
                       className="object-cover"

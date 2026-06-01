@@ -145,7 +145,7 @@ export default async function ProductDetailPage({
           {/* Images */}
           <div className="relative aspect-video rounded-xl overflow-hidden bg-muted">
             <Image
-              src={product.images[0] || "/images/placeholder-equipment.jpg"}
+              src={product.images[0] || "/images/placeholder-equipment.svg"}
               alt={displayName}
               fill
               className="object-cover"
