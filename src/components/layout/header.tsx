@@ -171,14 +171,12 @@ export function Header() {
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <>
-                <Button variant="ghost" asChild>
-                  <Link href="/sign-in">เข้าสู่ระบบ</Link>
-                </Button>
-                <Button asChild>
-                  <Link href="/sign-up">สมัครสมาชิก</Link>
-                </Button>
-              </>
+              <Button
+                asChild
+                className="rounded-full bg-brand px-6 text-brand-foreground hover:bg-brand/90"
+              >
+                <Link href="/sign-in">เข้าสู่ระบบ</Link>
+              </Button>
             )}
           </div>
 
