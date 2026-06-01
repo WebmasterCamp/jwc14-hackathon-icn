@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, Suspense } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { useForm } from "react-hook-form";
@@ -24,7 +24,6 @@ const signInSchema = z.object({
 type SignInForm = z.infer<typeof signInSchema>;
 
 function SignInForm() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/dashboard/customer";
   const [isLoading, setIsLoading] = useState(false);
@@ -51,9 +50,10 @@ function SignInForm() {
         toast.error("อีเมลหรือรหัสผ่านไม่ถูกต้อง");
       } else {
         toast.success("เข้าสู่ระบบสำเร็จ");
-        // Wait a bit for session to be established before redirecting
-        await new Promise(resolve => setTimeout(resolve, 100));
-        router.push(callbackUrl);
+        // Full-page navigation so the request carries the freshly-set session
+        // cookie and the server re-renders with the authenticated session. This
+        // is reliable, unlike a timed client-side router.push.
+        window.location.href = callbackUrl;
       }
     } catch {
       toast.error("เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง");

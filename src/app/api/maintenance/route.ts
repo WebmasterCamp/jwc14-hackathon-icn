@@ -156,19 +156,29 @@ export async function GET(request: Request) {
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '20');
 
-    let where: any = {};
+    const where: any = {};
+
+    // Scope results to the caller's own records. A missing profile row would make
+    // the id `undefined`, which Prisma drops from the filter — leaking every
+    // tenant's maintenance requests. Return an empty result in that case instead.
+    const emptyResult = NextResponse.json({
+      requests: [],
+      pagination: { page, limit, total: 0, totalPages: 0 },
+    });
 
     if (session.user.role === 'CUSTOMER') {
       const customer = await prisma.customer.findUnique({
         where: { userId: session.user.id },
       });
-      where.customerId = customer?.id;
+      if (!customer) return emptyResult;
+      where.customerId = customer.id;
     } else if (session.user.role === 'PROVIDER') {
       const provider = await prisma.provider.findUnique({
         where: { userId: session.user.id },
       });
+      if (!provider) return emptyResult;
       where.equipment = {
-        providerId: provider?.id,
+        providerId: provider.id,
       };
     }
 

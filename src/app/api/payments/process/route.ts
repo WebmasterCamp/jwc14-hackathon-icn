@@ -4,6 +4,10 @@ import { prisma } from "@/lib/prisma";
 import { processDemoPayment } from "@/lib/payment";
 
 // POST /api/payments/process - Process a demo payment
+//
+// ⚠️ DEMO ONLY: processDemoPayment() always succeeds and performs no real charge,
+// so a customer can mark their own invoices PAID for free. Replace with a real
+// payment-gateway charge (see /api/payments/[id]/process) before production.
 export async function POST(request: Request) {
   try {
     const session = await auth();

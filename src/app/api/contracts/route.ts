@@ -16,18 +16,29 @@ export async function GET(request: Request) {
     const page = parseInt(searchParams.get("page") || "1");
     const limit = parseInt(searchParams.get("limit") || "20");
 
-    let where = {};
+    let where: Record<string, unknown> = {};
+
+    // Scope results to the caller's own records. If the profile row is missing
+    // (e.g. an OAuth user that has no Customer/Provider row yet), the id would be
+    // `undefined` and Prisma would drop the filter entirely, leaking ALL tenants'
+    // data. Guard against that by returning an empty result instead.
+    const emptyResult = NextResponse.json({
+      contracts: [],
+      pagination: { page, limit, total: 0, totalPages: 0 },
+    });
 
     if (session.user.role === "PROVIDER") {
       const provider = await prisma.provider.findUnique({
         where: { userId: session.user.id },
       });
-      where = { providerId: provider?.id };
+      if (!provider) return emptyResult;
+      where = { providerId: provider.id };
     } else if (session.user.role === "CUSTOMER") {
       const customer = await prisma.customer.findUnique({
         where: { userId: session.user.id },
       });
-      where = { customerId: customer?.id };
+      if (!customer) return emptyResult;
+      where = { customerId: customer.id };
     }
 
     if (status) {
@@ -107,6 +118,15 @@ export async function POST(request: Request) {
 
     const body = await request.json();
     const data = createContractSchema.parse(body);
+
+    // Ensure the target customer actually exists before creating a contract for
+    // them (the id comes straight from the request body).
+    const customer = await prisma.customer.findUnique({
+      where: { id: data.customerId },
+    });
+    if (!customer) {
+      return NextResponse.json({ error: "Customer not found" }, { status: 404 });
+    }
 
     // Calculate totals
     const monthlyAmount = data.items.reduce(

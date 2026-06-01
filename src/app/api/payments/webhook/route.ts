@@ -1,11 +1,36 @@
 import { NextResponse } from "next/server";
+import { createHmac, timingSafeEqual } from "crypto";
 import { prisma } from "@/lib/prisma";
 
-// POST /api/payments/webhook - Demo webhook for payment notifications
-// In production, this would be called by a payment gateway
+// Verify the request body against an HMAC-SHA256 signature sent in the
+// `x-webhook-signature` header, keyed by PAYMENT_WEBHOOK_SECRET. This stops
+// anyone from POSTing a paymentId to mark payments PAID for free.
+function verifySignature(rawBody: string, signature: string | null): boolean {
+  const secret = process.env.PAYMENT_WEBHOOK_SECRET;
+  if (!secret || !signature) return false;
+
+  const expected = createHmac("sha256", secret).update(rawBody).digest("hex");
+  const expectedBuf = Buffer.from(expected);
+  const providedBuf = Buffer.from(signature);
+
+  // timingSafeEqual throws on length mismatch — guard first.
+  if (expectedBuf.length !== providedBuf.length) return false;
+  return timingSafeEqual(expectedBuf, providedBuf);
+}
+
+// POST /api/payments/webhook - Webhook for payment notifications
+// In production, this is called by a payment gateway and must be signed.
 export async function POST(request: Request) {
   try {
-    const body = await request.json();
+    // Read the raw body so the signature is computed over the exact bytes.
+    const rawBody = await request.text();
+    const signature = request.headers.get("x-webhook-signature");
+
+    if (!verifySignature(rawBody, signature)) {
+      return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
+    }
+
+    const body = JSON.parse(rawBody);
     const { paymentId, status, transactionId } = body;
 
     if (!paymentId || !status) {
