@@ -16,8 +16,7 @@ datasource db {
 
 enum Role {
   ADMIN
-  PROVIDER
-  CUSTOMER
+  USER
 }
 
 enum SchoolType {
@@ -93,7 +92,6 @@ enum BlogPostStatus {
 
 enum BlogAuthorType {
   USER
-  PROVIDER
 }
 
 // ============================================
@@ -105,7 +103,7 @@ model User {
   email         String    @unique
   password      String?
   name          String?
-  role          Role      @default(CUSTOMER)
+  role          Role      @default(USER)
   phone         String?   @db.VarChar(20)
   avatar        String?
   emailVerified DateTime?

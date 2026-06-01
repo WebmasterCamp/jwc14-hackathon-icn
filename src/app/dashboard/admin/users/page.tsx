@@ -37,7 +37,7 @@ const ROLE_META: Record<
 
 export default async function AdminUsersPage() {
   const session = await auth();
-  if (!session || session.user.role !== "ADMIN") redirect("/sign-in");
+  if (!session || session.user.role !== "ADMIN") redirect("/login");
 
   const users = await prisma.user.findMany({
     include: {

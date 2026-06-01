@@ -9,7 +9,7 @@ export default async function DashboardIndex() {
   const session = await auth();
 
   if (!session) {
-    redirect("/sign-in");
+    redirect("/login");
   }
 
   switch (session.user.role) {
@@ -18,6 +18,7 @@ export default async function DashboardIndex() {
     case "PROVIDER":
       redirect("/dashboard/provider");
     default:
-      redirect("/dashboard/customer");
+      // Customers no longer have a dashboard — their area lives in the frontend.
+      redirect("/account");
   }
 }

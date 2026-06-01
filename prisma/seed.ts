@@ -382,76 +382,29 @@ async function main() {
     },
   })
 
-  // Create demo provider
-  console.log('Creating demo provider...')
-  const providerPassword = await bcrypt.hash('provider123', 12)
-  const providerUser = await prisma.user.upsert({
-    where: { email: 'provider@sparkgo.co.th' },
-    update: {},
-    create: {
-      email: 'provider@sparkgo.co.th',
-      password: providerPassword,
-      name: 'สมชาย เทคโนโลยี',
-      role: 'PROVIDER',
-      phone: '081-234-5678',
-      emailVerified: new Date(),
-    },
-  })
-
+  // Create the single company (seller). The platform sells/rents equipment
+  // directly to customers, so there is exactly one Provider row — the company —
+  // linked to the admin account.
+  console.log('Creating company...')
   const provider = await prisma.provider.upsert({
-    where: { userId: providerUser.id },
+    where: { userId: admin.id },
     update: {},
     create: {
-      userId: providerUser.id,
-      companyName: 'เทคสตาร์ท เอ็ดดูเคชั่น จำกัด',
+      userId: admin.id,
+      companyName: 'Spark Go จำกัด',
       taxId: '0123456789012',
       address: '123 ถนนสุขุมวิท แขวงคลองเตย',
       province: 'กรุงเทพมหานคร',
       bankAccount: '123-456-7890',
       bankName: 'ธนาคารกสิกรไทย',
-      description: 'ผู้จัดจำหน่ายอุปกรณ์ STEM และ IoT ชั้นนำ',
+      description: 'ผู้จัดจำหน่ายและให้เช่าอุปกรณ์ STEM และ IoT สำหรับสถานศึกษา',
       verified: true,
       verifiedAt: new Date(),
       rating: 4.8,
     },
   })
 
-  // Create a second demo provider so the same product can be offered by more
-  // than one shop (demonstrates the multi-provider / shop-comparison feature).
-  console.log('Creating second demo provider...')
-  const provider2Password = await bcrypt.hash('provider123', 12)
-  const provider2User = await prisma.user.upsert({
-    where: { email: 'provider2@sparkgo.co.th' },
-    update: {},
-    create: {
-      email: 'provider2@sparkgo.co.th',
-      password: provider2Password,
-      name: 'วิภา อิเล็กทรอนิกส์',
-      role: 'PROVIDER',
-      phone: '082-345-6789',
-      emailVerified: new Date(),
-    },
-  })
-
-  const provider2 = await prisma.provider.upsert({
-    where: { userId: provider2User.id },
-    update: {},
-    create: {
-      userId: provider2User.id,
-      companyName: 'เมกเกอร์สเปซ ซัพพลาย จำกัด',
-      taxId: '0987654321098',
-      address: '99 ถนนนิมมานเหมินท์ ตำบลสุเทพ',
-      province: 'เชียงใหม่',
-      bankAccount: '987-654-3210',
-      bankName: 'ธนาคารไทยพาณิชย์',
-      description: 'ร้านอุปกรณ์ STEM และ IoT ภาคเหนือ ราคาเป็นกันเอง',
-      verified: true,
-      verifiedAt: new Date(),
-      rating: 4.5,
-    },
-  })
-
-  // Create demo customer
+  // Create demo customer (buyer)
   console.log('Creating demo customer...')
   const customerPassword = await bcrypt.hash('customer123', 12)
   const customerUser = await prisma.user.upsert({
@@ -461,7 +414,7 @@ async function main() {
       email: 'customer@sparkgo.co.th',
       password: customerPassword,
       name: 'ครูสมหญิง ใจดี',
-      role: 'CUSTOMER',
+      role: 'USER',
       phone: '089-876-5432',
       emailVerified: new Date(),
     },
@@ -605,8 +558,8 @@ async function main() {
   }
 
   // Offerings: (provider, product) is unique, so upsert keeps this idempotent.
+  // The company offers each product once.
   const offerings = [
-    // Provider 1 — Bangkok shop, offers everything.
     {
       provider,
       productKey: 'arduino',
@@ -659,33 +612,6 @@ async function main() {
       insuranceMonths: 6,
       conditions: 'ประกันรวมการชน 1 ครั้ง เปลี่ยนใบพัดฟรีตลอดสัญญา',
     },
-    // Provider 2 — Chiang Mai shop, also offers the Arduino kit (shared!) + Tello.
-    {
-      provider: provider2,
-      productKey: 'arduino',
-      rentPriceMonthly: 1350,
-      leaseToOwnPrice: 24000,
-      leaseDuration: 24,
-      depositAmount: 2500,
-      stock: 12,
-      availableStock: 12,
-      condition: 'EXCELLENT' as const,
-      insuranceMonths: 18,
-      conditions: 'รับประกันยาว 18 เดือน เปลี่ยนเครื่องใหม่ใน 7 วันแรกหากชำรุด ส่งฟรีทั่วภาคเหนือ',
-    },
-    {
-      provider: provider2,
-      productKey: 'tello',
-      rentPriceMonthly: 1950,
-      leaseToOwnPrice: 27500,
-      leaseDuration: 12,
-      depositAmount: 3500,
-      stock: 8,
-      availableStock: 8,
-      condition: 'NEW' as const,
-      insuranceMonths: 12,
-      conditions: 'อบรมการใช้งานฟรี 1 ชั่วโมง รับประกันอุบัติเหตุ 2 ครั้ง',
-    },
   ]
 
   for (const o of offerings) {
@@ -735,9 +661,8 @@ async function main() {
   console.log('Seed completed successfully!')
   console.log(`
 Demo accounts:
-- Admin: admin@sparkgo.co.th / admin123
-- Provider: provider@sparkgo.co.th / provider123
-- Customer: customer@sparkgo.co.th / customer123
+- Admin (company): admin@sparkgo.co.th / admin123
+- User (customer): customer@sparkgo.co.th / customer123
   `)
 }
 

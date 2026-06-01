@@ -10,7 +10,7 @@ import { EquipmentForm } from "@/components/provider/equipment-form";
 export default async function NewEquipmentPage() {
   const session = await auth();
   if (!session || session.user.role !== "PROVIDER") {
-    redirect("/sign-in");
+    redirect("/login");
   }
 
   const provider = await prisma.provider.findUnique({
@@ -18,7 +18,7 @@ export default async function NewEquipmentPage() {
   });
 
   if (!provider) {
-    redirect("/sign-in");
+    redirect("/login");
   }
 
   if (!provider.verified) {

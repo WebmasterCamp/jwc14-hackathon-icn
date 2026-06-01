@@ -26,13 +26,13 @@ import { calculateProviderRevenue } from "@/lib/analytics";
 
 export default async function ProviderAnalyticsPage() {
   const session = await auth();
-  if (!session) redirect("/sign-in");
+  if (!session) redirect("/login");
 
   const provider = await prisma.provider.findUnique({
     where: { userId: session.user.id },
     include: { equipment: { where: { isActive: true } } },
   });
-  if (!provider) redirect("/sign-in");
+  if (!provider) redirect("/login");
 
   const [revenueStats, activeContractCount, activeItems] = await Promise.all([
     calculateProviderRevenue(provider.id, 12),

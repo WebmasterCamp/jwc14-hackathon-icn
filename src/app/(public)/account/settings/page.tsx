@@ -1,6 +1,5 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { redirect } from "next/navigation";
 import { ensureCustomerProfile } from "@/lib/queries";
 
 export const dynamic = "force-dynamic";
@@ -15,7 +14,7 @@ import { ProfileForm } from "@/components/settings/profile-form";
 
 export default async function CustomerSettingsPage() {
   const session = await auth();
-  if (!session) redirect("/sign-in");
+  if (!session?.user) return null;
 
   const customer = await ensureCustomerProfile(
     session.user.id,

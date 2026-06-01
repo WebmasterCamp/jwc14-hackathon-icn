@@ -1,6 +1,5 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { redirect } from "next/navigation";
 import Link from "next/link";
 import { Plus, Wrench, Clock, CheckCircle2, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -34,9 +33,7 @@ const STATUS_ICONS = {
 
 export default async function CustomerMaintenancePage() {
   const session = await auth();
-  if (!session || session.user.role !== "CUSTOMER") {
-    redirect("/sign-in");
-  }
+  if (!session?.user || session.user.role !== "CUSTOMER") return null;
 
   // Guarantee the profile row exists so we never redirect-loop with middleware.
   await ensureCustomerProfile(session.user.id, session.user.name);
@@ -45,9 +42,7 @@ export default async function CustomerMaintenancePage() {
     where: { userId: session.user.id },
   });
 
-  if (!customer) {
-    redirect("/sign-in");
-  }
+  if (!customer) return null;
 
   const requests = await prisma.maintenanceRequest.findMany({
     where: { customerId: customer.id },
@@ -86,7 +81,7 @@ export default async function CustomerMaintenancePage() {
           </p>
         </div>
         <Button asChild>
-          <Link href="/dashboard/customer/maintenance/new">
+          <Link href="/account/maintenance/new">
             <Plus className="mr-2 h-4 w-4" />
             สร้างคำขอใหม่
           </Link>
@@ -138,7 +133,7 @@ export default async function CustomerMaintenancePage() {
                   <Wrench className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
                   <p className="text-muted-foreground">ยังไม่มีคำขอซ่อมบำรุง</p>
                   <Button asChild className="mt-4">
-                    <Link href="/dashboard/customer/maintenance/new">
+                    <Link href="/account/maintenance/new">
                       สร้างคำขอใหม่
                     </Link>
                   </Button>

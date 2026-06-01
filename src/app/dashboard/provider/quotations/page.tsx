@@ -39,7 +39,7 @@ const statusLabels: Record<
 
 export default async function ProviderQuotationsPage() {
   const session = await auth();
-  if (!session) redirect("/sign-in");
+  if (!session) redirect("/login");
 
   const provider = await prisma.provider.findUnique({
     where: { userId: session.user.id },
@@ -51,7 +51,7 @@ export default async function ProviderQuotationsPage() {
     },
   });
 
-  if (!provider) redirect("/sign-in");
+  if (!provider) redirect("/login");
 
   const quotations = provider.quotations;
 

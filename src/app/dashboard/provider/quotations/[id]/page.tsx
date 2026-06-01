@@ -42,13 +42,13 @@ export default async function ProviderQuotationDetailPage({
 }) {
   const { id } = await params;
   const session = await auth();
-  if (!session) redirect("/sign-in");
+  if (!session) redirect("/login");
 
   const provider = await prisma.provider.findUnique({
     where: { userId: session.user.id },
     select: { id: true },
   });
-  if (!provider) redirect("/sign-in");
+  if (!provider) redirect("/login");
 
   const quotation = await prisma.quotation.findUnique({
     where: { id },

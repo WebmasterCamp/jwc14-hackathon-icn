@@ -1,6 +1,5 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { redirect } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -10,9 +9,7 @@ import { ensureCustomerProfile } from "@/lib/queries";
 
 export default async function NewMaintenanceRequestPage() {
   const session = await auth();
-  if (!session || session.user.role !== "CUSTOMER") {
-    redirect("/sign-in");
-  }
+  if (!session?.user || session.user.role !== "CUSTOMER") return null;
 
   // Guarantee the profile row exists so we never redirect-loop with middleware.
   await ensureCustomerProfile(session.user.id, session.user.name);
@@ -21,9 +18,7 @@ export default async function NewMaintenanceRequestPage() {
     where: { userId: session.user.id },
   });
 
-  if (!customer) {
-    redirect("/sign-in");
-  }
+  if (!customer) return null;
 
   // Get equipment from active contracts with contract details
   const activeContracts = await prisma.contract.findMany({
@@ -67,7 +62,7 @@ export default async function NewMaintenanceRequestPage() {
     <div className="space-y-6">
       <div className="flex items-center gap-4">
         <Button variant="ghost" size="icon" asChild>
-          <Link href="/dashboard/customer/maintenance">
+          <Link href="/account/maintenance">
             <ArrowLeft className="h-4 w-4" />
           </Link>
         </Button>

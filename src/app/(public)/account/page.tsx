@@ -1,6 +1,5 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { redirect } from "next/navigation";
 
 export const dynamic = 'force-dynamic';
 import Link from "next/link";
@@ -23,7 +22,7 @@ import { differenceInDays } from "date-fns";
 
 export default async function CustomerDashboardPage() {
   const session = await auth();
-  if (!session) redirect("/sign-in");
+  if (!session?.user) return null;
 
   // Guarantee the profile row exists so we never redirect-loop with middleware.
   await ensureCustomerProfile(session.user.id, session.user.name);
@@ -57,7 +56,7 @@ export default async function CustomerDashboardPage() {
     },
   });
 
-  if (!customer) redirect("/sign-in");
+  if (!customer) return null;
 
   // Calculate stats
   const activeContracts = customer.contracts.filter(
@@ -97,7 +96,7 @@ export default async function CustomerDashboardPage() {
                 {formatPrice(totalOverdue)})
               </span>
               <Link
-                href="/dashboard/customer/payments"
+                href="/account/payments"
                 className="text-sm underline"
               >
                 ชำระเงิน
@@ -166,7 +165,7 @@ export default async function CustomerDashboardPage() {
               </CardDescription>
             </div>
             <Button variant="outline" size="sm" asChild>
-              <Link href="/dashboard/customer/contracts">
+              <Link href="/account/contracts">
                 ดูทั้งหมด
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
@@ -180,7 +179,7 @@ export default async function CustomerDashboardPage() {
                   ยังไม่มีสัญญาที่ใช้งาน
                 </p>
                 <Button asChild>
-                  <Link href="/dashboard/customer/browse">
+                  <Link href="/equipment">
                     <Search className="mr-2 h-4 w-4" />
                     ค้นหาอุปกรณ์
                   </Link>
@@ -235,7 +234,7 @@ export default async function CustomerDashboardPage() {
               </CardDescription>
             </div>
             <Button variant="outline" size="sm" asChild>
-              <Link href="/dashboard/customer/payments">
+              <Link href="/account/payments">
                 ดูทั้งหมด
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
@@ -292,19 +291,19 @@ export default async function CustomerDashboardPage() {
         <CardContent>
           <div className="flex flex-wrap gap-3">
             <Button asChild>
-              <Link href="/dashboard/customer/browse">
+              <Link href="/equipment">
                 <Search className="mr-2 h-4 w-4" />
                 ค้นหาอุปกรณ์
               </Link>
             </Button>
             <Button variant="outline" asChild>
-              <Link href="/dashboard/customer/payments">
+              <Link href="/account/payments">
                 <CreditCard className="mr-2 h-4 w-4" />
                 ชำระเงิน
               </Link>
             </Button>
             <Button variant="outline" asChild>
-              <Link href="/dashboard/customer/maintenance">
+              <Link href="/account/maintenance">
                 <Package className="mr-2 h-4 w-4" />
                 แจ้งซ่อม
               </Link>

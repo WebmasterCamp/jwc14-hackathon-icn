@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -78,7 +79,7 @@ export default function CustomerSignUpPage() {
       }
 
       toast.success("สมัครสมาชิกสำเร็จ กรุณาเข้าสู่ระบบ");
-      router.push("/sign-in");
+      router.push("/login");
     } catch {
       toast.error("เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง");
     } finally {
@@ -89,8 +90,18 @@ export default function CustomerSignUpPage() {
   return (
     <Card className="border-0 shadow-lg max-w-2xl mx-auto">
       <CardHeader className="space-y-2">
+        <div className="mb-2 flex justify-center">
+          <Image
+            src="/logo.png"
+            alt="Spark Go"
+            width={6000}
+            height={3375}
+            priority
+            className="h-10 w-auto"
+          />
+        </div>
         <Link
-          href="/sign-up"
+          href="/register"
           className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-2"
         >
           <ArrowLeft className="w-4 h-4 mr-1" />
@@ -285,7 +296,7 @@ export default function CustomerSignUpPage() {
 
           <p className="text-center text-sm text-muted-foreground">
             มีบัญชีอยู่แล้ว?{" "}
-            <Link href="/sign-in" className="text-primary hover:underline font-medium">
+            <Link href="/login" className="text-primary hover:underline font-medium">
               เข้าสู่ระบบ
             </Link>
           </p>

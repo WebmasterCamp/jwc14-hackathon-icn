@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   title: "หมวดหมู่สินค้า",
   description:
     "เลือกชมอุปกรณ์ IoT และ STEM ตามหมวดหมู่ Arduino, หุ่นยนต์, เครื่องพิมพ์ 3D, โดรน และอีกมากมาย",
-  alternates: { canonical: `${SITE_URL}/categorise` },
+  alternates: { canonical: `${SITE_URL}/category` },
 };
 
 export default async function CategorisePage() {

@@ -29,7 +29,7 @@ export async function sendWelcomeEmail({
   const dashboardUrl =
     role === "PROVIDER"
       ? `${APP_URL}/dashboard/provider`
-      : `${APP_URL}/dashboard/customer`;
+      : `${APP_URL}/account`;
 
   return getResend().emails.send({
     from: FROM_EMAIL,
@@ -109,7 +109,7 @@ export async function sendPaymentReminderEmail({
           <p><strong>จำนวนเงิน:</strong> ${formattedAmount}</p>
           <p><strong>กำหนดชำระ:</strong> ${formattedDate}</p>
         </div>
-        <a href="${APP_URL}/dashboard/customer/payments" style="display: inline-block; background-color: #2563EB; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px;">
+        <a href="${APP_URL}/account/payments" style="display: inline-block; background-color: #2563EB; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px;">
           ชำระเงิน
         </a>
         <p style="margin-top: 24px; color: #666;">หากชำระแล้ว กรุณาอย่าสนใจอีเมลนี้</p>
@@ -157,7 +157,7 @@ export async function sendPaymentOverdueEmail({
           <p><strong>กำหนดชำระเดิม:</strong> ${formattedDate}</p>
         </div>
         <p><strong>กรุณาชำระเงินโดยเร็วที่สุดเพื่อหลีกเลี่ยงการระงับบริการ</strong></p>
-        <a href="${APP_URL}/dashboard/customer/payments" style="display: inline-block; background-color: #DC2626; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px;">
+        <a href="${APP_URL}/account/payments" style="display: inline-block; background-color: #DC2626; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px;">
           ชำระเงินทันที
         </a>
         <p style="margin-top: 24px; color: #666;">หากต้องการความช่วยเหลือ กรุณาติดต่อ support@sparkgo.co.th</p>
@@ -196,7 +196,7 @@ export async function sendContractApprovedEmail({
           <li>รอการจัดส่งอุปกรณ์</li>
           <li>ตรวจรับอุปกรณ์</li>
         </ol>
-        <a href="${APP_URL}/dashboard/customer/contracts" style="display: inline-block; background-color: #2563EB; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; margin-top: 16px;">
+        <a href="${APP_URL}/account/contracts" style="display: inline-block; background-color: #2563EB; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; margin-top: 16px;">
           ดูรายละเอียดสัญญา
         </a>
       </div>

@@ -19,7 +19,7 @@ export function CommentForm({ postId }: { postId: string }) {
   if (!session?.user) {
     return (
       <div className="rounded-lg border bg-muted/30 p-4 text-sm text-muted-foreground">
-        <Link href="/sign-in" className="font-medium text-primary hover:underline">
+        <Link href="/login" className="font-medium text-primary hover:underline">
           เข้าสู่ระบบ
         </Link>{" "}
         เพื่อแสดงความคิดเห็น

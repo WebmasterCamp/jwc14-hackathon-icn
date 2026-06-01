@@ -22,7 +22,7 @@ import { calculateProviderRevenue } from "@/lib/analytics";
 
 export default async function ProviderDashboardPage() {
   const session = await auth();
-  if (!session) redirect("/sign-in");
+  if (!session) redirect("/login");
 
   const provider = await prisma.provider.findUnique({
     where: { userId: session.user.id },
@@ -46,7 +46,7 @@ export default async function ProviderDashboardPage() {
     },
   });
 
-  if (!provider) redirect("/sign-in");
+  if (!provider) redirect("/login");
 
   // Calculate stats
   const totalEquipment = provider.equipment.length;

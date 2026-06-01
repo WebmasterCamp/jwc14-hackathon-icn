@@ -10,7 +10,7 @@ import { prisma } from "@/lib/prisma";
  * Ensure a CUSTOMER user has a Customer profile row, creating a placeholder if
  * missing. OAuth sign-ups create the row up front, but accounts created before
  * that fix (or any edge case) would otherwise have a CUSTOMER user with no
- * Customer row — which made every customer dashboard page redirect to /sign-in
+ * Customer row — which made every customer dashboard page redirect to /login
  * and loop with the middleware. Calling this before querying the profile makes
  * the dashboard self-healing. The user completes the placeholder details later.
  */

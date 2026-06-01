@@ -41,7 +41,7 @@ const typeLabels: Record<string, string> = {
 
 export default async function ProviderContractsPage() {
   const session = await auth();
-  if (!session) redirect("/sign-in");
+  if (!session) redirect("/login");
 
   const provider = await prisma.provider.findUnique({
     where: { userId: session.user.id },
@@ -60,7 +60,7 @@ export default async function ProviderContractsPage() {
     },
   });
 
-  if (!provider) redirect("/sign-in");
+  if (!provider) redirect("/login");
 
   const activeContracts = provider.contracts.filter(
     (c) => c.status === "ACTIVE"

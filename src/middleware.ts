@@ -3,15 +3,15 @@ import type { NextRequest } from "next/server";
 
 const publicRoutes = [
   "/",
-  "/sign-in",
-  "/sign-up",
-  "/sign-up/provider",
-  "/sign-up/customer",
+  "/login",
+  "/register",
+  "/register/provider",
+  "/register/customer",
   "/equipment",
   "/providers",
 ];
 
-const authRoutes = ["/sign-in", "/sign-up", "/sign-up/provider", "/sign-up/customer"];
+const authRoutes = ["/login", "/register", "/register/provider", "/register/customer"];
 
 export async function middleware(req: NextRequest) {
   const { nextUrl } = req;
@@ -42,7 +42,7 @@ export async function middleware(req: NextRequest) {
   // If user is logged in and trying to access auth routes, send them to the
   // neutral /dashboard entry point, which routes by role server-side. (Redirecting
   // straight to /dashboard/customer here would loop for admins/providers, since
-  // that layout bounces non-customers back to /sign-in.)
+  // that layout bounces non-customers back to /login.)
   if (isLoggedIn && isAuthRoute) {
     return NextResponse.redirect(new URL("/dashboard", nextUrl));
   }
@@ -50,7 +50,7 @@ export async function middleware(req: NextRequest) {
   // If not logged in and trying to access protected routes
   if (!isLoggedIn && isDashboard) {
     const callbackUrl = encodeURIComponent(pathname);
-    return NextResponse.redirect(new URL(`/sign-in?callbackUrl=${callbackUrl}`, nextUrl));
+    return NextResponse.redirect(new URL(`/login?callbackUrl=${callbackUrl}`, nextUrl));
   }
 
   return NextResponse.next();

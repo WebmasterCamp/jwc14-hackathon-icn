@@ -1,17 +1,9 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Cpu, CircuitBoard, Cpu as Chip, Radio, Boxes } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { JsonLd } from "@/components/seo/json-ld";
 import { generateOrganizationSchema, generateWebSiteSchema } from "@/lib/structured-data";
-
-const categories = [
-  { label: "Raspberry Pi", icon: Cpu, query: "Raspberry Pi" },
-  { label: "Arduino", icon: CircuitBoard, query: "Arduino" },
-  { label: "Micro : bit", icon: Chip, query: "Micro:bit" },
-  { label: "เซนเซอร์", icon: Radio, query: "เซนเซอร์" },
-  { label: "ชุด Kit พร้อมใช้", icon: Boxes, query: "Kit" },
-];
+import { getCategories } from "@/lib/queries";
 
 const projectExamples = [
   { title: "ระบบรดน้ำอัตโนมัติ", image: "/assets/iot1.png" },
@@ -29,7 +21,9 @@ function SectionHeading({ children }: { children: React.ReactNode }) {
   );
 }
 
-export default function HomePage() {
+export default async function HomePage() {
+  const categories = await getCategories();
+
   return (
     <>
       <JsonLd data={[generateOrganizationSchema(), generateWebSiteSchema()]} />
@@ -92,14 +86,20 @@ export default function HomePage() {
           <div className="flex flex-wrap justify-center gap-3 md:gap-4">
             {categories.map((cat) => (
               <Link
-                key={cat.label}
-                href={`/equipment?search=${encodeURIComponent(cat.query)}`}
+                key={cat.id}
+                href={`/equipment?category=${cat.slug}`}
                 className="group flex items-center gap-2 rounded-full border bg-card px-5 py-2.5 text-sm font-medium shadow-sm transition-colors hover:border-brand hover:text-brand"
               >
-                <cat.icon className="h-4 w-4 text-brand" />
-                {cat.label}
+                <span className="text-base leading-none">{cat.icon || "📦"}</span>
+                {cat.nameTh || cat.name}
               </Link>
             ))}
+            <Link
+              href="/category"
+              className="group flex items-center gap-2 rounded-full border border-brand bg-brand/5 px-5 py-2.5 text-sm font-medium text-brand shadow-sm transition-colors hover:bg-brand hover:text-brand-foreground"
+            >
+              ดูทั้งหมด
+            </Link>
           </div>
         </div>
       </section>

@@ -18,7 +18,7 @@ export default async function ProviderEditBlogPostPage({
 }) {
   const { slug } = await params;
   const session = await auth();
-  if (!session?.user) redirect("/sign-in");
+  if (!session?.user) redirect("/login");
 
   const post = await getBlogPostBySlug(slug);
   if (!post) notFound();

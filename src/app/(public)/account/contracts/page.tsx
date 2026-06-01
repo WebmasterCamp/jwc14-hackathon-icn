@@ -1,6 +1,5 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { redirect } from "next/navigation";
 import Link from "next/link";
 
 export const dynamic = 'force-dynamic';
@@ -46,7 +45,7 @@ const typeLabels: Record<string, string> = {
 
 export default async function CustomerContractsPage() {
   const session = await auth();
-  if (!session) redirect("/sign-in");
+  if (!session?.user) return null;
 
   // Guarantee the profile row exists so we never redirect-loop with middleware.
   await ensureCustomerProfile(session.user.id, session.user.name);
@@ -68,7 +67,7 @@ export default async function CustomerContractsPage() {
     },
   });
 
-  if (!customer) redirect("/sign-in");
+  if (!customer) return null;
 
   const activeContracts = customer.contracts.filter(
     (c) => c.status === "ACTIVE"
@@ -149,7 +148,7 @@ export default async function CustomerContractsPage() {
                   <DropdownMenuContent align="end">
                     <DropdownMenuItem asChild>
                       <Link
-                        href={`/dashboard/customer/contracts/${contract.id}`}
+                        href={`/account/contracts/${contract.id}`}
                       >
                         <Eye className="mr-2 h-4 w-4" />
                         ดูรายละเอียด
@@ -211,7 +210,7 @@ export default async function CustomerContractsPage() {
                     ยังไม่มีสัญญาที่ใช้งาน
                   </p>
                   <Button asChild>
-                    <Link href="/dashboard/customer/browse">
+                    <Link href="/equipment">
                       ค้นหาอุปกรณ์
                     </Link>
                   </Button>

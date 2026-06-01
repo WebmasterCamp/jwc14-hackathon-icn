@@ -16,13 +16,13 @@ import { ProfileForm } from "@/components/settings/profile-form";
 
 export default async function ProviderSettingsPage() {
   const session = await auth();
-  if (!session) redirect("/sign-in");
+  if (!session) redirect("/login");
 
   const provider = await prisma.provider.findUnique({
     where: { userId: session.user.id },
     include: { user: { select: { name: true, phone: true, email: true } } },
   });
-  if (!provider) redirect("/sign-in");
+  if (!provider) redirect("/login");
 
   return (
     <div className="space-y-6">

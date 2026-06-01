@@ -147,7 +147,7 @@ export default function ProvidersPage() {
           เข้าถึงโรงเรียนกว่า 500 แห่งทั่วประเทศผ่านแพลตฟอร์มของเรา
         </p>
         <Button size="lg" asChild>
-          <Link href="/sign-up/provider">
+          <Link href="/register/provider">
             สมัครเป็นผู้ให้บริการ
             <ArrowRight className="ml-2 h-5 w-5" />
           </Link>

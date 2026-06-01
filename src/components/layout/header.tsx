@@ -31,7 +31,7 @@ import { cn } from "@/lib/utils";
 
 const publicNavItems = [
   { href: "/", label: "หน้าหลัก" },
-  { href: "/categorise", label: "สินค้าทั้งหมด" },
+  { href: "/category", label: "สินค้าทั้งหมด" },
   { href: "/how-to", label: "วิธีการสั่งซื้อ" },
   { href: "/blog", label: "บทความ" },
   { href: "/contact", label: "ติดต่อเรา" },
@@ -43,15 +43,17 @@ export function Header() {
   const { theme, setTheme } = useTheme();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
+  // Customers live in the public /account area; staff have role dashboards.
+  const isStaff =
+    session?.user?.role === "ADMIN" || session?.user?.role === "PROVIDER";
   const getDashboardLink = () => {
-    if (!session?.user?.role) return "/dashboard/customer";
-    switch (session.user.role) {
+    switch (session?.user?.role) {
       case "ADMIN":
         return "/dashboard/admin";
       case "PROVIDER":
         return "/dashboard/provider";
       default:
-        return "/dashboard/customer";
+        return "/account";
     }
   };
 
@@ -148,15 +150,17 @@ export function Header() {
                   <DropdownMenuItem asChild>
                     <Link href={getDashboardLink()}>
                       <LayoutDashboard className="mr-2 h-4 w-4" />
-                      แดชบอร์ด
+                      {isStaff ? "แดชบอร์ด" : "บัญชีของฉัน"}
                     </Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link href="/profile">
-                      <User className="mr-2 h-4 w-4" />
-                      โปรไฟล์
-                    </Link>
-                  </DropdownMenuItem>
+                  {!isStaff && (
+                    <DropdownMenuItem asChild>
+                      <Link href="/account/settings">
+                        <User className="mr-2 h-4 w-4" />
+                        ตั้งค่าโปรไฟล์
+                      </Link>
+                    </DropdownMenuItem>
+                  )}
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
                     onClick={() => signOut({ callbackUrl: "/" })}
@@ -172,7 +176,7 @@ export function Header() {
                 asChild
                 className="rounded-full bg-brand px-6 text-brand-foreground hover:bg-brand/90"
               >
-                <Link href="/sign-in">เข้าสู่ระบบ</Link>
+                <Link href="/login">เข้าสู่ระบบ</Link>
               </Button>
             )}
           </div>
@@ -221,7 +225,7 @@ export function Header() {
                     onClick={() => setIsMobileMenuOpen(false)}
                     className="px-3 py-2 rounded-md text-sm font-medium text-muted-foreground hover:bg-accent"
                   >
-                    แดชบอร์ด
+                    {isStaff ? "แดชบอร์ด" : "บัญชีของฉัน"}
                   </Link>
                   <button
                     onClick={() => {
@@ -235,7 +239,7 @@ export function Header() {
                 </>
               ) : (
                 <Link
-                  href="/sign-in"
+                  href="/login"
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="px-3 py-2 rounded-full text-center text-sm font-medium bg-brand text-brand-foreground hover:bg-brand/90"
                 >

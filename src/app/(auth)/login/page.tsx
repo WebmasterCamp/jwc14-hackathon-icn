@@ -7,7 +7,8 @@ import { signIn } from "next-auth/react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Loader2, GraduationCap } from "lucide-react";
+import Image from "next/image";
+import { Loader2 } from "lucide-react";
 import { toast } from "react-hot-toast";
 
 import { Button } from "@/components/ui/button";
@@ -27,7 +28,9 @@ type SignInForm = z.infer<typeof signInSchema>;
 
 function SignInForm() {
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get("callbackUrl") || "/dashboard/customer";
+  // Default to the neutral /dashboard router, which sends each role to the right
+  // place (customers → /account, providers/admins → their dashboard).
+  const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [inAppBrowser, setInAppBrowser] = useState<{ name: string } | null>(null);
@@ -95,8 +98,15 @@ function SignInForm() {
     />
     <Card className="border-0 shadow-lg">
       <CardHeader className="text-center space-y-2">
-        <div className="mx-auto w-12 h-12 bg-primary rounded-xl flex items-center justify-center mb-2">
-          <GraduationCap className="w-7 h-7 text-primary-foreground" />
+        <div className="mx-auto mb-2 flex justify-center">
+          <Image
+            src="/logo.png"
+            alt="Spark Go"
+            width={6000}
+            height={3375}
+            priority
+            className="h-12 w-auto"
+          />
         </div>
         <CardTitle className="text-2xl font-bold">เข้าสู่ระบบ</CardTitle>
         <CardDescription>
@@ -190,7 +200,7 @@ function SignInForm() {
       <CardFooter className="flex flex-col space-y-4">
         <div className="text-center text-sm text-muted-foreground">
           ยังไม่มีบัญชี?{" "}
-          <Link href="/sign-up" className="text-primary hover:underline font-medium">
+          <Link href="/register" className="text-primary hover:underline font-medium">
             สมัครสมาชิก
           </Link>
         </div>

@@ -61,7 +61,7 @@ export default async function ProviderContractDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const session = await auth();
-  if (!session) redirect("/sign-in");
+  if (!session) redirect("/login");
 
   const { id } = await params;
 
@@ -69,7 +69,7 @@ export default async function ProviderContractDetailPage({
     where: { userId: session.user.id },
     select: { id: true },
   });
-  if (!provider) redirect("/sign-in");
+  if (!provider) redirect("/login");
 
   const contract = await prisma.contract.findUnique({
     where: { id },

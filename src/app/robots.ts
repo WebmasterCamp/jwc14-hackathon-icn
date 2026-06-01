@@ -21,8 +21,8 @@ export default function robots(): MetadataRoute.Robots {
         disallow: [
           "/dashboard/*",
           "/api/*",
-          "/sign-in",
-          "/sign-up/*",
+          "/login",
+          "/register/*",
           "/*?*", // Disallow query parameters
         ],
       },

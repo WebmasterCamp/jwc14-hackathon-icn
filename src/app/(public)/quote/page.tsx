@@ -30,7 +30,7 @@ export default async function QuotePage() {
               เพื่อบันทึกและส่งใบเสนอราคาให้ผู้ให้บริการ
             </p>
             <Button asChild className="w-full">
-              <Link href={`/sign-in?callbackUrl=/quote`}>
+              <Link href={`/login?callbackUrl=/quote`}>
                 <LogIn className="mr-2 h-4 w-4" />
                 เข้าสู่ระบบ
               </Link>

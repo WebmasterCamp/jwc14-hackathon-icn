@@ -30,7 +30,7 @@ const statusConfig: Record<
 
 export default async function ProviderPaymentsPage() {
   const session = await auth();
-  if (!session) redirect("/sign-in");
+  if (!session) redirect("/login");
 
   const provider = await prisma.provider.findUnique({
     where: { userId: session.user.id },
@@ -46,7 +46,7 @@ export default async function ProviderPaymentsPage() {
     },
   });
 
-  if (!provider) redirect("/sign-in");
+  if (!provider) redirect("/login");
 
   // Flatten payments
   const allPayments = provider.contracts.flatMap((contract) =>

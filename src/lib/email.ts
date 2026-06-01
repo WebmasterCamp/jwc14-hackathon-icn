@@ -87,7 +87,7 @@ export const emailTemplates = {
         <p>A new contract has been created by ${providerName}.</p>
         <p><strong>Contract ID:</strong> ${contractId}</p>
         <p>Please review the contract details and confirm your acceptance.</p>
-        <a href="${process.env.NEXT_PUBLIC_APP_URL}/dashboard/customer/contracts/${contractId}"
+        <a href="${process.env.NEXT_PUBLIC_APP_URL}/account/contracts/${contractId}"
            style="display: inline-block; background-color: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; margin-top: 16px;">
           View Contract
         </a>
@@ -121,7 +121,7 @@ export const emailTemplates = {
         <p>We have received your payment of <strong>฿${amount.toLocaleString()}</strong>.</p>
         <p><strong>Contract ID:</strong> ${contractId}</p>
         <p>Thank you for your payment. You can view your receipt in your dashboard.</p>
-        <a href="${process.env.NEXT_PUBLIC_APP_URL}/dashboard/customer/payments"
+        <a href="${process.env.NEXT_PUBLIC_APP_URL}/account/payments"
            style="display: inline-block; background-color: #16a34a; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; margin-top: 16px;">
           View Payments
         </a>

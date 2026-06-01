@@ -15,8 +15,6 @@ import {
   Shield,
   ChevronLeft,
   ChevronRight,
-  Wrench,
-  Search,
   GraduationCap,
   Newspaper,
   ReceiptText,
@@ -43,15 +41,6 @@ const providerNavItems: SidebarItem[] = [
   { href: "/dashboard/provider/settings", label: "ตั้งค่า", icon: Settings },
 ];
 
-const customerNavItems: SidebarItem[] = [
-  { href: "/dashboard/customer", label: "ภาพรวม", icon: LayoutDashboard },
-  { href: "/dashboard/customer/browse", label: "ค้นหาอุปกรณ์", icon: Search },
-  { href: "/dashboard/customer/contracts", label: "สัญญาของฉัน", icon: FileText },
-  { href: "/dashboard/customer/payments", label: "การชำระเงิน", icon: CreditCard },
-  { href: "/dashboard/customer/maintenance", label: "แจ้งซ่อม", icon: Wrench },
-  { href: "/dashboard/customer/settings", label: "ตั้งค่า", icon: Settings },
-];
-
 const adminNavItems: SidebarItem[] = [
   { href: "/dashboard/admin", label: "ภาพรวม", icon: LayoutDashboard },
   { href: "/dashboard/admin/providers", label: "ผู้ให้บริการ", icon: Building2 },
@@ -64,7 +53,7 @@ const adminNavItems: SidebarItem[] = [
 ];
 
 interface SidebarProps {
-  variant: "provider" | "customer" | "admin";
+  variant: "provider" | "admin";
 }
 
 export function Sidebar({ variant }: SidebarProps) {
@@ -72,11 +61,7 @@ export function Sidebar({ variant }: SidebarProps) {
   const [collapsed, setCollapsed] = useState(false);
 
   const navItems =
-    variant === "provider"
-      ? providerNavItems
-      : variant === "admin"
-      ? adminNavItems
-      : customerNavItems;
+    variant === "provider" ? providerNavItems : adminNavItems;
 
   const getVariantColor = () => {
     switch (variant) {

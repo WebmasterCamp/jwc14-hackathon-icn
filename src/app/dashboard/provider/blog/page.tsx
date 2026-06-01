@@ -13,7 +13,7 @@ const BASE = "/dashboard/provider/blog";
 
 export default async function ProviderBlogPage() {
   const session = await auth();
-  if (!session?.user) redirect("/sign-in");
+  if (!session?.user) redirect("/login");
 
   const provider = await prisma.provider.findUnique({
     where: { userId: session.user.id },

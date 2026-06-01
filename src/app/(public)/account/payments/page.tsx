@@ -1,6 +1,5 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { redirect } from "next/navigation";
 
 export const dynamic = 'force-dynamic';
 import { CreditCard, AlertTriangle, CheckCircle2, Clock } from "lucide-react";
@@ -37,7 +36,7 @@ const statusConfig: Record<
 
 export default async function CustomerPaymentsPage() {
   const session = await auth();
-  if (!session) redirect("/sign-in");
+  if (!session?.user) return null;
 
   // Guarantee the profile row exists so we never redirect-loop with middleware.
   await ensureCustomerProfile(session.user.id, session.user.name);
@@ -56,7 +55,7 @@ export default async function CustomerPaymentsPage() {
     },
   });
 
-  if (!customer) redirect("/sign-in");
+  if (!customer) return null;
 
   // Flatten payments
   const allPayments = customer.contracts.flatMap((contract) =>

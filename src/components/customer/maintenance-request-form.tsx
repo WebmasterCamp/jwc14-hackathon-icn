@@ -77,7 +77,7 @@ export function MaintenanceRequestForm({ equipment }: MaintenanceRequestFormProp
       }
 
       toast.success('สร้างคำขอซ่อมบำรุงเรียบร้อยแล้ว');
-      router.push('/dashboard/customer/maintenance');
+      router.push('/account/maintenance');
       router.refresh();
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'เกิดข้อผิดพลาด');

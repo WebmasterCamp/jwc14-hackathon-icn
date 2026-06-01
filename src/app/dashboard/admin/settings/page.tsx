@@ -16,7 +16,7 @@ import { ProfileForm } from "@/components/settings/profile-form";
 
 export default async function AdminSettingsPage() {
   const session = await auth();
-  if (!session || session.user.role !== "ADMIN") redirect("/sign-in");
+  if (!session || session.user.role !== "ADMIN") redirect("/login");
 
   const [user, userCount, providerCount, customerCount, equipmentCount, contractCount] =
     await Promise.all([

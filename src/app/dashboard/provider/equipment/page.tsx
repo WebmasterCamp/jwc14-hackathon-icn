@@ -29,7 +29,7 @@ const conditionLabels: Record<string, string> = {
 
 export default async function ProviderEquipmentPage() {
   const session = await auth();
-  if (!session) redirect("/sign-in");
+  if (!session) redirect("/login");
 
   const provider = await prisma.provider.findUnique({
     where: { userId: session.user.id },
@@ -44,7 +44,7 @@ export default async function ProviderEquipmentPage() {
     },
   });
 
-  if (!provider) redirect("/sign-in");
+  if (!provider) redirect("/login");
 
   return (
     <div className="space-y-6">

@@ -13,7 +13,7 @@ export default async function ProviderDashboardLayout({
   const session = await auth();
 
   if (!session || session.user.role !== "PROVIDER") {
-    redirect("/sign-in");
+    redirect("/login");
   }
 
   return (

@@ -16,7 +16,7 @@ export default async function EditEquipmentPage({
   const session = await auth();
 
   if (!session || session.user.role !== "PROVIDER") {
-    redirect("/sign-in");
+    redirect("/login");
   }
 
   const provider = await prisma.provider.findUnique({
@@ -24,7 +24,7 @@ export default async function EditEquipmentPage({
   });
 
   if (!provider) {
-    redirect("/sign-in");
+    redirect("/login");
   }
 
   const equipment = await prisma.equipment.findUnique({
