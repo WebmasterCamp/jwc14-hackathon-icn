@@ -27,9 +27,9 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <ProjectExamples />
-
       <RecommendedProducts categories={categories} products={products} />
+
+      <ProjectExamples />
     </>
   );
 }
