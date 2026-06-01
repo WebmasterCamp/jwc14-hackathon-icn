@@ -2,12 +2,14 @@ import { format as dateFnsFormat, addYears } from "date-fns";
 import { th } from "date-fns/locale";
 
 export function formatPrice(amount: number): string {
+  // Guard against NaN/undefined/Infinity so prices never render as "฿NaN".
+  const n = Number.isFinite(amount) ? amount : 0;
   return new Intl.NumberFormat("th-TH", {
     style: "currency",
     currency: "THB",
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
-  }).format(amount);
+  }).format(n);
 }
 
 export function formatNumber(value: number): string {

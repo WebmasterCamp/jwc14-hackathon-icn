@@ -16,6 +16,15 @@ interface PriceCalculatorProps {
   depositAmount: number;
 }
 
+// The base-ui Slider callback doesn't guarantee an array for a single thumb, so
+// read the value defensively (handles both `number` and `number[]`).
+function asScalar(value: number | readonly number[]): number {
+  return Array.isArray(value) ? Number(value[0]) : Number(value);
+}
+
+const clamp = (n: number, min: number, max: number) =>
+  Math.min(Math.max(n, min), max);
+
 export function PriceCalculator({
   rentPriceMonthly,
   leaseToOwnPrice,
@@ -26,21 +35,33 @@ export function PriceCalculator({
   const [quantity, setQuantity] = useState(1);
 
   const calculations = useMemo(() => {
-    const rentTotal = rentPriceMonthly * rentMonths * quantity;
-    const rentDeposit = depositAmount * quantity;
+    // Coerce every numeric input to a finite value so a stray undefined/NaN can
+    // never propagate into the totals (which previously rendered "฿NaN").
+    const months = Number.isFinite(rentMonths) ? rentMonths : 1;
+    const qty = Number.isFinite(quantity) ? quantity : 1;
+    const monthly = Number(rentPriceMonthly) || 0;
+    const deposit = Number(depositAmount) || 0;
+    const leasePrice = Number(leaseToOwnPrice) || 0;
+    const leaseMonths = Number(leaseDuration) || 0;
+
+    const rentPerMonth = monthly * qty;
+    const rentTotal = rentPerMonth * months;
+    const rentDeposit = deposit * qty;
     const rentGrandTotal = rentTotal + rentDeposit;
 
-    const leaseMonthly = leaseToOwnPrice && leaseDuration
-      ? leaseToOwnPrice / leaseDuration
-      : 0;
-    const leaseTotal = (leaseToOwnPrice || 0) * quantity;
-    const leaseDeposit = depositAmount * quantity;
+    const leaseMonthly = leasePrice && leaseMonths ? leasePrice / leaseMonths : 0;
+    const leaseTotal = leasePrice * qty;
+    const leaseDeposit = deposit * qty;
     const leaseGrandTotal = leaseTotal + leaseDeposit;
 
     const savings = leaseTotal > 0 ? rentGrandTotal - leaseGrandTotal : 0;
-    const savingsPercent = leaseTotal > 0 ? (savings / leaseGrandTotal) * 100 : 0;
+    const savingsPercent =
+      leaseTotal > 0 && leaseGrandTotal > 0
+        ? (savings / leaseGrandTotal) * 100
+        : 0;
 
     return {
+      rentPerMonth,
       rentTotal,
       rentDeposit,
       rentGrandTotal,
@@ -73,7 +94,7 @@ export function PriceCalculator({
           </div>
           <Slider
             value={[quantity]}
-            onValueChange={(value) => setQuantity(value[0])}
+            onValueChange={(value) => setQuantity(clamp(asScalar(value), 1, 10))}
             min={1}
             max={10}
             step={1}
@@ -88,7 +109,7 @@ export function PriceCalculator({
           </div>
           <Slider
             value={[rentMonths]}
-            onValueChange={(value) => setRentMonths(value[0])}
+            onValueChange={(value) => setRentMonths(clamp(asScalar(value), 1, 36))}
             min={1}
             max={36}
             step={1}
@@ -107,7 +128,7 @@ export function PriceCalculator({
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">ค่าเช่ารายเดือน</span>
-                <span>{formatPrice(rentPriceMonthly * quantity)}</span>
+                <span>{formatPrice(calculations.rentPerMonth)}</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">ระยะเวลา</span>
