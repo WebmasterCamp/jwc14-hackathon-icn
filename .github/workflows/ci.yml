@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# Cancel in-progress runs for the same ref when a new commit is pushed.
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Lint, type-check & build
+    runs-on: ubuntu-latest
+
+    env:
+      # next build / prisma generate need a value present; the URL is never
+      # connected to during CI, so a dummy connection string is fine.
+      DATABASE_URL: postgresql://user:password@localhost:5432/ci?schema=public
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Generate Prisma client
+        run: bun run db:generate
+
+      - name: Lint
+        run: bun run lint
+
+      - name: Type check
+        run: bunx tsc --noEmit
+
+      - name: Build
+        run: bun run build
