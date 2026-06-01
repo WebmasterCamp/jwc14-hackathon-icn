@@ -21,6 +21,7 @@ interface Category {
 
 interface EquipmentFiltersProps {
   categories: Category[];
+  basePath?: string;
 }
 
 const priceRanges = [
@@ -31,7 +32,7 @@ const priceRanges = [
   { label: "มากกว่า 5,000 บาท", min: "5000", max: "" },
 ];
 
-export function EquipmentFilters({ categories }: EquipmentFiltersProps) {
+export function EquipmentFilters({ categories, basePath = "/equipment" }: EquipmentFiltersProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [search, setSearch] = useState(searchParams.get("search") || "");
@@ -54,30 +55,30 @@ export function EquipmentFilters({ categories }: EquipmentFiltersProps) {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    router.push(`/equipment?${createQueryString({ search })}`);
+    router.push(`${basePath}?${createQueryString({ search })}`);
   };
 
   const handleCategoryChange = (slug: string, checked: boolean) => {
     if (checked) {
-      router.push(`/equipment?${createQueryString({ category: slug })}`);
+      router.push(`${basePath}?${createQueryString({ category: slug })}`);
     } else {
-      router.push(`/equipment?${createQueryString({ category: null })}`);
+      router.push(`${basePath}?${createQueryString({ category: null })}`);
     }
   };
 
   const handleProvinceChange = (value: string) => {
     router.push(
-      `/equipment?${createQueryString({ province: value === "all" ? null : value })}`
+      `${basePath}?${createQueryString({ province: value === "all" ? null : value })}`
     );
   };
 
   const handlePriceChange = (min: string, max: string) => {
-    router.push(`/equipment?${createQueryString({ minPrice: min, maxPrice: max })}`);
+    router.push(`${basePath}?${createQueryString({ minPrice: min, maxPrice: max })}`);
   };
 
   const clearAllFilters = () => {
     setSearch("");
-    router.push("/equipment");
+    router.push(basePath);
   };
 
   const hasFilters =
@@ -87,7 +88,7 @@ export function EquipmentFilters({ categories }: EquipmentFiltersProps) {
     searchParams.has("maxPrice") ||
     searchParams.has("search");
 
-  const FilterContent = () => (
+  const renderFilterContent = () => (
     <div className="space-y-6">
       {/* Search */}
       <form onSubmit={handleSearch}>
@@ -199,7 +200,7 @@ export function EquipmentFilters({ categories }: EquipmentFiltersProps) {
           <CardTitle className="text-lg">ตัวกรอง</CardTitle>
         </CardHeader>
         <CardContent>
-          <FilterContent />
+          {renderFilterContent()}
         </CardContent>
       </Card>
 
@@ -221,7 +222,7 @@ export function EquipmentFilters({ categories }: EquipmentFiltersProps) {
             <SheetTitle>ตัวกรอง</SheetTitle>
           </SheetHeader>
           <div className="mt-6">
-            <FilterContent />
+            {renderFilterContent()}
           </div>
         </SheetContent>
       </Sheet>
