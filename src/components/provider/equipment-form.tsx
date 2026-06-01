@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+import { useForm, type Resolver } from 'react-hook-form';
 import * as z from 'zod';
 import { Search, Check, Package, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -99,7 +99,10 @@ export function EquipmentForm({
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const form = useForm<EquipmentFormValues>({
-    resolver: zodResolver(equipmentSchema),
+    // zod v4 `coerce` makes the schema's input type diverge from its output,
+    // which @hookform/resolvers v5 can't reconcile against a single useForm
+    // generic — cast the resolver to the (output) form-values type.
+    resolver: zodResolver(equipmentSchema) as unknown as Resolver<EquipmentFormValues>,
     defaultValues: {
       categoryId: initialData?.categoryId || '',
       name: initialData?.name || '',

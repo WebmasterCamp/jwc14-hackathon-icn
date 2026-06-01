@@ -5,7 +5,7 @@ import Link from "next/link";
 
 export const dynamic = 'force-dynamic';
 import Image from "next/image";
-import { Plus, Pencil, MoreHorizontal, Package, Eye, Trash2 } from "lucide-react";
+import { Plus, Package } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -16,13 +16,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { EquipmentActions } from "@/components/provider/equipment-actions";
 import { formatPrice } from "@/lib/format";
 
 const conditionLabels: Record<string, string> = {
@@ -154,33 +149,11 @@ export default async function ProviderEquipmentPage() {
                       </Badge>
                     </TableCell>
                     <TableCell>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon">
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem asChild>
-                            <Link href={`/products/${equipment.product.slug}`}>
-                              <Eye className="mr-2 h-4 w-4" />
-                              ดูหน้าสาธารณะ
-                            </Link>
-                          </DropdownMenuItem>
-                          <DropdownMenuItem asChild>
-                            <Link
-                              href={`/dashboard/provider/equipment/${equipment.id}`}
-                            >
-                              <Pencil className="mr-2 h-4 w-4" />
-                              แก้ไข
-                            </Link>
-                          </DropdownMenuItem>
-                          <DropdownMenuItem className="text-destructive">
-                            <Trash2 className="mr-2 h-4 w-4" />
-                            ลบ
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
+                      <EquipmentActions
+                        equipmentId={equipment.id}
+                        equipmentName={equipment.nameTh || equipment.name}
+                        productSlug={equipment.product.slug}
+                      />
                     </TableCell>
                   </TableRow>
                 ))}

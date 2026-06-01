@@ -59,22 +59,25 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ];
 
   try {
-    // Dynamic equipment pages
-    const equipment = await prisma.equipment.findMany({
-      where: { isActive: true },
-      select: { id: true, updatedAt: true },
+    // Dynamic product pages (one per catalog product with a visible offering)
+    const products = await prisma.product.findMany({
+      where: {
+        isActive: true,
+        equipment: { some: { isActive: true, provider: { verified: true } } },
+      },
+      select: { slug: true, updatedAt: true },
       orderBy: { updatedAt: "desc" },
     });
 
-    const equipmentPages: MetadataRoute.Sitemap = equipment.map((item) => ({
-      url: `${baseUrl}/equipment/${item.id}`,
+    const equipmentPages: MetadataRoute.Sitemap = products.map((item) => ({
+      url: `${baseUrl}/products/${item.slug}`,
       lastModified: item.updatedAt,
       changeFrequency: "weekly",
       priority: 0.7,
       alternates: {
         languages: {
-          th: `${baseUrl}/equipment/${item.id}?lang=th`,
-          en: `${baseUrl}/equipment/${item.id}?lang=en`,
+          th: `${baseUrl}/products/${item.slug}?lang=th`,
+          en: `${baseUrl}/products/${item.slug}?lang=en`,
         },
       },
     }));
