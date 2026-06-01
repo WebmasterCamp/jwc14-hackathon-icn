@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { getBlogPosts, getBlogCategories, getFeaturedPosts } from "@/lib/blog/queries";
 import { BlogCard, type BlogCardPost } from "@/components/blog/blog-card";
 import { BlogListSkeleton } from "@/components/blog/blog-list-skeleton";
+import { BlogSearch } from "@/components/blog/blog-search";
 import { Badge } from "@/components/ui/badge";
 import { JsonLd } from "@/components/seo/json-ld";
 import { generateWebSiteSchema, generateBreadcrumbSchema } from "@/lib/structured-data";
@@ -162,6 +163,8 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
       <Suspense fallback={null}>
         <CategoryChips active={category} />
       </Suspense>
+
+      <BlogSearch />
 
       {!category && !search && currentPage === 1 && (
         <Suspense fallback={<BlogListSkeleton count={3} />}>
