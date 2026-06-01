@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { getCategories } from "@/lib/queries";
 
 export const revalidate = 300; // ISR: revalidate every 5 minutes
-import { EquipmentCard } from "@/components/equipment/equipment-card";
+import { ProductCard } from "@/components/equipment/product-card";
 import { EquipmentFilters } from "@/components/equipment/equipment-filters";
 import { Skeleton } from "@/components/ui/skeleton";
 import { JsonLd } from "@/components/seo/json-ld";
@@ -45,27 +45,28 @@ async function EquipmentList({
   const page = parseInt(searchParams.page || "1");
   const pageSize = 12;
 
-  const where = {
+  // An offering (Equipment) is publicly visible if it's active and from a
+  // verified provider. Province/price filters narrow which offerings count.
+  const offeringFilter = {
     isActive: true,
-    ...(searchParams.category && {
-      category: {
-        slug: searchParams.category,
-      },
-    }),
-    ...(searchParams.province && {
-      provider: {
-        province: searchParams.province,
-      },
-    }),
+    provider: {
+      verified: true,
+      ...(searchParams.province && { province: searchParams.province }),
+    },
     ...(searchParams.minPrice && {
-      rentPriceMonthly: {
-        gte: parseFloat(searchParams.minPrice),
-      },
+      rentPriceMonthly: { gte: parseFloat(searchParams.minPrice) },
     }),
     ...(searchParams.maxPrice && {
-      rentPriceMonthly: {
-        lte: parseFloat(searchParams.maxPrice),
-      },
+      rentPriceMonthly: { lte: parseFloat(searchParams.maxPrice) },
+    }),
+  };
+
+  // List one card per Product, only when it has at least one visible offering.
+  const where = {
+    isActive: true,
+    equipment: { some: offeringFilter },
+    ...(searchParams.category && {
+      category: { slug: searchParams.category },
     }),
     ...(searchParams.search && {
       OR: [
@@ -76,26 +77,38 @@ async function EquipmentList({
     }),
   };
 
-  const [equipment, totalCount, categories] = await Promise.all([
-    prisma.equipment.findMany({
+  const [products, totalCount, categories] = await Promise.all([
+    prisma.product.findMany({
       where,
       include: {
         category: true,
-        provider: {
-          select: {
-            companyName: true,
-            province: true,
-            rating: true,
-          },
+        equipment: {
+          where: offeringFilter,
+          select: { rentPriceMonthly: true },
         },
       },
       orderBy: { createdAt: "desc" },
       skip: (page - 1) * pageSize,
       take: pageSize,
     }),
-    prisma.equipment.count({ where }),
+    prisma.product.count({ where }),
     getCategories(), // Use cached query
   ]);
+
+  // Collapse each product's visible offerings into a from-price + shop count.
+  const equipment = products.map((p) => ({
+    slug: p.slug,
+    name: p.name,
+    nameTh: p.nameTh,
+    description: p.descriptionTh || p.description,
+    images: p.images,
+    category: p.category,
+    offeringCount: p.equipment.length,
+    fromPrice: p.equipment.reduce(
+      (min, o) => Math.min(min, o.rentPriceMonthly),
+      Infinity
+    ),
+  }));
 
   const totalPages = Math.ceil(totalCount / pageSize);
 
@@ -105,11 +118,11 @@ async function EquipmentList({
         <JsonLd
           data={generateItemListSchema(
             equipment.map((item) => ({
-              id: item.id,
+              slug: item.slug,
               name: item.name,
               nameTh: item.nameTh ?? undefined,
               images: item.images,
-              rentPriceMonthly: item.rentPriceMonthly,
+              fromPrice: item.fromPrice,
             }))
           )}
         />
@@ -128,7 +141,7 @@ async function EquipmentList({
         <>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {equipment.map((item) => (
-              <EquipmentCard key={item.id} equipment={item} />
+              <ProductCard key={item.slug} product={item} />
             ))}
           </div>
 

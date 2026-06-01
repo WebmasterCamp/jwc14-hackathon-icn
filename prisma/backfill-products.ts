@@ -18,7 +18,9 @@ const prisma = new PrismaClient({ adapter });
 
 async function main() {
   const equipment = await prisma.equipment.findMany({
-    where: { productId: null },
+    // productId is required in the schema, but legacy rows can still be empty at
+    // the DB level before this one-time backfill runs; cast to query for them.
+    where: { productId: null as unknown as string },
   });
 
   console.log(`Backfilling ${equipment.length} equipment row(s)...`);
@@ -55,7 +57,9 @@ async function main() {
     console.log(`  ${eq.name} -> product ${product.slug}`);
   }
 
-  const remaining = await prisma.equipment.count({ where: { productId: null } });
+  const remaining = await prisma.equipment.count({
+    where: { productId: null as unknown as string },
+  });
   console.log(`Done. Equipment still missing productId: ${remaining}`);
 }
 

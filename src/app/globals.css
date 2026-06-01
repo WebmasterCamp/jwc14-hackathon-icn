@@ -43,6 +43,10 @@
   --color-success-foreground: var(--success-foreground);
   --color-warning: var(--warning);
   --color-warning-foreground: var(--warning-foreground);
+  /* Spark Go marketing brand (cyan) — scoped to public pages */
+  --color-brand: var(--brand);
+  --color-brand-foreground: var(--brand-foreground);
+  --color-brand-soft: var(--brand-soft);
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -92,6 +96,11 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.9 0 0);
   --sidebar-ring: oklch(0.546 0.195 262);
+  /* Spark Go brand cyan #27BEE4 */
+  --brand: oklch(0.755 0.122 219);
+  --brand-foreground: oklch(1 0 0);
+  /* Light cool page background #F6F9FC */
+  --brand-soft: oklch(0.978 0.005 230);
 }
 
 .dark {
@@ -133,6 +142,10 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(0.3 0 0);
   --sidebar-ring: oklch(0.62 0.19 262);
+  /* Spark Go brand cyan (lighter in dark mode) */
+  --brand: oklch(0.78 0.12 219);
+  --brand-foreground: oklch(0.145 0 0);
+  --brand-soft: oklch(0.22 0.02 230);
 }
 
 @layer base {

@@ -29,6 +29,9 @@ export default async function EditEquipmentPage({
 
   const equipment = await prisma.equipment.findUnique({
     where: { id },
+    include: {
+      product: { include: { category: true } },
+    },
   });
 
   if (!equipment) {
@@ -68,6 +71,14 @@ export default async function EditEquipmentPage({
         <CardContent>
           <EquipmentForm
             categories={categories}
+            linkedProduct={{
+              id: equipment.product.id,
+              name: equipment.product.name,
+              nameTh: equipment.product.nameTh,
+              category:
+                equipment.product.category.nameTh ||
+                equipment.product.category.name,
+            }}
             initialData={{
               id: equipment.id,
               categoryId: equipment.categoryId,
@@ -81,6 +92,8 @@ export default async function EditEquipmentPage({
               depositAmount: equipment.depositAmount,
               stock: equipment.stock,
               condition: equipment.condition,
+              insuranceMonths: equipment.insuranceMonths || undefined,
+              conditions: equipment.conditions || undefined,
             }}
           />
         </CardContent>
