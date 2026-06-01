@@ -31,7 +31,7 @@ import { cn } from "@/lib/utils";
 
 const publicNavItems = [
   { href: "/", label: "หน้าหลัก" },
-  { href: "/equipment", label: "สินค้าทั้งหมด" },
+  { href: "/categorise", label: "สินค้าทั้งหมด" },
   { href: "/how-to", label: "วิธีการสั่งซื้อ" },
   { href: "/blog", label: "บทความ" },
   { href: "/contact", label: "ติดต่อเรา" },
