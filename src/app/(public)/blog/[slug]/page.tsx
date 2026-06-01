@@ -104,7 +104,21 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       <ViewTracker slug={post.slug} />
       <JsonLd
         data={[
-          generateBlogPostingSchema(post),
+          generateBlogPostingSchema({
+            slug: post.slug,
+            title: post.title,
+            titleTh: post.titleTh ?? undefined,
+            excerpt: post.excerpt ?? undefined,
+            excerptTh: post.excerptTh ?? undefined,
+            featuredImage: post.featuredImage ?? undefined,
+            publishedAt: post.publishedAt,
+            updatedAt: post.updatedAt,
+            author: {
+              name: post.author.name ?? undefined,
+              avatar: post.author.avatar ?? undefined,
+            },
+            readingTime: post.readingTime ?? undefined,
+          }),
           generateBreadcrumbSchema([
             { name: "หน้าแรก", url: "/" },
             { name: "บทความ", url: "/blog" },

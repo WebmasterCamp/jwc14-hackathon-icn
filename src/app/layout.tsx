@@ -60,20 +60,15 @@ export const metadata: Metadata = {
     siteName: "Sparkgo",
     title: "Sparkgo - ระบบเช่าอุปกรณ์การศึกษา IoT และ STEM สำหรับโรงเรียน",
     description: "แพลตฟอร์มเช่าอุปกรณ์ IoT และ STEM สำหรับโรงเรียนไทย เพื่อการเรียนรู้ที่ทันสมัย",
-    images: [
-      {
-        url: `${SITE_URL}/og-image.png`,
-        width: 1200,
-        height: 630,
-        alt: "Sparkgo - ระบบเช่าอุปกรณ์การศึกษา",
-      },
-    ],
+    // Open Graph / Twitter images are supplied by the file-based metadata
+    // convention (app/opengraph-image.tsx and per-route opengraph-image.tsx).
+    // Hardcoding `images` here would override those generated images on every
+    // page, so it is intentionally omitted.
   },
   twitter: {
     card: "summary_large_image",
     title: "Sparkgo - ระบบเช่าอุปกรณ์การศึกษา",
     description: "แพลตฟอร์มเช่าอุปกรณ์ IoT และ STEM สำหรับโรงเรียนไทย",
-    images: [`${SITE_URL}/og-image.png`],
   },
   alternates: {
     canonical: SITE_URL,

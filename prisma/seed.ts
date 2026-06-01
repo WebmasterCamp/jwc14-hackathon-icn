@@ -548,10 +548,17 @@ async function main() {
     },
   ]
 
-  for (const equipment of equipmentData) {
-    await prisma.equipment.create({
-      data: equipment,
-    })
+  // Only seed demo equipment on a fresh database to keep db:seed re-runnable
+  // (equipment has no natural unique key to upsert against).
+  const existingEquipment = await prisma.equipment.count()
+  if (existingEquipment === 0) {
+    for (const equipment of equipmentData) {
+      await prisma.equipment.create({
+        data: equipment,
+      })
+    }
+  } else {
+    console.log('Equipment already present, skipping equipment seed')
   }
 
   // Create blog categories, tags, and posts

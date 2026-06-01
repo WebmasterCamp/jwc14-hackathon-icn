@@ -1,9 +1,20 @@
 import { ImageResponse } from "next/og";
+import { prisma } from "@/lib/prisma";
 import { getBlogPostBySlug } from "@/lib/blog/queries";
 
 export const alt = "Sparkgo Blog";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
+
+export async function generateStaticParams() {
+  const posts = await prisma.blogPost.findMany({
+    where: { status: "PUBLISHED", publishedAt: { lte: new Date() } },
+    select: { slug: true },
+    orderBy: { publishedAt: "desc" },
+    take: 50,
+  });
+  return posts.map((p) => ({ slug: p.slug }));
+}
 
 // Use the (Latin) `title` field rather than the Thai `titleTh` because the
 // default ImageResponse font only ships Latin glyphs — Thai text would render
