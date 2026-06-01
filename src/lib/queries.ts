@@ -40,18 +40,31 @@ export const getCategories = cache(async () => {
 // shaping used by the equipment listing (equipment/page.tsx) so the result
 // drops straight into <ProductCard /> without further mapping.
 export const getFeaturedProducts = cache(async () => {
-  const products = await prisma.product.findMany({
-    where: { isActive: true },
-    include: {
-      category: true,
-      equipment: {
-        where: { isActive: true, provider: { verified: true } },
-        select: { rentPriceMonthly: true },
-      },
+  const select = {
+    category: true,
+    equipment: {
+      where: { isActive: true, provider: { verified: true } },
+      select: { rentPriceMonthly: true },
     },
+  } as const;
+
+  // Prefer admin-picked featured products; if none are marked, fall back to
+  // the 10 newest active products so the homepage section is never empty.
+  let products = await prisma.product.findMany({
+    where: { isActive: true, isFeatured: true },
+    include: select,
     orderBy: { createdAt: "desc" },
     take: 10,
   });
+
+  if (products.length === 0) {
+    products = await prisma.product.findMany({
+      where: { isActive: true },
+      include: select,
+      orderBy: { createdAt: "desc" },
+      take: 10,
+    });
+  }
 
   return products.map((p) => ({
     slug: p.slug,

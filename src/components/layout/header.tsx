@@ -110,6 +110,9 @@ export function Header() {
               </Link>
             </Button>
 
+            {/* Quote cart */}
+            <QuoteCartSheet />
+
             {/* Theme Toggle */}
             <Button
               variant="ghost"
@@ -181,13 +184,15 @@ export function Header() {
             )}
           </div>
 
-          {/* Mobile Menu Button */}
-          <Button
-            variant="ghost"
-            size="lg"
-            className="md:hidden h-12 w-12"
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          >
+          {/* Mobile actions */}
+          <div className="flex items-center gap-1 md:hidden">
+            <QuoteCartSheet />
+            <Button
+              variant="ghost"
+              size="lg"
+              className="h-12 w-12"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            >
             <AnimatePresence initial={false} mode="wait">
               <motion.span
                 key={isMobileMenuOpen ? "close" : "open"}
@@ -204,7 +209,8 @@ export function Header() {
                 )}
               </motion.span>
             </AnimatePresence>
-          </Button>
+            </Button>
+          </div>
         </div>
 
         {/* Mobile Menu */}

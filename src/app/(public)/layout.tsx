@@ -1,7 +1,6 @@
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { AskLauncher } from "@/components/ask/ask-launcher";
-import { QuoteCartBar } from "@/components/quote/quote-cart-bar";
 import { PageTransition } from "@/components/motion/page-transition";
 
 export default function PublicLayout({
@@ -16,7 +15,6 @@ export default function PublicLayout({
         <PageTransition>{children}</PageTransition>
       </main>
       <Footer />
-      <QuoteCartBar />
       <AskLauncher />
     </div>
   );

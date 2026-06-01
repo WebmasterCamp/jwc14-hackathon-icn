@@ -10,7 +10,6 @@ import {
   Star,
   Package,
   ShieldCheck,
-  Phone,
   Building2,
   CheckCircle2,
   Store,
