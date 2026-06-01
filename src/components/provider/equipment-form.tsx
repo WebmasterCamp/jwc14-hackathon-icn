@@ -188,12 +188,12 @@ export function EquipmentForm({
       let payload: Record<string, unknown>;
 
       if (isEdit) {
-        url = `/api/equipment/${initialData!.id}`;
+        url = `/api/product/${initialData!.id}`;
         method = 'PUT';
         // Edit only touches the offering's commercial terms.
         payload = offering;
       } else {
-        url = '/api/equipment';
+        url = '/api/product';
         method = 'POST';
         payload =
           mode === 'select'
@@ -227,7 +227,7 @@ export function EquipmentForm({
       toast.success(
         isEdit ? 'อัพเดทรายการเรียบร้อยแล้ว' : 'เพิ่มรายการเรียบร้อยแล้ว'
       );
-      router.push('/dashboard/provider/equipment');
+      router.push('/dashboard/provider/product');
       router.refresh();
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'เกิดข้อผิดพลาด');

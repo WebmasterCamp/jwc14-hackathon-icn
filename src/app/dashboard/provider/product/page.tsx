@@ -56,7 +56,7 @@ export default async function ProviderEquipmentPage() {
           </p>
         </div>
         <Button asChild>
-          <Link href="/dashboard/provider/equipment/new">
+          <Link href="/dashboard/provider/product/new">
             <Plus className="mr-2 h-4 w-4" />
             เพิ่มอุปกรณ์
           </Link>
@@ -76,7 +76,7 @@ export default async function ProviderEquipmentPage() {
               <Package className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
               <p className="text-muted-foreground mb-4">ยังไม่มีอุปกรณ์</p>
               <Button asChild>
-                <Link href="/dashboard/provider/equipment/new">
+                <Link href="/dashboard/provider/product/new">
                   <Plus className="mr-2 h-4 w-4" />
                   เพิ่มอุปกรณ์แรก
                 </Link>

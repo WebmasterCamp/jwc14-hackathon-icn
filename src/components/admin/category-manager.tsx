@@ -84,6 +84,7 @@ export function CategoryManager({ categories }: { categories: Category[] }) {
       nameTh: cat.nameTh,
       description: cat.description || "",
       icon: cat.icon || "",
+      image: cat.image || "",
     });
   }
 
@@ -100,6 +101,7 @@ export function CategoryManager({ categories }: { categories: Category[] }) {
           nameTh: editForm.nameTh.trim(),
           description: editForm.description.trim() || undefined,
           icon: editForm.icon.trim() || undefined,
+          image: editForm.image || null,
         }),
       });
       if (!res.ok) {
@@ -168,6 +170,16 @@ export function CategoryManager({ categories }: { categories: Category[] }) {
             rows={2}
             className="mt-1"
           />
+        </div>
+        <div className="sm:col-span-2">
+          <label className="text-sm font-medium">รูปภาพหมวดหมู่ (พื้นหลัง)</label>
+          <div className="mt-1">
+            <ImageUploadField
+              value={form.image || undefined}
+              onChange={(url) => setForm({ ...form, image: url ?? "" })}
+              folder="categories"
+            />
+          </div>
         </div>
         <div className="sm:col-span-2">
           <Button
@@ -298,6 +310,18 @@ export function CategoryManager({ categories }: { categories: Category[] }) {
                 rows={2}
                 className="mt-1"
               />
+            </div>
+            <div>
+              <label className="text-sm font-medium">รูปภาพหมวดหมู่ (พื้นหลัง)</label>
+              <div className="mt-1">
+                <ImageUploadField
+                  value={editForm.image || undefined}
+                  onChange={(url) =>
+                    setEditForm({ ...editForm, image: url ?? "" })
+                  }
+                  folder="categories"
+                />
+              </div>
             </div>
             <DialogFooter>
               <Button

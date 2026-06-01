@@ -191,7 +191,7 @@ export default async function CustomerDashboardPage() {
                   ยังไม่มีสัญญาที่ใช้งาน
                 </p>
                 <Button asChild>
-                  <Link href="/equipment">
+                  <Link href="/product">
                     <Search className="mr-2 h-4 w-4" />
                     ค้นหาอุปกรณ์
                   </Link>
@@ -303,7 +303,7 @@ export default async function CustomerDashboardPage() {
         <CardContent>
           <div className="flex flex-wrap gap-3">
             <Button asChild>
-              <Link href="/equipment">
+              <Link href="/product">
                 <Search className="mr-2 h-4 w-4" />
                 ค้นหาอุปกรณ์
               </Link>

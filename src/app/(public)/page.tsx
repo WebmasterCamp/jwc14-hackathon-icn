@@ -64,7 +64,7 @@ export default async function HomePage() {
                 size="lg"
                 className="rounded-full bg-brand px-8 text-brand-foreground hover:bg-brand/90"
               >
-                <Link href="/equipment">เลือกดูสินค้า</Link>
+                <Link href="/product">เลือกดูสินค้า</Link>
               </Button>
               <Button
                 asChild
@@ -87,7 +87,7 @@ export default async function HomePage() {
             {categories.map((cat) => (
               <Link
                 key={cat.id}
-                href={`/equipment?category=${cat.slug}`}
+                href={`/product?category=${cat.slug}`}
                 className="group flex items-center gap-2 rounded-full border bg-card px-5 py-2.5 text-sm font-medium shadow-sm transition-colors hover:border-brand hover:text-brand"
               >
                 <span className="text-base leading-none">{cat.icon || "📦"}</span>

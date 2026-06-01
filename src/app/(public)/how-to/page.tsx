@@ -228,7 +228,7 @@ export default function HowToPage() {
               size="lg"
               className="rounded-full bg-brand px-8 text-brand-foreground hover:bg-brand/90"
             >
-              <Link href="/equipment">เริ่มเลือกอุปกรณ์เลย</Link>
+              <Link href="/product">เริ่มเลือกอุปกรณ์เลย</Link>
             </Button>
           </div>
         </div>
@@ -298,7 +298,7 @@ export default function HowToPage() {
                 size="lg"
                 className="rounded-full bg-brand px-8 text-brand-foreground hover:bg-brand/90"
               >
-                <Link href="/equipment">เลือกดูสินค้า</Link>
+                <Link href="/product">เลือกดูสินค้า</Link>
               </Button>
               <Button
                 asChild

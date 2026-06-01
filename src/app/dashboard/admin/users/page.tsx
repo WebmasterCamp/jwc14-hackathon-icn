@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";
-import { Users, Shield, Building2, GraduationCap, Mail, Phone } from "lucide-react";
+import { Users, Shield, UserCog, Mail, Phone } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import {
   Card,
@@ -132,11 +132,10 @@ export default async function AdminUsersPage() {
         </p>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-3">
         <StatCard title="ผู้ใช้ทั้งหมด" value={users.length} icon={Users} />
         <StatCard title="ผู้ดูแลระบบ" value={adminCount} icon={Shield} />
-        <StatCard title="ผู้ให้บริการ" value={providerCount} icon={Building2} />
-        <StatCard title="สถานศึกษา" value={customerCount} icon={GraduationCap} />
+        <StatCard title="ผู้ใช้งาน" value={userCount} icon={User} />
       </div>
 
       <Tabs defaultValue="all">

@@ -3,7 +3,7 @@ import { GraduationCap } from "lucide-react";
 
 const footerLinks = {
   platform: [
-    { href: "/equipment", label: "อุปกรณ์ทั้งหมด" },
+    { href: "/product", label: "อุปกรณ์ทั้งหมด" },
     { href: "/providers", label: "ผู้ให้บริการ" },
     { href: "/blog", label: "บทความ" },
     { href: "/pricing", label: "ราคา" },

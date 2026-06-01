@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import type { Metadata } from "next";
 import { prisma } from "@/lib/prisma";
 import { Badge } from "@/components/ui/badge";
@@ -42,25 +43,49 @@ export default async function CategorisePage() {
           <p className="text-muted-foreground">ยังไม่มีหมวดหมู่</p>
         </div>
       ) : (
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
           {categories.map((cat) => (
             <Link
               key={cat.id}
-              href={`/equipment?category=${cat.slug}`}
-              className="group flex flex-col items-center rounded-2xl border bg-card p-6 text-center transition-colors hover:border-brand hover:bg-accent"
+              href={`/product?category=${cat.slug}`}
+              className="group relative flex min-h-[200px] flex-col justify-end overflow-hidden rounded-2xl border p-6 transition-all hover:shadow-xl"
             >
-              <span className="mb-3 text-4xl">{cat.icon || "📦"}</span>
-              <span className="font-semibold group-hover:text-brand">
-                {cat.nameTh || cat.name}
-              </span>
-              {cat.description && (
-                <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">
-                  {cat.description}
-                </p>
+              {/* Background image (behind the text) */}
+              {cat.image ? (
+                <Image
+                  src={cat.image}
+                  alt=""
+                  fill
+                  sizes="(max-width: 640px) 100vw, 50vw"
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                />
+              ) : (
+                <div className="absolute inset-0 bg-gradient-to-br from-slate-800 via-slate-900 to-slate-800" />
               )}
-              <Badge variant="secondary" className="mt-3">
-                {cat._count.products} รายการ
-              </Badge>
+
+              {/* Dark gradient overlay keeps text readable on any image */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/35 to-black/10" />
+
+              {/* Foreground content */}
+              <div className="relative">
+                <span className="mb-2 inline-block text-4xl drop-shadow">
+                  {cat.icon || "📦"}
+                </span>
+                <h2 className="text-xl font-bold text-white drop-shadow-sm">
+                  {cat.nameTh || cat.name}
+                </h2>
+                {cat.description && (
+                  <p className="mt-1 line-clamp-2 text-sm text-white/85">
+                    {cat.description}
+                  </p>
+                )}
+                <Badge
+                  variant="secondary"
+                  className="mt-3 bg-white/90 text-slate-900 hover:bg-white"
+                >
+                  {cat._count.products} รายการ
+                </Badge>
+              </div>
             </Link>
           ))}
         </div>

@@ -40,7 +40,7 @@ export default async function EditEquipmentPage({
 
   // Check ownership
   if (equipment.providerId !== provider.id) {
-    redirect("/dashboard/provider/equipment");
+    redirect("/dashboard/provider/product");
   }
 
   const categories = await prisma.category.findMany({
@@ -51,7 +51,7 @@ export default async function EditEquipmentPage({
     <div className="space-y-6">
       <div className="flex items-center gap-4">
         <Button variant="ghost" size="icon" asChild>
-          <Link href="/dashboard/provider/equipment">
+          <Link href="/dashboard/provider/product">
             <ArrowLeft className="h-4 w-4" />
           </Link>
         </Button>

@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   title: "อุปกรณ์ทั้งหมด",
   description:
     "ค้นหาและเช่าอุปกรณ์ IoT และ STEM สำหรับการเรียนการสอน Arduino, หุ่นยนต์, เครื่องพิมพ์ 3D, โดรน และอีกมากมาย",
-  alternates: { canonical: `${SITE_URL}/equipment` },
+  alternates: { canonical: `${SITE_URL}/product` },
 };
 
 interface EquipmentPageProps {
@@ -151,7 +151,7 @@ async function EquipmentList({
                 {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
                   <a
                     key={p}
-                    href={`/equipment?${new URLSearchParams({
+                    href={`/product?${new URLSearchParams({
                       ...searchParams,
                       page: p.toString(),
                     }).toString()}`}

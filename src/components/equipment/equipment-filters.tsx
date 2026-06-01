@@ -35,7 +35,7 @@ const priceRanges = [
 
 export function EquipmentFilters({
   categories,
-  basePath = "/equipment",
+  basePath = "/product",
 }: EquipmentFiltersProps) {
   const router = useRouter();
   const searchParams = useSearchParams();

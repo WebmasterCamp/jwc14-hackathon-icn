@@ -21,14 +21,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       },
     },
     {
-      url: `${baseUrl}/equipment`,
+      url: `${baseUrl}/product`,
       lastModified: new Date(),
       changeFrequency: "daily",
       priority: 0.9,
       alternates: {
         languages: {
-          th: `${baseUrl}/equipment?lang=th`,
-          en: `${baseUrl}/equipment?lang=en`,
+          th: `${baseUrl}/product?lang=th`,
+          en: `${baseUrl}/product?lang=en`,
         },
       },
     },

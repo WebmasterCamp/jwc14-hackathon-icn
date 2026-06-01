@@ -183,7 +183,7 @@ export function QuoteReviewClient({ prefill }: { prefill: Prefill }) {
               </div>
             ))}
             <Button asChild className="mt-2">
-              <Link href="/equipment">เลือกอุปกรณ์เพิ่ม</Link>
+              <Link href="/product">เลือกอุปกรณ์เพิ่ม</Link>
             </Button>
           </CardContent>
         </Card>
@@ -201,7 +201,7 @@ export function QuoteReviewClient({ prefill }: { prefill: Prefill }) {
           </p>
         </div>
         <Button variant="outline" asChild>
-          <Link href="/equipment">
+          <Link href="/product">
             <ArrowLeft className="mr-2 h-4 w-4" />
             เลือกอุปกรณ์เพิ่ม
           </Link>

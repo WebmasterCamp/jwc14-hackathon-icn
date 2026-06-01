@@ -210,7 +210,7 @@ export default async function CustomerContractsPage() {
                     ยังไม่มีสัญญาที่ใช้งาน
                   </p>
                   <Button asChild>
-                    <Link href="/equipment">
+                    <Link href="/product">
                       ค้นหาอุปกรณ์
                     </Link>
                   </Button>

@@ -5,7 +5,7 @@ import { z } from "zod";
 import { buildMatchKey, buildProductSlug } from "@/lib/product-match";
 import { randomUUID } from "crypto";
 
-// GET /api/equipment - List equipment with filters
+// GET /api/product - List equipment with filters
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
@@ -108,7 +108,7 @@ const createEquipmentSchema = z
     message: "Either productId or newProduct is required",
   });
 
-// POST /api/equipment - Create new offering (Provider only)
+// POST /api/product - Create new offering (Provider only)
 export async function POST(request: Request) {
   try {
     const session = await auth();

@@ -217,7 +217,7 @@ export default async function ProviderDashboardPage() {
         <CardContent>
           <div className="flex flex-wrap gap-3">
             <Button asChild>
-              <Link href="/dashboard/provider/equipment/new">
+              <Link href="/dashboard/provider/product/new">
                 <Package className="mr-2 h-4 w-4" />
                 เพิ่มอุปกรณ์ใหม่
               </Link>

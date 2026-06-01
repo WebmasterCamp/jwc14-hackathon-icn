@@ -7,7 +7,7 @@ interface RouteParams {
   params: Promise<{ id: string }>;
 }
 
-// GET /api/equipment/[id] - Get single equipment
+// GET /api/product/[id] - Get single equipment
 export async function GET(request: Request, { params }: RouteParams) {
   try {
     const { id } = await params;
@@ -65,7 +65,7 @@ const updateEquipmentSchema = z.object({
   isActive: z.boolean().optional(),
 });
 
-// PUT /api/equipment/[id] - Update equipment (Provider only)
+// PUT /api/product/[id] - Update equipment (Provider only)
 export async function PUT(request: Request, { params }: RouteParams) {
   try {
     const session = await auth();
@@ -136,7 +136,7 @@ export async function PUT(request: Request, { params }: RouteParams) {
   }
 }
 
-// DELETE /api/equipment/[id] - Delete equipment (Provider only)
+// DELETE /api/product/[id] - Delete equipment (Provider only)
 export async function DELETE(request: Request, { params }: RouteParams) {
   try {
     const session = await auth();

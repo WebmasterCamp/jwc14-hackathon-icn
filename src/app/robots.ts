@@ -9,8 +9,8 @@ export default function robots(): MetadataRoute.Robots {
         userAgent: "*",
         allow: [
           "/",
-          "/equipment",
-          "/equipment/*",
+          "/product",
+          "/product/*",
           "/providers",
           "/providers/*",
           "/blog",

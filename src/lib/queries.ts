@@ -83,7 +83,7 @@ export const getProductBySlug = cache(async (slug: string) => {
 });
 
 // Map an offering (Equipment) id to its product slug — used for legacy
-// /equipment/[id] redirects.
+// /product/[id] redirects.
 export const getProductSlugByEquipmentId = cache(async (equipmentId: string) => {
   const equipment = await prisma.equipment.findUnique({
     where: { id: equipmentId },

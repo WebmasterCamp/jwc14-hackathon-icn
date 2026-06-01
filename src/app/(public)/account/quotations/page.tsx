@@ -58,7 +58,7 @@ export default async function AccountQuotationsPage() {
             <ReceiptText className="mx-auto mb-3 h-10 w-10 opacity-40" />
             <p className="mb-4">ยังไม่มีใบเสนอราคา</p>
             <Button asChild>
-              <Link href="/equipment">เลือกดูอุปกรณ์</Link>
+              <Link href="/product">เลือกดูอุปกรณ์</Link>
             </Button>
           </div>
         ) : (

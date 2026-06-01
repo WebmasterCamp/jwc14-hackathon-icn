@@ -122,7 +122,7 @@ export default async function ProductDetailPage({
           }),
           generateBreadcrumbSchema([
             { name: "หน้าแรก", url: "/" },
-            { name: "อุปกรณ์ทั้งหมด", url: "/equipment" },
+            { name: "อุปกรณ์ทั้งหมด", url: "/product" },
             { name: displayName, url: `/products/${product.slug}` },
           ]),
         ]}
@@ -131,7 +131,7 @@ export default async function ProductDetailPage({
       {/* Breadcrumb */}
       <nav className="mb-6">
         <Link
-          href="/equipment"
+          href="/product"
           className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground"
         >
           <ArrowLeft className="mr-2 h-4 w-4" />

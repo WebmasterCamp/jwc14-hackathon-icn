@@ -91,7 +91,7 @@ export default async function NewMaintenanceRequestPage() {
                 กรุณาเช่าอุปกรณ์ก่อนเพื่อสร้างคำขอซ่อมบำรุง
               </p>
               <Button asChild>
-                <Link href="/equipment">เรียกดูอุปกรณ์</Link>
+                <Link href="/product">เรียกดูอุปกรณ์</Link>
               </Button>
             </div>
           ) : (

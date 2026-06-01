@@ -40,7 +40,7 @@ interface SidebarItem {
 
 const providerNavItems: SidebarItem[] = [
   { href: "/dashboard/provider", label: "ภาพรวม", icon: LayoutDashboard },
-  { href: "/dashboard/provider/equipment", label: "อุปกรณ์", icon: Package },
+  { href: "/dashboard/provider/product", label: "อุปกรณ์", icon: Package },
   { href: "/dashboard/provider/contracts", label: "สัญญา", icon: FileText },
   { href: "/dashboard/provider/quotations", label: "ใบเสนอราคา", icon: ReceiptText },
   { href: "/dashboard/provider/payments", label: "การชำระเงิน", icon: CreditCard },

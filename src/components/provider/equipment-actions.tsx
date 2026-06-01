@@ -42,7 +42,7 @@ export function EquipmentActions({
   const handleDelete = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch(`/api/equipment/${equipmentId}`, {
+      const response = await fetch(`/api/product/${equipmentId}`, {
         method: "DELETE",
       });
       if (!response.ok) {
@@ -75,7 +75,7 @@ export function EquipmentActions({
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
-            <Link href={`/dashboard/provider/equipment/${equipmentId}/edit`}>
+            <Link href={`/dashboard/provider/product/${equipmentId}/edit`}>
               <Pencil className="mr-2 h-4 w-4" />
               แก้ไข
             </Link>

@@ -95,7 +95,7 @@ export function Header() {
           <div className="hidden md:flex items-center gap-4">
             {/* Search */}
             <Button variant="ghost" size="lg" aria-label="ค้นหา" asChild className="h-12 w-12">
-              <Link href="/equipment">
+              <Link href="/product">
                 <Search className="h-7 w-7" />
               </Link>
             </Button>

@@ -2,7 +2,7 @@ import { notFound, redirect } from "next/navigation";
 import { getProductSlugByEquipmentId } from "@/lib/queries";
 
 // Legacy route: products are now served at /products/[slug]. An old
-// /equipment/[id] link (where id is an offering id) redirects to the product
+// /product/[id] link (where id is an offering id) redirects to the product
 // page that offering belongs to.
 interface LegacyEquipmentPageProps {
   params: Promise<{ id: string }>;
