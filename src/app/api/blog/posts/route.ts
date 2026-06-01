@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
     const isAdmin = session.user.role === "ADMIN";
     let isVerifiedProvider = false;
 
-    if (session.user.role === "PROVIDER") {
+    if (session.user.role === "ADMIN") {
       const provider = await prisma.provider.findUnique({
         where: { userId: session.user.id },
       });

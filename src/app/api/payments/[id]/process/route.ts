@@ -58,7 +58,7 @@ export async function POST(request: Request, { params }: RouteParams) {
     }
 
     // Verify customer owns this payment
-    if (session.user.role === 'CUSTOMER') {
+    if (session.user.role === 'USER') {
       const customer = await prisma.customer.findUnique({
         where: { userId: session.user.id },
       });

@@ -74,11 +74,11 @@ export function TagManager({ tags }: { tags: Tag[] }) {
   return (
     <div className="space-y-6">
       <form onSubmit={create} className="flex flex-wrap items-end gap-3">
-        <div className="flex-1 min-w-[160px]">
+        <div className="flex-1 min-w-[120px] sm:min-w-[160px]">
           <label className="text-sm font-medium">ชื่อ (อังกฤษ) *</label>
           <Input value={name} onChange={(e) => setName(e.target.value)} className="mt-1" />
         </div>
-        <div className="flex-1 min-w-[160px]">
+        <div className="flex-1 min-w-[120px] sm:min-w-[160px]">
           <label className="text-sm font-medium">ชื่อ (ไทย)</label>
           <Input value={nameTh} onChange={(e) => setNameTh(e.target.value)} className="mt-1" />
         </div>

@@ -15,7 +15,7 @@ export default async function EditEquipmentPage({
   const { id } = await params;
   const session = await auth();
 
-  if (!session || session.user.role !== "PROVIDER") {
+  if (!session || session.user.role !== "ADMIN") {
     redirect("/login");
   }
 

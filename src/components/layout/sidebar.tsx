@@ -64,92 +64,138 @@ interface SidebarProps {
   variant: "provider" | "admin";
 }
 
-export function Sidebar({ variant }: SidebarProps) {
+function getVariantColor(variant: SidebarProps["variant"]) {
+  switch (variant) {
+    case "provider":
+      return "text-secondary";
+    case "admin":
+      return "text-destructive";
+    default:
+      return "text-primary";
+  }
+}
+
+/**
+ * Renders the list of nav links. Shared by the desktop aside and the mobile drawer.
+ * `collapsed` only applies on desktop (icon-only with tooltips); the mobile drawer
+ * always renders expanded and calls `onNavigate` to dismiss itself on click.
+ */
+function SidebarNav({
+  variant,
+  collapsed = false,
+  onNavigate,
+}: {
+  variant: SidebarProps["variant"];
+  collapsed?: boolean;
+  onNavigate?: () => void;
+}) {
   const pathname = usePathname();
-  const [collapsed, setCollapsed] = useState(false);
-
-  const navItems =
-    variant === "provider" ? providerNavItems : adminNavItems;
-
-  const getVariantColor = () => {
-    switch (variant) {
-      case "provider":
-        return "text-secondary";
-      case "admin":
-        return "text-destructive";
-      default:
-        return "text-primary";
-    }
-  };
+  const navItems = variant === "provider" ? providerNavItems : adminNavItems;
 
   return (
-    <aside
-      className={cn(
-        "sticky top-16 h-[calc(100vh-4rem)] border-r bg-sidebar transition-all duration-300 flex flex-col",
-        collapsed ? "w-16" : "w-64"
-      )}
-    >
-      <div className="flex-1 py-4">
-        <nav className="space-y-1 px-2">
-          {navItems.map((item) => {
-            const isActive =
-              pathname === item.href ||
-              (item.href !== `/dashboard/${variant}` &&
-                pathname.startsWith(item.href));
+    <nav className="space-y-1 px-2">
+      {navItems.map((item) => {
+        const isActive =
+          pathname === item.href ||
+          (item.href !== `/dashboard/${variant}` &&
+            pathname.startsWith(item.href));
 
-            const linkContent = (
-              <Link
-                href={item.href}
-                className={cn(
-                  "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
-                  isActive
-                    ? "bg-sidebar-accent text-sidebar-accent-foreground"
-                    : "text-sidebar-foreground hover:bg-sidebar-accent/50"
-                )}
-              >
-                <item.icon
-                  className={cn(
-                    "h-5 w-5 flex-shrink-0",
-                    isActive && getVariantColor()
-                  )}
-                />
-                {!collapsed && <span>{item.label}</span>}
-              </Link>
-            );
+        const linkContent = (
+          <Link
+            href={item.href}
+            onClick={onNavigate}
+            className={cn(
+              "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+              isActive
+                ? "bg-sidebar-accent text-sidebar-accent-foreground"
+                : "text-sidebar-foreground hover:bg-sidebar-accent/50"
+            )}
+          >
+            <item.icon
+              className={cn(
+                "h-5 w-5 flex-shrink-0",
+                isActive && getVariantColor(variant)
+              )}
+            />
+            {!collapsed && <span>{item.label}</span>}
+          </Link>
+        );
 
-            if (collapsed) {
-              return (
-                <Tooltip key={item.href} delayDuration={0}>
-                  <TooltipTrigger asChild>{linkContent}</TooltipTrigger>
-                  <TooltipContent side="right">
-                    <p>{item.label}</p>
-                  </TooltipContent>
-                </Tooltip>
-              );
-            }
+        if (collapsed) {
+          return (
+            <Tooltip key={item.href} delayDuration={0}>
+              <TooltipTrigger asChild>{linkContent}</TooltipTrigger>
+              <TooltipContent side="right">
+                <p>{item.label}</p>
+              </TooltipContent>
+            </Tooltip>
+          );
+        }
 
-            return <div key={item.href}>{linkContent}</div>;
-          })}
-        </nav>
+        return <div key={item.href}>{linkContent}</div>;
+      })}
+    </nav>
+  );
+}
+
+export function Sidebar({ variant }: SidebarProps) {
+  const [collapsed, setCollapsed] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  return (
+    <>
+      {/* Desktop sidebar */}
+      <aside
+        className={cn(
+          "sticky top-16 hidden h-[calc(100vh-4rem)] border-r bg-sidebar transition-all duration-300 md:flex md:flex-col",
+          collapsed ? "w-16" : "w-64"
+        )}
+      >
+        <div className="flex-1 py-4">
+          <SidebarNav variant={variant} collapsed={collapsed} />
+        </div>
+
+        <div className="border-t p-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="w-full justify-center"
+            onClick={() => setCollapsed(!collapsed)}
+          >
+            {collapsed ? (
+              <ChevronRight className="h-4 w-4" />
+            ) : (
+              <>
+                <ChevronLeft className="h-4 w-4 mr-2" />
+                <span>ย่อเมนู</span>
+              </>
+            )}
+          </Button>
+        </div>
+      </aside>
+
+      {/* Mobile top bar + drawer trigger */}
+      <div className="sticky top-16 z-30 flex items-center gap-2 border-b bg-background px-4 py-2 md:hidden">
+        <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+          <SheetTrigger asChild>
+            <Button variant="outline" size="sm" className="gap-2">
+              <Menu className="h-4 w-4" />
+              <span>เมนู</span>
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="left" className="w-72 bg-sidebar p-0">
+            <SheetHeader className="border-b px-4 py-4">
+              <SheetTitle>เมนู</SheetTitle>
+            </SheetHeader>
+            <div className="py-4">
+              <SidebarNav
+                variant={variant}
+                onNavigate={() => setMobileOpen(false)}
+              />
+            </div>
+          </SheetContent>
+        </Sheet>
       </div>
-
-      <div className="border-t p-2">
-        <Button
-          variant="ghost"
-          size="sm"
-          className="w-full justify-center"
-          onClick={() => setCollapsed(!collapsed)}
-        >
-          {collapsed ? (
-            <ChevronRight className="h-4 w-4" />
-          ) : (
-            <>
-              <ChevronLeft className="h-4 w-4 mr-2" />
-              <span>ย่อเมนู</span>
-            </>
-          )}
-        </Button>
-      </div>
-    </aside>
+    </>
   );
 }

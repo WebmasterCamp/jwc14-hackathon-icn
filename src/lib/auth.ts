@@ -106,7 +106,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                   name: user.name,
                   avatar: user.image,
                   emailVerified: new Date(),
-                  role: "CUSTOMER", // Default role for OAuth users
+                  role: "USER", // OAuth users are customers (USER)
                 },
               });
 

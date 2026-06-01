@@ -17,7 +17,7 @@ export default async function QuotePage() {
   const session = await auth();
 
   // Issuing a quotation requires a signed-in CUSTOMER.
-  if (!session?.user || session.user.role !== "CUSTOMER") {
+  if (!session?.user || session.user.role !== "USER") {
     return (
       <div className="container mx-auto max-w-lg px-4 py-20">
         <Card>
@@ -35,7 +35,7 @@ export default async function QuotePage() {
                 เข้าสู่ระบบ
               </Link>
             </Button>
-            {session?.user && session.user.role !== "CUSTOMER" && (
+            {session?.user && session.user.role !== "USER" && (
               <p className="text-sm text-muted-foreground">
                 บัญชีปัจจุบันไม่ใช่บัญชีผู้เช่า กรุณาเข้าสู่ระบบด้วยบัญชีลูกค้า
               </p>

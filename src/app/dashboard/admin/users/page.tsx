@@ -48,8 +48,8 @@ export default async function AdminUsersPage() {
   });
 
   const adminCount = users.filter((u) => u.role === "ADMIN").length;
-  const providerCount = users.filter((u) => u.role === "PROVIDER").length;
-  const customerCount = users.filter((u) => u.role === "CUSTOMER").length;
+  const providerCount = users.filter((u) => u.role === "ADMIN").length;
+  const customerCount = users.filter((u) => u.role === "USER").length;
 
   const UserTable = ({ rows }: { rows: typeof users }) => (
     <Table>
@@ -65,9 +65,9 @@ export default async function AdminUsersPage() {
       <TableBody>
         {rows.map((u) => {
           const orgName =
-            u.role === "PROVIDER"
+            u.role === "ADMIN"
               ? u.provider?.companyName
-              : u.role === "CUSTOMER"
+              : u.role === "USER"
               ? u.customer?.schoolName
               : null;
           return (
@@ -125,12 +125,12 @@ export default async function AdminUsersPage() {
     {
       value: "PROVIDER",
       label: `ผู้ให้บริการ (${providerCount})`,
-      rows: users.filter((u) => u.role === "PROVIDER"),
+      rows: users.filter((u) => u.role === "ADMIN"),
     },
     {
       value: "CUSTOMER",
       label: `สถานศึกษา (${customerCount})`,
-      rows: users.filter((u) => u.role === "CUSTOMER"),
+      rows: users.filter((u) => u.role === "USER"),
     },
   ];
 

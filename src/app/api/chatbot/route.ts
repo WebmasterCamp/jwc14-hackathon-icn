@@ -127,7 +127,7 @@ export async function POST(request: Request) {
 
     // Get user's active contracts for personalized responses.
     let userEquipment: { name: string; category: { nameTh: string } }[] = [];
-    if (session.user.role === 'CUSTOMER') {
+    if (session.user.role === 'USER') {
       const customer = await prisma.customer.findUnique({
         where: { userId: session.user.id },
       });

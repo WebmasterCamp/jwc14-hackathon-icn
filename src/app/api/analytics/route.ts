@@ -90,7 +90,7 @@ export async function GET() {
       });
     }
 
-    if (session.user.role === "PROVIDER") {
+    if (session.user.role === "ADMIN") {
       const provider = await prisma.provider.findUnique({
         where: { userId: session.user.id },
         include: {
@@ -177,7 +177,7 @@ export async function GET() {
       });
     }
 
-    if (session.user.role === "CUSTOMER") {
+    if (session.user.role === "USER") {
       const customer = await prisma.customer.findUnique({
         where: { userId: session.user.id },
         include: {

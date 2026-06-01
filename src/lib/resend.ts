@@ -22,12 +22,12 @@ export async function sendWelcomeEmail({
   role: "PROVIDER" | "CUSTOMER";
 }) {
   const subject =
-    role === "PROVIDER"
+    role === "ADMIN"
       ? "ยินดีต้อนรับสู่ Sparkgo - สำหรับผู้ให้บริการ"
       : "ยินดีต้อนรับสู่ Sparkgo - สำหรับสถานศึกษา";
 
   const dashboardUrl =
-    role === "PROVIDER"
+    role === "ADMIN"
       ? `${APP_URL}/dashboard/provider`
       : `${APP_URL}/account`;
 
@@ -41,7 +41,7 @@ export async function sendWelcomeEmail({
         <p>สวัสดีคุณ ${name},</p>
         <p>ขอบคุณที่สมัครใช้งาน Sparkgo - แพลตฟอร์มเช่าอุปกรณ์ IoT และ STEM สำหรับโรงเรียนไทย</p>
         ${
-          role === "PROVIDER"
+          role === "ADMIN"
             ? `
           <p>ในฐานะผู้ให้บริการ คุณสามารถ:</p>
           <ul>

@@ -27,13 +27,13 @@ export async function GET(request: Request) {
       pagination: { page, limit, total: 0, totalPages: 0 },
     });
 
-    if (session.user.role === "PROVIDER") {
+    if (session.user.role === "ADMIN") {
       const provider = await prisma.provider.findUnique({
         where: { userId: session.user.id },
       });
       if (!provider) return emptyResult;
       where = { providerId: provider.id };
-    } else if (session.user.role === "CUSTOMER") {
+    } else if (session.user.role === "USER") {
       const customer = await prisma.customer.findUnique({
         where: { userId: session.user.id },
       });
@@ -101,7 +101,7 @@ const createContractSchema = z.object({
 export async function POST(request: Request) {
   try {
     const session = await auth();
-    if (!session || session.user.role !== "PROVIDER") {
+    if (!session || session.user.role !== "ADMIN") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 

@@ -203,7 +203,7 @@ export default async function AdminCustomersPage({
               <Input placeholder="ค้นหาชื่อสถานศึกษา, จังหวัด, อีเมล..." />
             </div>
             <Select>
-              <SelectTrigger className="w-[200px]">
+              <SelectTrigger className="w-full sm:w-[200px]">
                 <SelectValue placeholder="ประเภทสถานศึกษา" />
               </SelectTrigger>
               <SelectContent>

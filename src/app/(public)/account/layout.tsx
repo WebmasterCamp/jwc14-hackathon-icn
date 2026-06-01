@@ -38,7 +38,7 @@ export default async function AccountLayout({
   }
 
   // Signed in but not a customer → point them at their own dashboard.
-  if (session.user.role !== "CUSTOMER") {
+  if (session.user.role !== "USER") {
     const dashboard =
       session.user.role === "ADMIN"
         ? "/dashboard/admin"

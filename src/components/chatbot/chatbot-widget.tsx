@@ -107,7 +107,7 @@ export function ChatbotWidget() {
       {/* Chat Window */}
       <div
         className={cn(
-          'fixed bottom-6 right-6 w-96 h-[600px] bg-background border rounded-lg shadow-2xl z-50 flex flex-col transition-all',
+          'fixed bottom-4 right-4 sm:bottom-6 sm:right-6 w-[min(24rem,calc(100vw-2rem))] h-[min(600px,calc(100vh-7rem))] bg-background border rounded-lg shadow-2xl z-50 flex flex-col transition-all',
           isOpen ? 'scale-100 opacity-100' : 'scale-0 opacity-0'
         )}
       >

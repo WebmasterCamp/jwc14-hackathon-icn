@@ -9,7 +9,7 @@ import { EquipmentForm } from "@/components/provider/equipment-form";
 
 export default async function NewEquipmentPage() {
   const session = await auth();
-  if (!session || session.user.role !== "PROVIDER") {
+  if (!session || session.user.role !== "ADMIN") {
     redirect("/login");
   }
 

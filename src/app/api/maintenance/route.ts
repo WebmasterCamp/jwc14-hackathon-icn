@@ -15,7 +15,7 @@ const createMaintenanceSchema = z.object({
 export async function POST(request: Request) {
   try {
     const session = await auth();
-    if (!session || session.user.role !== 'CUSTOMER') {
+    if (!session || session.user.role !== 'USER') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -166,13 +166,13 @@ export async function GET(request: Request) {
       pagination: { page, limit, total: 0, totalPages: 0 },
     });
 
-    if (session.user.role === 'CUSTOMER') {
+    if (session.user.role === 'USER') {
       const customer = await prisma.customer.findUnique({
         where: { userId: session.user.id },
       });
       if (!customer) return emptyResult;
       where.customerId = customer.id;
-    } else if (session.user.role === 'PROVIDER') {
+    } else if (session.user.role === 'ADMIN') {
       const provider = await prisma.provider.findUnique({
         where: { userId: session.user.id },
       });

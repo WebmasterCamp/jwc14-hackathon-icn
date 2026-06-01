@@ -22,7 +22,7 @@ export async function PATCH(request: Request) {
     const role = session.user.role;
     const body = await request.json();
 
-    if (role === "PROVIDER") {
+    if (role === "ADMIN") {
       const parsed = providerProfileSchema.safeParse(body);
       if (!parsed.success) {
         return NextResponse.json(
@@ -52,7 +52,7 @@ export async function PATCH(request: Request) {
       return NextResponse.json({ success: true });
     }
 
-    if (role === "CUSTOMER") {
+    if (role === "USER") {
       const parsed = customerProfileSchema.safeParse(body);
       if (!parsed.success) {
         return NextResponse.json(

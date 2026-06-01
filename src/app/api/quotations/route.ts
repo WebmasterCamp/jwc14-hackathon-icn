@@ -66,7 +66,7 @@ export async function POST(request: Request) {
   if (!session?.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-  if (session.user.role !== "CUSTOMER") {
+  if (session.user.role !== "USER") {
     return NextResponse.json(
       { error: "เฉพาะบัญชีผู้เช่าเท่านั้นที่ออกใบเสนอราคาได้" },
       { status: 403 }

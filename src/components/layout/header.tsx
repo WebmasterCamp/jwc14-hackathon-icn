@@ -45,7 +45,7 @@ export function Header() {
 
   // Customers live in the public /account area; staff have role dashboards.
   const isStaff =
-    session?.user?.role === "ADMIN" || session?.user?.role === "PROVIDER";
+    session?.user?.role === "ADMIN" || session?.user?.role === "ADMIN";
   const getDashboardLink = () => {
     switch (session?.user?.role) {
       case "ADMIN":

@@ -9,7 +9,7 @@ import { ensureCustomerProfile } from "@/lib/queries";
 
 export default async function NewMaintenanceRequestPage() {
   const session = await auth();
-  if (!session?.user || session.user.role !== "CUSTOMER") return null;
+  if (!session?.user || session.user.role !== "USER") return null;
 
   // Guarantee the profile row exists so we never redirect-loop with middleware.
   await ensureCustomerProfile(session.user.id, session.user.name);

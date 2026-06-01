@@ -69,7 +69,7 @@ const updateEquipmentSchema = z.object({
 export async function PUT(request: Request, { params }: RouteParams) {
   try {
     const session = await auth();
-    if (!session || session.user.role !== "PROVIDER") {
+    if (!session || session.user.role !== "ADMIN") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -140,7 +140,7 @@ export async function PUT(request: Request, { params }: RouteParams) {
 export async function DELETE(request: Request, { params }: RouteParams) {
   try {
     const session = await auth();
-    if (!session || session.user.role !== "PROVIDER") {
+    if (!session || session.user.role !== "ADMIN") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
