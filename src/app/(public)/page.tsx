@@ -22,7 +22,7 @@ export default async function HomePage() {
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl font-extrabold md:text-5xl">ไม่มีงบประมาณหรอ?</h2>
           <p className="mt-3 text-xl font-semibold md:text-3xl">
-            อย่าให้งบประมาณ มาขวางไอเดียคุณ
+            เปลี่ยนจากบอร์ดเป็นพัน กลายเป็นหลักร้อย
           </p>
         </div>
       </section>

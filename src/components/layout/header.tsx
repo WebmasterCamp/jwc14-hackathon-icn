@@ -17,6 +17,7 @@ import {
   Search,
 } from "lucide-react";
 import { useTheme } from "next-themes";
+import { motion, AnimatePresence } from "framer-motion";
 
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -66,9 +67,9 @@ export function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b-[3px] border-border bg-background shadow-md">
-      <div className="container mx-auto px-6">
-        <div className="flex h-24 items-center justify-between">
+    <header className="sticky top-0 z-50 w-full border-b border-border bg-background shadow-sm">
+      <div className="container mx-auto px-4 md:px-6">
+        <div className="flex h-16 items-center justify-between md:h-20">
           {/* Logo */}
           <Link href="/" className="flex items-center" aria-label="Spark Go">
             <Image
@@ -77,21 +78,21 @@ export function Header() {
               width={6000}
               height={3375}
               priority
-              className="h-16 w-auto"
+              className="h-10 w-auto md:h-12"
             />
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-10">
+          <nav className="hidden md:flex items-center gap-7">
             {publicNavItems.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "text-lg font-bold transition-colors hover:text-brand py-2 px-2 hover:scale-105 transition-transform",
+                  "text-[15px] font-medium transition-colors hover:text-brand",
                   pathname === item.href
-                    ? "text-brand border-b-[3px] border-brand"
-                    : "text-foreground"
+                    ? "text-brand"
+                    : "text-foreground/80"
                 )}
               >
                 {item.label}
@@ -100,42 +101,41 @@ export function Header() {
           </nav>
 
           {/* Desktop Actions */}
-          <div className="hidden md:flex items-center gap-4">
+          <div className="hidden md:flex items-center gap-2">
             {/* Search */}
-            <Button variant="ghost" size="lg" aria-label="ค้นหา" asChild className="h-12 w-12">
+            <Button variant="ghost" size="icon" aria-label="ค้นหา" asChild>
               <Link href="/product">
-                <Search className="h-7 w-7" />
+                <Search className="h-5 w-5" />
               </Link>
             </Button>
 
             {/* Theme Toggle */}
             <Button
               variant="ghost"
-              size="lg"
+              size="icon"
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              className="h-12 w-12"
             >
-              <Sun className="h-7 w-7 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-              <Moon className="absolute h-7 w-7 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+              <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+              <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
               <span className="sr-only">Toggle theme</span>
             </Button>
 
             {status === "loading" ? (
-              <div className="h-12 w-28 bg-muted animate-pulse rounded-md" />
+              <div className="h-9 w-20 bg-muted animate-pulse rounded-md" />
             ) : session ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="gap-2 h-12 text-lg font-bold">
-                    <Avatar className="h-10 w-10">
+                  <Button variant="ghost" className="gap-2">
+                    <Avatar className="h-8 w-8">
                       <AvatarImage src={session.user?.image || undefined} />
-                      <AvatarFallback className="bg-primary/10 text-primary text-lg font-bold">
+                      <AvatarFallback className="bg-primary/10 text-primary text-sm">
                         {getInitials(session.user?.name)}
                       </AvatarFallback>
                     </Avatar>
-                    <span className="hidden lg:inline max-w-[120px] truncate font-bold">
+                    <span className="hidden lg:inline max-w-[120px] truncate">
                       {session.user?.name}
                     </span>
-                    <ChevronDown className="h-5 w-5" />
+                    <ChevronDown className="h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56">
@@ -173,8 +173,7 @@ export function Header() {
             ) : (
               <Button
                 asChild
-                size="lg"
-                className="rounded-full bg-brand px-10 py-6 text-lg font-bold text-brand-foreground hover:bg-brand/90 shadow-md hover:shadow-lg transition-all"
+                className="rounded-full bg-brand px-6 text-brand-foreground hover:bg-brand/90"
               >
                 <Link href="/login">เข้าสู่ระบบ</Link>
               </Button>
@@ -188,67 +187,93 @@ export function Header() {
             className="md:hidden h-12 w-12"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           >
-            {isMobileMenuOpen ? (
-              <X className="h-7 w-7" />
-            ) : (
-              <Menu className="h-7 w-7" />
-            )}
+            <AnimatePresence initial={false} mode="wait">
+              <motion.span
+                key={isMobileMenuOpen ? "close" : "open"}
+                initial={{ rotate: -90, opacity: 0 }}
+                animate={{ rotate: 0, opacity: 1 }}
+                exit={{ rotate: 90, opacity: 0 }}
+                transition={{ duration: 0.15 }}
+                className="flex"
+              >
+                {isMobileMenuOpen ? (
+                  <X className="h-7 w-7" />
+                ) : (
+                  <Menu className="h-7 w-7" />
+                )}
+              </motion.span>
+            </AnimatePresence>
           </Button>
         </div>
 
         {/* Mobile Menu */}
-        {isMobileMenuOpen && (
-          <div className="md:hidden py-6 border-t-2">
-            <nav className="flex flex-col gap-3">
-              {publicNavItems.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className={cn(
-                    "px-5 py-4 rounded-lg text-lg font-bold transition-colors",
-                    pathname === item.href
-                      ? "bg-brand/10 text-brand border-l-4 border-brand"
-                      : "text-foreground hover:bg-accent"
-                  )}
-                >
-                  {item.label}
-                </Link>
-              ))}
+        <AnimatePresence initial={false}>
+          {isMobileMenuOpen && (
+            <motion.div
+              key="mobile-menu"
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.25, ease: "easeInOut" }}
+              className="md:hidden overflow-hidden border-t-2"
+            >
+              <nav className="flex flex-col gap-1.5 py-4">
+                {publicNavItems.map((item, i) => (
+                  <motion.div
+                    key={item.href}
+                    initial={{ opacity: 0, x: -12 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.06 * i + 0.08 }}
+                  >
+                    <Link
+                      href={item.href}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className={cn(
+                        "block rounded-lg px-4 py-3 text-base font-semibold transition-colors",
+                        pathname === item.href
+                          ? "bg-brand/10 text-brand border-l-4 border-brand"
+                          : "text-foreground hover:bg-accent"
+                      )}
+                    >
+                      {item.label}
+                    </Link>
+                  </motion.div>
+                ))}
 
-              <div className="h-px bg-border my-3" />
+                <div className="h-px bg-border my-2" />
 
-              {session ? (
-                <>
+                {session ? (
+                  <>
+                    <Link
+                      href={getDashboardLink()}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="block rounded-lg px-4 py-3 text-base font-semibold text-muted-foreground hover:bg-accent"
+                    >
+                      {dashboardLabel}
+                    </Link>
+                    <button
+                      onClick={() => {
+                        setIsMobileMenuOpen(false);
+                        signOut({ callbackUrl: "/" });
+                      }}
+                      className="rounded-lg px-4 py-3 text-base font-semibold text-destructive hover:bg-destructive/10 text-left"
+                    >
+                      ออกจากระบบ
+                    </button>
+                  </>
+                ) : (
                   <Link
-                    href={getDashboardLink()}
+                    href="/login"
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className="px-5 py-4 rounded-lg text-lg font-bold text-muted-foreground hover:bg-accent"
+                    className="rounded-full px-4 py-3 text-center text-base font-bold bg-brand text-brand-foreground hover:bg-brand/90 shadow-md"
                   >
-                    {dashboardLabel}
+                    เข้าสู่ระบบ
                   </Link>
-                  <button
-                    onClick={() => {
-                      setIsMobileMenuOpen(false);
-                      signOut({ callbackUrl: "/" });
-                    }}
-                    className="px-5 py-4 rounded-lg text-lg font-bold text-destructive hover:bg-destructive/10 text-left"
-                  >
-                    ออกจากระบบ
-                  </button>
-                </>
-              ) : (
-                <Link
-                  href="/login"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="px-5 py-4 rounded-full text-center text-lg font-bold bg-brand text-brand-foreground hover:bg-brand/90 shadow-md"
-                >
-                  เข้าสู่ระบบ
-                </Link>
-              )}
-            </nav>
-          </div>
-        )}
+                )}
+              </nav>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </header>
   );
