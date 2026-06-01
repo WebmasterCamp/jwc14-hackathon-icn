@@ -139,20 +139,6 @@ export default function ProvidersPage() {
       <Suspense fallback={<ProvidersListSkeleton />}>
         <ProvidersList />
       </Suspense>
-
-      {/* CTA */}
-      <div className="mt-12 p-8 bg-muted/50 rounded-xl text-center">
-        <h2 className="text-2xl font-bold mb-2">สนใจเป็นผู้ให้บริการ?</h2>
-        <p className="text-muted-foreground mb-4">
-          เข้าถึงโรงเรียนกว่า 500 แห่งทั่วประเทศผ่านแพลตฟอร์มของเรา
-        </p>
-        <Button size="lg" asChild>
-          <Link href="/register/provider">
-            สมัครเป็นผู้ให้บริการ
-            <ArrowRight className="ml-2 h-5 w-5" />
-          </Link>
-        </Button>
-      </div>
     </div>
   );
 }

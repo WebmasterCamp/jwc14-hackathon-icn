@@ -5,13 +5,12 @@ const publicRoutes = [
   "/",
   "/login",
   "/register",
-  "/register/provider",
   "/register/customer",
   "/equipment",
   "/providers",
 ];
 
-const authRoutes = ["/login", "/register", "/register/provider", "/register/customer"];
+const authRoutes = ["/login", "/register", "/register/customer"];
 
 export async function middleware(req: NextRequest) {
   const { nextUrl } = req;

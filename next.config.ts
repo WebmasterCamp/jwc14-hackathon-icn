@@ -9,6 +9,10 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
+        hostname: "cdn-sparkgo.meao.dev",
+      },
+      {
+        protocol: "https",
         hostname: "*.googleusercontent.com",
       },
       {

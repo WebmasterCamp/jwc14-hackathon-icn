@@ -12,13 +12,10 @@ export default async function DashboardIndex() {
     redirect("/login");
   }
 
-  switch (session.user.role) {
-    case "ADMIN":
-      redirect("/dashboard/admin");
-    case "PROVIDER":
-      redirect("/dashboard/provider");
-    default:
-      // Customers no longer have a dashboard — their area lives in the frontend.
-      redirect("/account");
+  // ADMIN = shop operator/platform admin; everyone else (USER) is a customer
+  // whose area lives in the public /account frontend.
+  if (session.user.role === "ADMIN") {
+    redirect("/dashboard/admin");
   }
+  redirect("/account");
 }

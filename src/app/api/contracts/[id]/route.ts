@@ -145,11 +145,6 @@ export async function PATCH(request: Request, { params }: RouteParams) {
     let canUpdate = false;
     if (session.user.role === 'ADMIN') {
       canUpdate = true;
-    } else if (session.user.role === 'ADMIN') {
-      const provider = await prisma.provider.findUnique({
-        where: { userId: session.user.id },
-      });
-      canUpdate = contract.providerId === provider?.id;
     } else if (session.user.role === 'USER') {
       const customer = await prisma.customer.findUnique({
         where: { userId: session.user.id },
@@ -270,11 +265,6 @@ export async function DELETE(request: Request, { params }: RouteParams) {
     let canDelete = false;
     if (session.user.role === 'ADMIN') {
       canDelete = true;
-    } else if (session.user.role === 'ADMIN') {
-      const provider = await prisma.provider.findUnique({
-        where: { userId: session.user.id },
-      });
-      canDelete = contract.providerId === provider?.id;
     }
 
     if (!canDelete) {

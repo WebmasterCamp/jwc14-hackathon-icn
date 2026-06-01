@@ -43,19 +43,9 @@ export function Header() {
   const { theme, setTheme } = useTheme();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  // Customers live in the public /account area; staff have role dashboards.
-  const isStaff =
-    session?.user?.role === "ADMIN" || session?.user?.role === "ADMIN";
-  const getDashboardLink = () => {
-    switch (session?.user?.role) {
-      case "ADMIN":
-        return "/dashboard/admin";
-      case "PROVIDER":
-        return "/dashboard/provider";
-      default:
-        return "/account";
-    }
-  };
+  // ADMIN = staff (operator console); everyone else is a customer using /account.
+  const isStaff = session?.user?.role === "ADMIN";
+  const getDashboardLink = () => (isStaff ? "/dashboard/admin" : "/account");
 
   const getInitials = (name: string | null | undefined) => {
     if (!name) return "U";

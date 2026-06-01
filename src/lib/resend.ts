@@ -15,21 +15,12 @@ const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 export async function sendWelcomeEmail({
   email,
   name,
-  role,
 }: {
   email: string;
   name: string;
-  role: "PROVIDER" | "CUSTOMER";
 }) {
-  const subject =
-    role === "ADMIN"
-      ? "ยินดีต้อนรับสู่ Sparkgo - สำหรับผู้ให้บริการ"
-      : "ยินดีต้อนรับสู่ Sparkgo - สำหรับสถานศึกษา";
-
-  const dashboardUrl =
-    role === "ADMIN"
-      ? `${APP_URL}/dashboard/provider`
-      : `${APP_URL}/account`;
+  const subject = "ยินดีต้อนรับสู่ Sparkgo";
+  const dashboardUrl = `${APP_URL}/account`;
 
   return getResend().emails.send({
     from: FROM_EMAIL,
@@ -39,29 +30,15 @@ export async function sendWelcomeEmail({
       <div style="font-family: 'IBM Plex Sans Thai', sans-serif; max-width: 600px; margin: 0 auto;">
         <h1 style="color: #2563EB;">ยินดีต้อนรับสู่ Sparkgo</h1>
         <p>สวัสดีคุณ ${name},</p>
-        <p>ขอบคุณที่สมัครใช้งาน Sparkgo - แพลตฟอร์มเช่าอุปกรณ์ IoT และ STEM สำหรับโรงเรียนไทย</p>
-        ${
-          role === "ADMIN"
-            ? `
-          <p>ในฐานะผู้ให้บริการ คุณสามารถ:</p>
-          <ul>
-            <li>เพิ่มอุปกรณ์ให้เช่า</li>
-            <li>จัดการสัญญากับโรงเรียน</li>
-            <li>ติดตามการชำระเงิน</li>
-          </ul>
-          <p><strong>หมายเหตุ:</strong> บัญชีของคุณจะถูกตรวจสอบและยืนยันภายใน 1-2 วันทำการ</p>
-        `
-            : `
-          <p>ในฐานะสถานศึกษา คุณสามารถ:</p>
-          <ul>
-            <li>ค้นหาอุปกรณ์ STEM และ IoT</li>
-            <li>ขอใบเสนอราคาจากผู้ให้บริการ</li>
-            <li>จัดการสัญญาและการชำระเงิน</li>
-          </ul>
-        `
-        }
+        <p>ขอบคุณที่สมัครใช้งาน Sparkgo - แพลตฟอร์มเช่าอุปกรณ์ทำโปรเจกต์</p>
+        <p>คุณสามารถ:</p>
+        <ul>
+          <li>ค้นหาและเลือกอุปกรณ์ที่ต้องการ</li>
+          <li>ขอใบเสนอราคา</li>
+          <li>จัดการสัญญาและการชำระเงิน</li>
+        </ul>
         <a href="${dashboardUrl}" style="display: inline-block; background-color: #2563EB; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; margin-top: 16px;">
-          เข้าสู่แดชบอร์ด
+          เข้าสู่บัญชีของฉัน
         </a>
         <p style="margin-top: 24px; color: #666;">หากมีคำถามใดๆ สามารถติดต่อเราได้ที่ support@sparkgo.co.th</p>
         <hr style="margin-top: 24px; border: none; border-top: 1px solid #eee;">

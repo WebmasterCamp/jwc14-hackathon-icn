@@ -6,7 +6,7 @@ import { z } from "zod";
 const uploadRequestSchema = z.object({
   filename: z.string().min(1),
   contentType: z.string().min(1),
-  folder: z.enum(["equipment", "contracts", "avatars", "logos", "blog"]).default("equipment"),
+  folder: z.enum(["equipment", "contracts", "avatars", "logos", "blog", "categories"]).default("equipment"),
 });
 
 // POST /api/upload - Get presigned URL for file upload

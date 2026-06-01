@@ -26,6 +26,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { ImageUploadField } from "@/components/blog-admin/image-upload-field";
 
 interface Category {
   id: string;
@@ -33,10 +34,11 @@ interface Category {
   nameTh: string;
   description?: string | null;
   icon?: string | null;
+  image?: string | null;
   _count?: { products: number };
 }
 
-const EMPTY = { name: "", nameTh: "", description: "", icon: "" };
+const EMPTY = { name: "", nameTh: "", description: "", icon: "", image: "" };
 
 export function CategoryManager({ categories }: { categories: Category[] }) {
   const router = useRouter();
@@ -58,6 +60,7 @@ export function CategoryManager({ categories }: { categories: Category[] }) {
           nameTh: form.nameTh.trim(),
           description: form.description.trim() || undefined,
           icon: form.icon.trim() || undefined,
+          image: form.image || null,
         }),
       });
       if (!res.ok) {

@@ -11,10 +11,10 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { MoreHorizontal, Shield, Building2, GraduationCap } from "lucide-react";
+import { MoreHorizontal, Shield, User } from "lucide-react";
 import { toast } from "react-hot-toast";
 
-type Role = "ADMIN" | "PROVIDER" | "CUSTOMER";
+type Role = "ADMIN" | "USER";
 
 interface UserActionsProps {
   userId: string;
@@ -25,8 +25,7 @@ interface UserActionsProps {
 
 const ROLE_OPTIONS: { role: Role; label: string; icon: typeof Shield }[] = [
   { role: "ADMIN", label: "ผู้ดูแลระบบ", icon: Shield },
-  { role: "PROVIDER", label: "ผู้ให้บริการ", icon: Building2 },
-  { role: "CUSTOMER", label: "สถานศึกษา", icon: GraduationCap },
+  { role: "USER", label: "ผู้ใช้งาน", icon: User },
 ];
 
 export function UserActions({

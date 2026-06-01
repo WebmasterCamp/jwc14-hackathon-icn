@@ -49,20 +49,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Check if user is admin or verified provider
-    const isAdmin = session.user.role === "ADMIN";
-    let isVerifiedProvider = false;
-
-    if (session.user.role === "ADMIN") {
-      const provider = await prisma.provider.findUnique({
-        where: { userId: session.user.id },
-      });
-      isVerifiedProvider = provider?.verified || false;
-    }
-
-    if (!isAdmin && !isVerifiedProvider) {
+    // Only the shop operator (ADMIN) can create blog posts.
+    if (session.user.role !== "ADMIN") {
       return NextResponse.json(
-        { error: "Only admins and verified providers can create blog posts" },
+        { error: "Only admins can create blog posts" },
         { status: 403 }
       );
     }
@@ -73,7 +63,7 @@ export async function POST(request: NextRequest) {
     const post = await createBlogPost({
       ...validatedData,
       authorId: session.user.id,
-      authorType: isAdmin ? "USER" : "PROVIDER",
+      authorType: "USER",
       scheduledFor: validatedData.scheduledFor
         ? new Date(validatedData.scheduledFor)
         : undefined,

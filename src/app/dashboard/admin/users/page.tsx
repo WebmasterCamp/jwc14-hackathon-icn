@@ -24,15 +24,14 @@ import { StatCard } from "@/components/dashboard/stat-card";
 import { UserActions } from "@/components/admin/user-actions";
 import { formatThaiDate } from "@/lib/format";
 
-type Role = "ADMIN" | "PROVIDER" | "CUSTOMER";
+type Role = "ADMIN" | "USER";
 
 const ROLE_META: Record<
   Role,
   { label: string; variant: "default" | "secondary" | "destructive" | "outline" }
 > = {
   ADMIN: { label: "ผู้ดูแลระบบ", variant: "destructive" },
-  PROVIDER: { label: "ผู้ให้บริการ", variant: "default" },
-  CUSTOMER: { label: "สถานศึกษา", variant: "secondary" },
+  USER: { label: "ผู้ใช้งาน", variant: "secondary" },
 };
 
 export default async function AdminUsersPage() {
@@ -48,8 +47,7 @@ export default async function AdminUsersPage() {
   });
 
   const adminCount = users.filter((u) => u.role === "ADMIN").length;
-  const providerCount = users.filter((u) => u.role === "ADMIN").length;
-  const customerCount = users.filter((u) => u.role === "USER").length;
+  const userCount = users.filter((u) => u.role === "USER").length;
 
   const UserTable = ({ rows }: { rows: typeof users }) => (
     <Table>
@@ -65,11 +63,7 @@ export default async function AdminUsersPage() {
       <TableBody>
         {rows.map((u) => {
           const orgName =
-            u.role === "ADMIN"
-              ? u.provider?.companyName
-              : u.role === "USER"
-              ? u.customer?.schoolName
-              : null;
+            u.provider?.companyName || u.customer?.schoolName || null;
           return (
             <TableRow key={u.id}>
               <TableCell>
@@ -123,13 +117,8 @@ export default async function AdminUsersPage() {
       rows: users.filter((u) => u.role === "ADMIN"),
     },
     {
-      value: "PROVIDER",
-      label: `ผู้ให้บริการ (${providerCount})`,
-      rows: users.filter((u) => u.role === "ADMIN"),
-    },
-    {
-      value: "CUSTOMER",
-      label: `สถานศึกษา (${customerCount})`,
+      value: "USER",
+      label: `ผู้ใช้งาน (${userCount})`,
       rows: users.filter((u) => u.role === "USER"),
     },
   ];

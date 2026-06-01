@@ -8,6 +8,7 @@ export const categorySchema = z.object({
   nameTh: z.string().min(1, "Thai name is required").max(100, "Thai name too long"),
   description: z.string().max(500, "Description too long").optional(),
   icon: z.string().max(50, "Icon too long").optional(),
+  image: z.string().max(2048, "Image URL too long").nullish(),
 });
 
 export const categoryUpdateSchema = categorySchema.partial();

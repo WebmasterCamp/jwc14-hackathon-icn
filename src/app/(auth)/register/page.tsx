@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { Building2, School } from "lucide-react";
+import { School } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function SignUpPage() {
@@ -25,23 +25,6 @@ export default function SignUpPage() {
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
-        <Link href="/register/provider">
-          <div className="p-6 border rounded-lg hover:border-primary hover:bg-accent transition-colors cursor-pointer group">
-            <div className="flex items-start gap-4">
-              <div className="w-12 h-12 bg-secondary/10 rounded-lg flex items-center justify-center group-hover:bg-secondary/20 transition-colors">
-                <Building2 className="w-6 h-6 text-secondary" />
-              </div>
-              <div className="flex-1">
-                <h3 className="font-semibold text-lg mb-1">ผู้ให้บริการ (Provider)</h3>
-                <p className="text-muted-foreground text-sm">
-                  สำหรับบริษัทหรือผู้จัดจำหน่ายอุปกรณ์ STEM และ IoT
-                  ที่ต้องการปล่อยเช่าอุปกรณ์ให้กับสถานศึกษา
-                </p>
-              </div>
-            </div>
-          </div>
-        </Link>
-
         <Link href="/register/customer">
           <div className="p-6 border rounded-lg hover:border-primary hover:bg-accent transition-colors cursor-pointer group">
             <div className="flex items-start gap-4">

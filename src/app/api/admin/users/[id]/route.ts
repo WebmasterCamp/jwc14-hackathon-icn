@@ -8,7 +8,7 @@ interface RouteParams {
 }
 
 const updateUserSchema = z.object({
-  role: z.enum(["ADMIN", "PROVIDER", "CUSTOMER"]),
+  role: z.enum(["ADMIN", "USER"]),
 });
 
 // PATCH /api/admin/users/[id] - Change a user's role (Admin only).

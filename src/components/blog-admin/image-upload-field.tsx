@@ -15,9 +15,12 @@ import { Progress } from "@/components/ui/progress";
 export function ImageUploadField({
   value,
   onChange,
+  folder = "blog",
 }: {
   value?: string;
   onChange: (url: string | undefined) => void;
+  /** R2 destination folder (must be allowed by /api/upload). */
+  folder?: "equipment" | "contracts" | "avatars" | "logos" | "blog" | "categories";
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [progress, setProgress] = useState<number | null>(null);
@@ -36,7 +39,7 @@ export function ImageUploadField({
         body: JSON.stringify({
           filename: file.name,
           contentType: file.type,
-          folder: "blog",
+          folder,
         }),
       });
 
