@@ -19,6 +19,7 @@ import {
   Newspaper,
   ReceiptText,
   Tag,
+  Star,
   Menu,
 } from "lucide-react";
 import { cn } from "@/lib/utils";

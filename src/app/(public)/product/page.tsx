@@ -84,7 +84,13 @@ async function EquipmentList({
         category: true,
         equipment: {
           where: offeringFilter,
-          select: { rentPriceMonthly: true },
+          select: {
+            id: true,
+            rentPriceMonthly: true,
+            depositAmount: true,
+            provider: { select: { id: true, companyName: true } },
+          },
+          orderBy: { rentPriceMonthly: "asc" },
         },
       },
       orderBy: { createdAt: "desc" },
@@ -95,20 +101,34 @@ async function EquipmentList({
     getCategories(), // Use cached query
   ]);
 
-  // Collapse each product's visible offerings into a from-price + shop count.
-  const equipment = products.map((p) => ({
-    slug: p.slug,
-    name: p.name,
-    nameTh: p.nameTh,
-    description: p.descriptionTh || p.description,
-    images: p.images,
-    category: p.category,
-    offeringCount: p.equipment.length,
-    fromPrice: p.equipment.reduce(
-      (min, o) => Math.min(min, o.rentPriceMonthly),
-      Infinity
-    ),
-  }));
+  // Collapse each product's visible offerings into a from-price + shop count,
+  // and surface the cheapest offering for one-click add-to-quote.
+  const equipment = products.map((p) => {
+    const cheapest = p.equipment[0]; // sorted by rentPriceMonthly asc
+    return {
+      slug: p.slug,
+      name: p.name,
+      nameTh: p.nameTh,
+      description: p.descriptionTh || p.description,
+      images: p.images,
+      category: p.category,
+      offeringCount: p.equipment.length,
+      fromPrice: cheapest?.rentPriceMonthly ?? Infinity,
+      quickAdd: cheapest
+        ? {
+            equipmentId: cheapest.id,
+            name: p.name,
+            nameTh: p.nameTh,
+            rentPriceMonthly: cheapest.rentPriceMonthly,
+            depositAmount: cheapest.depositAmount,
+            provider: {
+              id: cheapest.provider.id,
+              companyName: cheapest.provider.companyName,
+            },
+          }
+        : undefined,
+    };
+  });
 
   const totalPages = Math.ceil(totalCount / pageSize);
 
@@ -141,7 +161,7 @@ async function EquipmentList({
         <>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {equipment.map((item) => (
-              <ProductCard key={item.slug} product={item} />
+              <ProductCard key={item.slug} product={item} quickAdd={item.quickAdd} />
             ))}
           </div>
 

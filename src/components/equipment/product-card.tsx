@@ -83,13 +83,24 @@ export function ProductCard({ product, quickAdd }: ProductCardProps) {
             </span>
             <span className="ml-0.5 text-xs text-muted-foreground">/ เดือน</span>
           </div>
-          <Link
-            href={href}
-            aria-label={`ดูรายละเอียด ${title}`}
-            className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand text-brand-foreground transition-colors hover:bg-brand/90"
-          >
-            <ShoppingCart className="h-4 w-4" />
-          </Link>
+          {quickAdd ? (
+            <button
+              type="button"
+              onClick={handleQuickAdd}
+              aria-label={`เพิ่ม ${title} ลงใบเสนอราคา`}
+              className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand text-brand-foreground transition-colors hover:bg-brand/90"
+            >
+              <ShoppingCart className="h-4 w-4" />
+            </button>
+          ) : (
+            <Link
+              href={href}
+              aria-label={`ดูรายละเอียด ${title}`}
+              className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand text-brand-foreground transition-colors hover:bg-brand/90"
+            >
+              <ShoppingCart className="h-4 w-4" />
+            </Link>
+          )}
         </div>
       </div>
     </div>
