@@ -51,7 +51,7 @@ export async function chatComplete(
   }
 
   const baseUrl = process.env.TYPHOON_BASE_URL || "https://api.opentyphoon.ai/v1";
-  const model = process.env.TYPHOON_MODEL || "typhoon-v2.1-12b-instruct";
+  const model = process.env.TYPHOON_MODEL || "typhoon-v2.5-30b-a3b-instruct";
 
   const res = await fetch(`${baseUrl}/chat/completions`, {
     method: "POST",
