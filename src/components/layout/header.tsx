@@ -68,9 +68,9 @@ export function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container mx-auto px-4">
-        <div className="flex h-16 items-center justify-between">
+    <header className="sticky top-0 z-50 w-full border-b-[3px] border-border bg-background shadow-md">
+      <div className="container mx-auto px-6">
+        <div className="flex h-24 items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center" aria-label="Spark Go">
             <Image
@@ -79,21 +79,21 @@ export function Header() {
               width={6000}
               height={3375}
               priority
-              className="h-10 w-auto"
+              className="h-16 w-auto"
             />
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-7">
+          <nav className="hidden md:flex items-center gap-10">
             {publicNavItems.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "text-sm font-medium transition-colors hover:text-brand",
+                  "text-lg font-bold transition-colors hover:text-brand py-2 px-2 hover:scale-105 transition-transform",
                   pathname === item.href
-                    ? "text-brand"
-                    : "text-foreground/80"
+                    ? "text-brand border-b-[3px] border-brand"
+                    : "text-foreground"
                 )}
               >
                 {item.label}
@@ -102,41 +102,42 @@ export function Header() {
           </nav>
 
           {/* Desktop Actions */}
-          <div className="hidden md:flex items-center gap-2">
+          <div className="hidden md:flex items-center gap-4">
             {/* Search */}
-            <Button variant="ghost" size="icon" aria-label="ค้นหา" asChild>
+            <Button variant="ghost" size="lg" aria-label="ค้นหา" asChild className="h-12 w-12">
               <Link href="/equipment">
-                <Search className="h-5 w-5" />
+                <Search className="h-7 w-7" />
               </Link>
             </Button>
 
             {/* Theme Toggle */}
             <Button
               variant="ghost"
-              size="icon"
+              size="lg"
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              className="h-12 w-12"
             >
-              <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-              <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+              <Sun className="h-7 w-7 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+              <Moon className="absolute h-7 w-7 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
               <span className="sr-only">Toggle theme</span>
             </Button>
 
             {status === "loading" ? (
-              <div className="h-9 w-20 bg-muted animate-pulse rounded-md" />
+              <div className="h-12 w-28 bg-muted animate-pulse rounded-md" />
             ) : session ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="gap-2">
-                    <Avatar className="h-8 w-8">
+                  <Button variant="ghost" className="gap-2 h-12 text-lg font-bold">
+                    <Avatar className="h-10 w-10">
                       <AvatarImage src={session.user?.image || undefined} />
-                      <AvatarFallback className="bg-primary/10 text-primary text-sm">
+                      <AvatarFallback className="bg-primary/10 text-primary text-lg font-bold">
                         {getInitials(session.user?.name)}
                       </AvatarFallback>
                     </Avatar>
-                    <span className="hidden lg:inline max-w-[120px] truncate">
+                    <span className="hidden lg:inline max-w-[120px] truncate font-bold">
                       {session.user?.name}
                     </span>
-                    <ChevronDown className="h-4 w-4" />
+                    <ChevronDown className="h-5 w-5" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56">
@@ -174,7 +175,8 @@ export function Header() {
             ) : (
               <Button
                 asChild
-                className="rounded-full bg-brand px-6 text-brand-foreground hover:bg-brand/90"
+                size="lg"
+                className="rounded-full bg-brand px-10 py-6 text-lg font-bold text-brand-foreground hover:bg-brand/90 shadow-md hover:shadow-lg transition-all"
               >
                 <Link href="/login">เข้าสู่ระบบ</Link>
               </Button>
@@ -184,46 +186,46 @@ export function Header() {
           {/* Mobile Menu Button */}
           <Button
             variant="ghost"
-            size="icon"
-            className="md:hidden"
+            size="lg"
+            className="md:hidden h-12 w-12"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           >
             {isMobileMenuOpen ? (
-              <X className="h-5 w-5" />
+              <X className="h-7 w-7" />
             ) : (
-              <Menu className="h-5 w-5" />
+              <Menu className="h-7 w-7" />
             )}
           </Button>
         </div>
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="md:hidden py-4 border-t">
-            <nav className="flex flex-col gap-2">
+          <div className="md:hidden py-6 border-t-2">
+            <nav className="flex flex-col gap-3">
               {publicNavItems.map((item) => (
                 <Link
                   key={item.href}
                   href={item.href}
                   onClick={() => setIsMobileMenuOpen(false)}
                   className={cn(
-                    "px-3 py-2 rounded-md text-sm font-medium transition-colors",
+                    "px-5 py-4 rounded-lg text-lg font-bold transition-colors",
                     pathname === item.href
-                      ? "bg-brand/10 text-brand"
-                      : "text-foreground/80 hover:bg-accent"
+                      ? "bg-brand/10 text-brand border-l-4 border-brand"
+                      : "text-foreground hover:bg-accent"
                   )}
                 >
                   {item.label}
                 </Link>
               ))}
 
-              <div className="h-px bg-border my-2" />
+              <div className="h-px bg-border my-3" />
 
               {session ? (
                 <>
                   <Link
                     href={getDashboardLink()}
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className="px-3 py-2 rounded-md text-sm font-medium text-muted-foreground hover:bg-accent"
+                    className="px-5 py-4 rounded-lg text-lg font-bold text-muted-foreground hover:bg-accent"
                   >
                     {isStaff ? "แดชบอร์ด" : "บัญชีของฉัน"}
                   </Link>
@@ -232,7 +234,7 @@ export function Header() {
                       setIsMobileMenuOpen(false);
                       signOut({ callbackUrl: "/" });
                     }}
-                    className="px-3 py-2 rounded-md text-sm font-medium text-destructive hover:bg-destructive/10 text-left"
+                    className="px-5 py-4 rounded-lg text-lg font-bold text-destructive hover:bg-destructive/10 text-left"
                   >
                     ออกจากระบบ
                   </button>
@@ -241,7 +243,7 @@ export function Header() {
                 <Link
                   href="/login"
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="px-3 py-2 rounded-full text-center text-sm font-medium bg-brand text-brand-foreground hover:bg-brand/90"
+                  className="px-5 py-4 rounded-full text-center text-lg font-bold bg-brand text-brand-foreground hover:bg-brand/90 shadow-md"
                 >
                   เข้าสู่ระบบ
                 </Link>
