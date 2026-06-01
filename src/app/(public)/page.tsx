@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Cpu, CircuitBoard, Cpu as Chip, Radio, Boxes } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { JsonLd } from "@/components/seo/json-ld";
@@ -13,9 +14,9 @@ const categories = [
 ];
 
 const projectExamples = [
-  { title: "ระบบรดน้ำอัตโนมัติ", from: "from-emerald-200", to: "to-emerald-50" },
-  { title: "เครื่องวัดอุณหภูมิ IoT", from: "from-sky-200", to: "to-sky-50" },
-  { title: "หุ่นยนต์เดินตามเส้น", from: "from-amber-200", to: "to-amber-50" },
+  { title: "ระบบรดน้ำอัตโนมัติ", image: "/assets/iot1.png" },
+  { title: "เครื่องวัดอุณหภูมิ IoT", image: "/assets/iot2.png" },
+  { title: "หุ่นยนต์เดินตามเส้น", image: "/assets/iot3.png" },
 ];
 
 /** Centered section heading with the Figma cyan underline accent. */
@@ -35,9 +36,25 @@ export default function HomePage() {
 
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-brand-soft py-24 md:py-32">
-        {/* Decorative floating boards (drop real photos at /public/hero-board-*.png) */}
-        <div className="pointer-events-none absolute -left-16 top-16 hidden h-44 w-72 -rotate-12 rounded-2xl bg-gradient-to-br from-emerald-300/70 to-emerald-100/40 blur-[1px] md:block" />
-        <div className="pointer-events-none absolute -right-16 top-12 hidden h-44 w-72 rotate-12 rounded-2xl bg-gradient-to-br from-sky-300/70 to-sky-100/40 blur-[1px] md:block" />
+        {/* Decorative floating boards */}
+        <Image
+          src="/assets/rasberrypi.png"
+          alt=""
+          aria-hidden
+          width={300}
+          height={230}
+          priority
+          className="pointer-events-none absolute -left-16 top-16 hidden w-[300px] -rotate-12 object-contain drop-shadow-xl md:block"
+        />
+        <Image
+          src="/assets/arduino.png"
+          alt=""
+          aria-hidden
+          width={300}
+          height={230}
+          priority
+          className="pointer-events-none absolute -right-16 top-12 hidden w-[300px] rotate-12 object-contain drop-shadow-xl md:block"
+        />
 
         <div className="container relative mx-auto px-4">
           <div className="mx-auto max-w-3xl text-center">
@@ -97,9 +114,14 @@ export default function HomePage() {
                 key={p.title}
                 className="group relative overflow-hidden rounded-2xl border bg-card shadow-sm transition-shadow hover:shadow-lg"
               >
-                <div
-                  className={`relative flex h-48 items-center justify-center bg-gradient-to-br ${p.from} ${p.to}`}
-                >
+                <div className="relative h-48 overflow-hidden bg-muted">
+                  <Image
+                    src={p.image}
+                    alt={p.title}
+                    fill
+                    className="object-cover transition-transform duration-300 group-hover:scale-105"
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  />
                   {/* cyan wave bottom (matches Figma) */}
                   <svg
                     className="absolute inset-x-0 bottom-0 h-10 w-full text-brand"

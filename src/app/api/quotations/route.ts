@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
-import { createElement } from "react";
-import { renderToBuffer } from "@react-pdf/renderer";
+import { createElement, type ReactElement } from "react";
+import { renderToBuffer, type DocumentProps } from "@react-pdf/renderer";
 import { z } from "zod";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { Prisma } from "@/generated/prisma/client";
 import { ensureCustomerProfile } from "@/lib/queries";
 import { uploadFile, generateFileKey } from "@/lib/r2";
 import { sendEmail } from "@/lib/email";
@@ -38,7 +39,7 @@ const bodySchema = z.object({
 });
 
 async function createQuoteNumberWithRetry(
-  data: Parameters<typeof prisma.quotation.create>[0]["data"]
+  data: Omit<Prisma.QuotationUncheckedCreateInput, "quoteNumber">
 ) {
   const year = new Date().getFullYear();
   // Best-effort sequence; the @unique constraint + retry guard against races.
@@ -209,31 +210,30 @@ export async function POST(request: Request) {
     // the saved quotation — log and continue with a null pdfUrl.
     let pdfUrl: string | null = null;
     try {
-      const buffer = await renderToBuffer(
-        createElement(QuotationPdf, {
-          quoteNumber: quotation.quoteNumber,
-          createdAt: quotation.createdAt,
-          validUntil,
-          provider: {
-            companyName: provider.companyName,
-            taxId: provider.taxId,
-            address: provider.address,
-            province: provider.province,
-          },
-          contact: {
-            contactName: contact.contactName,
-            contactEmail: contact.contactEmail,
-            contactPhone: contact.contactPhone,
-            organization: contact.organization,
-            billingAddress: contact.billingAddress,
-          },
-          items: lines,
-          rentalTotal,
-          depositTotal,
-          total,
-          notes: contact.notes || null,
-        })
-      );
+      const pdfElement = createElement(QuotationPdf, {
+        quoteNumber: quotation.quoteNumber,
+        createdAt: quotation.createdAt,
+        validUntil,
+        provider: {
+          companyName: provider.companyName,
+          taxId: provider.taxId,
+          address: provider.address,
+          province: provider.province,
+        },
+        contact: {
+          contactName: contact.contactName,
+          contactEmail: contact.contactEmail,
+          contactPhone: contact.contactPhone,
+          organization: contact.organization,
+          billingAddress: contact.billingAddress,
+        },
+        items: lines,
+        rentalTotal,
+        depositTotal,
+        total,
+        notes: contact.notes || null,
+      }) as unknown as ReactElement<DocumentProps>;
+      const buffer = await renderToBuffer(pdfElement);
       const key = generateFileKey(
         "quotations",
         `${quotation.quoteNumber}.pdf`,
