@@ -6,12 +6,16 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { MaintenanceRequestForm } from "@/components/customer/maintenance-request-form";
+import { ensureCustomerProfile } from "@/lib/queries";
 
 export default async function NewMaintenanceRequestPage() {
   const session = await auth();
   if (!session || session.user.role !== "CUSTOMER") {
     redirect("/sign-in");
   }
+
+  // Guarantee the profile row exists so we never redirect-loop with middleware.
+  await ensureCustomerProfile(session.user.id, session.user.name);
 
   const customer = await prisma.customer.findUnique({
     where: { userId: session.user.id },

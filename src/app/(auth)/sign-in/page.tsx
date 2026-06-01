@@ -15,6 +15,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { ExternalBrowserModal } from "@/components/auth/external-browser-modal";
+import { detectInAppBrowser } from "@/lib/in-app-browser";
 
 const signInSchema = z.object({
   email: z.string().email("กรุณากรอกอีเมลที่ถูกต้อง"),
@@ -28,6 +30,8 @@ function SignInForm() {
   const callbackUrl = searchParams.get("callbackUrl") || "/dashboard/customer";
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+  const [inAppBrowser, setInAppBrowser] = useState<{ name: string } | null>(null);
+  const [showBrowserModal, setShowBrowserModal] = useState(false);
 
   const {
     register,
@@ -63,6 +67,15 @@ function SignInForm() {
   };
 
   const handleGoogleSignIn = async () => {
+    // Google blocks OAuth inside in-app browsers (LINE, Facebook, IG, …).
+    // Prompt the user to reopen in an external browser instead of failing.
+    const detected = detectInAppBrowser();
+    if (detected) {
+      setInAppBrowser(detected);
+      setShowBrowserModal(true);
+      return;
+    }
+
     setIsGoogleLoading(true);
     try {
       await signIn("google", { callbackUrl });
@@ -74,6 +87,12 @@ function SignInForm() {
   };
 
   return (
+    <>
+    <ExternalBrowserModal
+      open={showBrowserModal}
+      onOpenChange={setShowBrowserModal}
+      appName={inAppBrowser?.name}
+    />
     <Card className="border-0 shadow-lg">
       <CardHeader className="text-center space-y-2">
         <div className="mx-auto w-12 h-12 bg-primary rounded-xl flex items-center justify-center mb-2">
@@ -177,6 +196,7 @@ function SignInForm() {
         </div>
       </CardFooter>
     </Card>
+    </>
   );
 }
 

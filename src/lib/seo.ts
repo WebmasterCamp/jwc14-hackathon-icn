@@ -146,8 +146,18 @@ export function calculateReadingTime(content: string): number {
  * Generate excerpt from content
  */
 export function generateExcerpt(content: string, maxLength: number = 160): string {
-  // Strip HTML tags
-  const text = content.replace(/<[^>]*>/g, "");
+  // Strip HTML tags, then common Markdown syntax so excerpts/meta descriptions
+  // are clean prose (content may be authored in Markdown).
+  const text = content
+    .replace(/<[^>]*>/g, "")
+    .replace(/!\[[^\]]*\]\([^)]*\)/g, "") // images
+    .replace(/\[([^\]]*)\]\([^)]*\)/g, "$1") // links -> link text
+    .replace(/`{1,3}([^`]*)`{1,3}/g, "$1") // inline/code fences
+    .replace(/^\s{0,3}#{1,6}\s+/gm, "") // headings
+    .replace(/^\s{0,3}>\s?/gm, "") // blockquotes
+    .replace(/[*_~]/g, "") // emphasis / strikethrough markers
+    .replace(/\s+/g, " ")
+    .trim();
 
   if (text.length <= maxLength) {
     return text;

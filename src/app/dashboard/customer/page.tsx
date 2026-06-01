@@ -13,6 +13,7 @@ import {
   Search,
   Calendar,
 } from "lucide-react";
+import { ensureCustomerProfile } from "@/lib/queries";
 import { StatCard } from "@/components/dashboard/stat-card";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -23,6 +24,9 @@ import { differenceInDays } from "date-fns";
 export default async function CustomerDashboardPage() {
   const session = await auth();
   if (!session) redirect("/sign-in");
+
+  // Guarantee the profile row exists so we never redirect-loop with middleware.
+  await ensureCustomerProfile(session.user.id, session.user.name);
 
   const customer = await prisma.customer.findUnique({
     where: { userId: session.user.id },

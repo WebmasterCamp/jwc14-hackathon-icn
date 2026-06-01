@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { formatThaiDate } from "@/lib/format";
+import { ensureCustomerProfile } from "@/lib/queries";
 
 const STATUS_LABELS = {
   PENDING: "รอดำเนินการ",
@@ -36,6 +37,9 @@ export default async function CustomerMaintenancePage() {
   if (!session || session.user.role !== "CUSTOMER") {
     redirect("/sign-in");
   }
+
+  // Guarantee the profile row exists so we never redirect-loop with middleware.
+  await ensureCustomerProfile(session.user.id, session.user.name);
 
   const customer = await prisma.customer.findUnique({
     where: { userId: session.user.id },

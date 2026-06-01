@@ -24,6 +24,7 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { formatPrice, formatThaiDate, formatContractDuration } from "@/lib/format";
+import { ensureCustomerProfile } from "@/lib/queries";
 import { differenceInMonths } from "date-fns";
 
 const statusLabels: Record<
@@ -46,6 +47,9 @@ const typeLabels: Record<string, string> = {
 export default async function CustomerContractsPage() {
   const session = await auth();
   if (!session) redirect("/sign-in");
+
+  // Guarantee the profile row exists so we never redirect-loop with middleware.
+  await ensureCustomerProfile(session.user.id, session.user.name);
 
   const customer = await prisma.customer.findUnique({
     where: { userId: session.user.id },

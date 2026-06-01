@@ -6,6 +6,29 @@ import { prisma } from "@/lib/prisma";
  * These functions ensure that identical queries within a single request are only executed once.
  */
 
+/**
+ * Ensure a CUSTOMER user has a Customer profile row, creating a placeholder if
+ * missing. OAuth sign-ups create the row up front, but accounts created before
+ * that fix (or any edge case) would otherwise have a CUSTOMER user with no
+ * Customer row — which made every customer dashboard page redirect to /sign-in
+ * and loop with the middleware. Calling this before querying the profile makes
+ * the dashboard self-healing. The user completes the placeholder details later.
+ */
+export async function ensureCustomerProfile(
+  userId: string,
+  name?: string | null
+) {
+  return prisma.customer.upsert({
+    where: { userId },
+    update: {},
+    create: {
+      userId,
+      schoolName: name ?? "",
+      schoolType: "PRIMARY",
+    },
+  });
+}
+
 // Get all categories (used multiple times in equipment pages)
 export const getCategories = cache(async () => {
   return prisma.category.findMany({
