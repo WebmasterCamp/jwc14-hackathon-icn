@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Separator } from "@/components/ui/separator";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { formatPrice } from "@/lib/format";
 
 export interface BrowseEquipment {
@@ -45,7 +46,8 @@ export interface BrowseEquipment {
 interface CartItem {
   equipment: BrowseEquipment;
   quantity: number;
-  months: number;
+  durationAmount: number;
+  durationUnit: RentalUnit;
 }
 
 interface CustomerBrowseClientProps {
@@ -53,6 +55,14 @@ interface CustomerBrowseClientProps {
 }
 
 const CART_STORAGE_KEY = "jwc-customer-equipment-cart";
+
+type RentalUnit = "day" | "month" | "year";
+
+const rentalUnitLabels: Record<RentalUnit, string> = {
+  day: "วัน",
+  month: "เดือน",
+  year: "ปี",
+};
 
 const conditionLabels: Record<string, string> = {
   NEW: "ใหม่",
@@ -69,7 +79,7 @@ export function CustomerBrowseClient({ equipment }: CustomerBrowseClientProps) {
     if (!savedCart) return [];
 
     try {
-      return JSON.parse(savedCart) as CartItem[];
+      return normalizeSavedCart(JSON.parse(savedCart));
     } catch {
       window.localStorage.removeItem(CART_STORAGE_KEY);
       return [];
@@ -86,15 +96,17 @@ export function CustomerBrowseClient({ equipment }: CustomerBrowseClientProps) {
       (summary, item) => {
         const monthly = item.equipment.rentPriceMonthly * item.quantity;
         const deposit = item.equipment.depositAmount * item.quantity;
+        const rentalTotal = calculateRentalTotal(item);
 
         return {
           itemCount: summary.itemCount + item.quantity,
           monthlyTotal: summary.monthlyTotal + monthly,
           depositTotal: summary.depositTotal + deposit,
-          estimatedTotal: summary.estimatedTotal + monthly * item.months + deposit,
+          rentalTotal: summary.rentalTotal + rentalTotal,
+          estimatedTotal: summary.estimatedTotal + rentalTotal + deposit,
         };
       },
-      { itemCount: 0, monthlyTotal: 0, depositTotal: 0, estimatedTotal: 0 }
+      { itemCount: 0, monthlyTotal: 0, depositTotal: 0, rentalTotal: 0, estimatedTotal: 0 }
     );
   }, [cart]);
 
@@ -113,7 +125,7 @@ export function CustomerBrowseClient({ equipment }: CustomerBrowseClientProps) {
         );
       }
 
-      return [...current, { equipment: item, quantity: 1, months: 12 }];
+      return [...current, { equipment: item, quantity: 1, durationAmount: 1, durationUnit: "month" }];
     });
     setCartOpen(true);
   };
@@ -131,11 +143,25 @@ export function CustomerBrowseClient({ equipment }: CustomerBrowseClientProps) {
     );
   };
 
-  const updateMonths = (equipmentId: string, months: number) => {
+  const updateDurationAmount = (equipmentId: string, durationAmount: number) => {
     setCart((current) =>
       current.map((item) =>
         item.equipment.id === equipmentId
-          ? { ...item, months: Math.max(1, Math.min(months, 60)) }
+          ? { ...item, durationAmount: Math.max(1, Math.min(durationAmount, getMaxDuration(item.durationUnit))) }
+          : item
+      )
+    );
+  };
+
+  const updateDurationUnit = (equipmentId: string, durationUnit: RentalUnit) => {
+    setCart((current) =>
+      current.map((item) =>
+        item.equipment.id === equipmentId
+          ? {
+              ...item,
+              durationUnit,
+              durationAmount: Math.min(item.durationAmount, getMaxDuration(durationUnit)),
+            }
           : item
       )
     );
@@ -171,7 +197,8 @@ export function CustomerBrowseClient({ equipment }: CustomerBrowseClientProps) {
               cart={cart}
               totals={totals}
               onQuantityChange={updateQuantity}
-              onMonthsChange={updateMonths}
+              onDurationAmountChange={updateDurationAmount}
+              onDurationUnitChange={updateDurationUnit}
               onRemove={removeItem}
               onClear={() => setCart([])}
             />
@@ -284,7 +311,8 @@ function CartPanel({
   cart,
   totals,
   onQuantityChange,
-  onMonthsChange,
+  onDurationAmountChange,
+  onDurationUnitChange,
   onRemove,
   onClear,
 }: {
@@ -293,10 +321,12 @@ function CartPanel({
     itemCount: number;
     monthlyTotal: number;
     depositTotal: number;
+    rentalTotal: number;
     estimatedTotal: number;
   };
   onQuantityChange: (equipmentId: string, quantity: number) => void;
-  onMonthsChange: (equipmentId: string, months: number) => void;
+  onDurationAmountChange: (equipmentId: string, durationAmount: number) => void;
+  onDurationUnitChange: (equipmentId: string, durationUnit: RentalUnit) => void;
   onRemove: (equipmentId: string) => void;
   onClear: () => void;
 }) {
@@ -354,14 +384,17 @@ function CartPanel({
                     max={item.equipment.availableStock}
                     onChange={(value) => onQuantityChange(item.equipment.id, value)}
                   />
-                  <QuantityControl
-                    label="เดือน"
-                    value={item.months}
-                    min={1}
-                    max={60}
-                    onChange={(value) => onMonthsChange(item.equipment.id, value)}
+                  <DurationControl
+                    amount={item.durationAmount}
+                    unit={item.durationUnit}
+                    onAmountChange={(value) => onDurationAmountChange(item.equipment.id, value)}
+                    onUnitChange={(value) => onDurationUnitChange(item.equipment.id, value)}
                   />
                 </div>
+                <p className="mt-3 text-sm text-muted-foreground">
+                  ระยะเวลา {item.durationAmount} {rentalUnitLabels[item.durationUnit]} -{" "}
+                  {formatPrice(calculateRentalTotal(item))}
+                </p>
               </div>
             ))}
           </div>
@@ -369,6 +402,7 @@ function CartPanel({
           <div className="mt-6 space-y-4 border-t pt-4">
             <div className="space-y-2 text-sm">
               <SummaryRow label="ค่าเช่าต่อเดือน" value={formatPrice(totals.monthlyTotal)} />
+              <SummaryRow label="ค่าเช่าตามระยะเวลา" value={formatPrice(totals.rentalTotal)} />
               <SummaryRow label="เงินประกัน" value={formatPrice(totals.depositTotal)} />
               <Separator />
               <SummaryRow
@@ -385,11 +419,50 @@ function CartPanel({
               <Button disabled>ขอใบเสนอราคา</Button>
             </div>
             <p className="text-xs text-muted-foreground">
-              รถเข็นนี้เป็นการคำนวณบนหน้าเว็บเท่านั้น ยังไม่มีการส่งข้อมูลหรือสร้างสัญญา
+              รถเข็นนี้เป็นการคำนวณบนหน้าเว็บเท่านั้น โดยประมาณรายวันจากราคาเดือน/30
+              และรายปีจากราคาเดือน x 12 ยังไม่มีการส่งข้อมูลหรือสร้างสัญญา
             </p>
           </div>
         </>
       )}
+    </div>
+  );
+}
+
+function DurationControl({
+  amount,
+  unit,
+  onAmountChange,
+  onUnitChange,
+}: {
+  amount: number;
+  unit: RentalUnit;
+  onAmountChange: (value: number) => void;
+  onUnitChange: (value: RentalUnit) => void;
+}) {
+  return (
+    <div>
+      <p className="mb-2 text-xs font-medium text-muted-foreground">ระยะเวลา</p>
+      <div className="grid grid-cols-[1fr_92px] gap-2">
+        <QuantityControl
+          label=""
+          value={amount}
+          min={1}
+          max={getMaxDuration(unit)}
+          onChange={onAmountChange}
+          hideLabel
+        />
+        <Select value={unit} onValueChange={(value) => onUnitChange(value as RentalUnit)}>
+          <SelectTrigger className="h-9">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="day">วัน</SelectItem>
+            <SelectItem value="month">เดือน</SelectItem>
+            <SelectItem value="year">ปี</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
     </div>
   );
 }
@@ -400,16 +473,18 @@ function QuantityControl({
   min,
   max,
   onChange,
+  hideLabel = false,
 }: {
   label: string;
   value: number;
   min: number;
   max: number;
   onChange: (value: number) => void;
+  hideLabel?: boolean;
 }) {
   return (
     <div>
-      <p className="mb-2 text-xs font-medium text-muted-foreground">{label}</p>
+      {!hideLabel && <p className="mb-2 text-xs font-medium text-muted-foreground">{label}</p>}
       <div className="flex h-9 items-center rounded-md border">
         <Button
           variant="ghost"
@@ -435,6 +510,58 @@ function QuantityControl({
       </div>
     </div>
   );
+}
+
+function calculateRentalTotal(item: CartItem) {
+  const monthly = item.equipment.rentPriceMonthly * item.quantity;
+
+  if (item.durationUnit === "day") {
+    return (monthly / 30) * item.durationAmount;
+  }
+
+  if (item.durationUnit === "year") {
+    return monthly * 12 * item.durationAmount;
+  }
+
+  return monthly * item.durationAmount;
+}
+
+function getMaxDuration(unit: RentalUnit) {
+  if (unit === "day") return 365;
+  if (unit === "year") return 5;
+  return 60;
+}
+
+function normalizeSavedCart(value: unknown): CartItem[] {
+  if (!Array.isArray(value)) return [];
+
+  return value.flatMap((item) => {
+    if (!item || typeof item !== "object") return [];
+
+    const cartItem = item as Partial<CartItem> & { months?: number };
+    if (!cartItem.equipment || typeof cartItem.quantity !== "number") return [];
+
+    const durationUnit = isRentalUnit(cartItem.durationUnit) ? cartItem.durationUnit : "month";
+    const durationAmount =
+      typeof cartItem.durationAmount === "number"
+        ? cartItem.durationAmount
+        : typeof cartItem.months === "number"
+          ? cartItem.months
+          : 1;
+
+    return [
+      {
+        equipment: cartItem.equipment,
+        quantity: Math.max(1, cartItem.quantity),
+        durationUnit,
+        durationAmount: Math.max(1, Math.min(durationAmount, getMaxDuration(durationUnit))),
+      },
+    ];
+  });
+}
+
+function isRentalUnit(value: unknown): value is RentalUnit {
+  return value === "day" || value === "month" || value === "year";
 }
 
 function SummaryRow({
