@@ -8,11 +8,12 @@ import { prisma } from "@/lib/prisma";
  */
 export async function POST(
   request: NextRequest,
-  { params }: { params: { slug: string } }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
+    const { slug } = await params;
     const post = await prisma.blogPost.findUnique({
-      where: { slug: params.slug },
+      where: { slug },
       select: { id: true },
     });
 

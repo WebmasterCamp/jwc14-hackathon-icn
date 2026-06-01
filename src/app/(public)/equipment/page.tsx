@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import type { Metadata } from "next";
 import { prisma } from "@/lib/prisma";
 import { getCategories } from "@/lib/queries";
 
@@ -6,6 +7,17 @@ export const revalidate = 300; // ISR: revalidate every 5 minutes
 import { EquipmentCard } from "@/components/equipment/equipment-card";
 import { EquipmentFilters } from "@/components/equipment/equipment-filters";
 import { Skeleton } from "@/components/ui/skeleton";
+import { JsonLd } from "@/components/seo/json-ld";
+import { generateItemListSchema } from "@/lib/structured-data";
+
+const SITE_URL = process.env.NEXT_PUBLIC_APP_URL || "https://sparkgo.co.th";
+
+export const metadata: Metadata = {
+  title: "อุปกรณ์ทั้งหมด",
+  description:
+    "ค้นหาและเช่าอุปกรณ์ IoT และ STEM สำหรับการเรียนการสอน Arduino, หุ่นยนต์, เครื่องพิมพ์ 3D, โดรน และอีกมากมาย",
+  alternates: { canonical: `${SITE_URL}/equipment` },
+};
 
 interface EquipmentPageProps {
   searchParams: Promise<{
@@ -89,6 +101,9 @@ async function EquipmentList({
 
   return (
     <>
+      {equipment.length > 0 && (
+        <JsonLd data={generateItemListSchema(equipment)} />
+      )}
       <div className="mb-6 flex items-center justify-between">
         <p className="text-muted-foreground">
           พบ <span className="font-medium text-foreground">{totalCount}</span> รายการ

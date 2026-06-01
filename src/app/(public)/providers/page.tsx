@@ -1,8 +1,18 @@
 import { Suspense } from "react";
 import Link from "next/link";
+import type { Metadata } from "next";
 import { getVerifiedProviders } from "@/lib/queries";
 
 export const revalidate = 600; // ISR: revalidate every 10 minutes
+
+const SITE_URL = process.env.NEXT_PUBLIC_APP_URL || "https://sparkgo.co.th";
+
+export const metadata: Metadata = {
+  title: "ผู้ให้บริการ",
+  description:
+    "ผู้จัดจำหน่ายอุปกรณ์ STEM และ IoT ที่ผ่านการตรวจสอบและรับรองจาก Sparkgo พร้อมให้บริการโรงเรียนทั่วประเทศ",
+  alternates: { canonical: `${SITE_URL}/providers` },
+};
 import {
   Building2,
   MapPin,

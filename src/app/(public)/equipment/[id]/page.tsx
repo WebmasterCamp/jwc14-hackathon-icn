@@ -24,6 +24,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { PriceCalculator } from "@/components/equipment/price-calculator";
 import { formatPrice } from "@/lib/format";
+import { JsonLd } from "@/components/seo/json-ld";
+import { generateProductSchema, generateBreadcrumbSchema } from "@/lib/structured-data";
 
 interface EquipmentDetailPageProps {
   params: Promise<{ id: string }>;
@@ -100,6 +102,38 @@ export default async function EquipmentDetailPage({
 
   return (
     <div className="container mx-auto px-4 py-8">
+      <JsonLd
+        data={[
+          generateProductSchema({
+            id: equipmentWithRelations.id,
+            name: equipmentWithRelations.name,
+            nameTh: equipmentWithRelations.nameTh ?? undefined,
+            description: equipmentWithRelations.description ?? undefined,
+            descriptionTh: equipmentWithRelations.descriptionTh ?? undefined,
+            images: equipmentWithRelations.images,
+            rentPriceMonthly: equipmentWithRelations.rentPriceMonthly,
+            leaseToOwnPrice: equipmentWithRelations.leaseToOwnPrice ?? undefined,
+            condition: equipmentWithRelations.condition,
+            category: {
+              name: equipmentWithRelations.category.name,
+              nameTh: equipmentWithRelations.category.nameTh,
+            },
+            provider: {
+              companyName: equipmentWithRelations.provider.companyName,
+              rating: equipmentWithRelations.provider.rating,
+            },
+            availableStock: equipmentWithRelations.availableStock,
+          }),
+          generateBreadcrumbSchema([
+            { name: "หน้าแรก", url: "/" },
+            { name: "อุปกรณ์ทั้งหมด", url: "/equipment" },
+            {
+              name: equipmentWithRelations.nameTh || equipmentWithRelations.name,
+              url: `/equipment/${equipmentWithRelations.id}`,
+            },
+          ]),
+        ]}
+      />
       {/* Breadcrumb */}
       <nav className="mb-6">
         <Link

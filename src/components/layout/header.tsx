@@ -1,11 +1,11 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 import { useState } from "react";
 import {
-  GraduationCap,
   Menu,
   X,
   ChevronDown,
@@ -32,6 +32,7 @@ const publicNavItems = [
   { href: "/", label: "หน้าแรก" },
   { href: "/equipment", label: "อุปกรณ์ทั้งหมด" },
   { href: "/providers", label: "ผู้ให้บริการ" },
+  { href: "/blog", label: "บทความ" },
 ];
 
 export function Header() {
@@ -67,11 +68,15 @@ export function Header() {
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 font-bold text-xl">
-            <div className="w-9 h-9 bg-primary rounded-lg flex items-center justify-center">
-              <GraduationCap className="w-5 h-5 text-primary-foreground" />
-            </div>
-            <span className="hidden sm:inline">Sparkgo</span>
+          <Link href="/" className="flex items-center">
+            <Image
+              src="/logo.png"
+              alt="Sparkgo"
+              width={142}
+              height={80}
+              priority
+              className="h-9 w-auto"
+            />
           </Link>
 
           {/* Desktop Navigation */}

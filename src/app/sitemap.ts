@@ -56,18 +56,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         },
       },
     },
-    {
-      url: `${baseUrl}/docs`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.7,
-      alternates: {
-        languages: {
-          th: `${baseUrl}/docs?lang=th`,
-          en: `${baseUrl}/docs?lang=en`,
-        },
-      },
-    },
   ];
 
   try {
@@ -131,7 +119,27 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       },
     }));
 
-    return [...staticPages, ...equipmentPages, ...providerPages, ...blogPages];
+    // Blog category archives
+    const blogCategories = await prisma.blogCategory.findMany({
+      select: { slug: true, updatedAt: true },
+    });
+
+    const blogCategoryPages: MetadataRoute.Sitemap = blogCategories.map(
+      (category) => ({
+        url: `${baseUrl}/blog/category/${category.slug}`,
+        lastModified: category.updatedAt,
+        changeFrequency: "weekly",
+        priority: 0.5,
+      })
+    );
+
+    return [
+      ...staticPages,
+      ...equipmentPages,
+      ...providerPages,
+      ...blogPages,
+      ...blogCategoryPages,
+    ];
   } catch (error) {
     console.error("Error generating sitemap:", error);
     // Return static pages only if database query fails

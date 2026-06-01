@@ -16,6 +16,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { JsonLd } from "@/components/seo/json-ld";
+import { generateOrganizationSchema, generateWebSiteSchema } from "@/lib/structured-data";
 
 const categories = [
   {
@@ -96,6 +98,10 @@ const stats = [
 export default function HomePage() {
   return (
     <>
+      <JsonLd
+        data={[generateOrganizationSchema(), generateWebSiteSchema()]}
+      />
+
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-to-br from-primary/5 via-background to-secondary/5 py-20 md:py-32">
         <div className="container mx-auto px-4">
