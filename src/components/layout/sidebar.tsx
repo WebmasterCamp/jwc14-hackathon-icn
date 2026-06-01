@@ -18,6 +18,7 @@ import {
   Wrench,
   Search,
   GraduationCap,
+  Newspaper,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -35,6 +36,7 @@ const providerNavItems: SidebarItem[] = [
   { href: "/dashboard/provider/contracts", label: "สัญญา", icon: FileText },
   { href: "/dashboard/provider/payments", label: "การชำระเงิน", icon: CreditCard },
   { href: "/dashboard/provider/analytics", label: "วิเคราะห์", icon: BarChart3 },
+  { href: "/dashboard/provider/blog", label: "บทความ", icon: Newspaper },
   { href: "/dashboard/provider/settings", label: "ตั้งค่า", icon: Settings },
 ];
 
@@ -53,6 +55,7 @@ const adminNavItems: SidebarItem[] = [
   { href: "/dashboard/admin/customers", label: "สถานศึกษา", icon: GraduationCap },
   { href: "/dashboard/admin/contracts", label: "สัญญาทั้งหมด", icon: FileText },
   { href: "/dashboard/admin/users", label: "ผู้ใช้", icon: Users },
+  { href: "/dashboard/admin/blog", label: "บทความ", icon: Newspaper },
   { href: "/dashboard/admin/settings", label: "ตั้งค่าระบบ", icon: Shield },
 ];
 

@@ -199,9 +199,12 @@ export function EquipmentFilters({
   return (
     <>
       {/* Desktop Filters */}
-      <Card className="hidden lg:block sticky top-20">
+      <Card className="hidden lg:block sticky top-20 rounded-2xl">
         <CardHeader>
-          <CardTitle className="text-lg">ตัวกรอง</CardTitle>
+          <CardTitle className="flex items-center gap-2 text-lg">
+            <SlidersHorizontal className="h-4 w-4 text-brand" />
+            ตัวกรอง
+          </CardTitle>
         </CardHeader>
         <CardContent>
           {renderFilterContent()}

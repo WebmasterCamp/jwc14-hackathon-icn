@@ -139,7 +139,7 @@ async function EquipmentList({
         </div>
       ) : (
         <>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {equipment.map((item) => (
               <ProductCard key={item.slug} product={item} />
             ))}
@@ -157,7 +157,7 @@ async function EquipmentList({
                     }).toString()}`}
                     className={`px-4 py-2 rounded-lg ${
                       p === page
-                        ? "bg-primary text-primary-foreground"
+                        ? "bg-brand text-brand-foreground"
                         : "bg-muted hover:bg-muted/80"
                     }`}
                   >
@@ -175,13 +175,14 @@ async function EquipmentList({
 
 function EquipmentListSkeleton() {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {Array.from({ length: 6 }).map((_, i) => (
-        <div key={i} className="space-y-4">
-          <Skeleton className="aspect-video w-full" />
-          <Skeleton className="h-6 w-3/4" />
-          <Skeleton className="h-4 w-full" />
-          <Skeleton className="h-4 w-1/2" />
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      {Array.from({ length: 8 }).map((_, i) => (
+        <div key={i} className="overflow-hidden rounded-2xl border">
+          <Skeleton className="aspect-square w-full" />
+          <div className="space-y-2 p-3">
+            <Skeleton className="h-4 w-3/4" />
+            <Skeleton className="h-5 w-1/2" />
+          </div>
         </div>
       ))}
     </div>
@@ -194,11 +195,17 @@ export default async function EquipmentPage({ searchParams }: EquipmentPageProps
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">อุปกรณ์ทั้งหมด</h1>
-        <p className="text-muted-foreground">
-          ค้นหาอุปกรณ์ IoT และ STEM สำหรับการเรียนการสอน
-        </p>
+      {/* Hero banner */}
+      <div className="relative mb-8 overflow-hidden rounded-2xl bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 px-6 py-12 text-center">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,theme(colors.brand/25),transparent_60%)]" />
+        <div className="relative">
+          <h1 className="text-3xl md:text-4xl font-extrabold text-white">
+            อุปกรณ์ทั้งหมด
+          </h1>
+          <p className="mt-2 text-lg text-white/80">
+            เริ่มต้นเพียงวันละ 10 บาทเท่านั้น
+          </p>
+        </div>
       </div>
 
       <div className="flex flex-col lg:flex-row gap-8">
