@@ -1,0 +1,32 @@
+import { MetadataRoute } from "next";
+
+export default function robots(): MetadataRoute.Robots {
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://sparkgo.co.th";
+
+  return {
+    rules: [
+      {
+        userAgent: "*",
+        allow: [
+          "/",
+          "/equipment",
+          "/equipment/*",
+          "/providers",
+          "/providers/*",
+          "/blog",
+          "/blog/*",
+          "/docs",
+          "/docs/*",
+        ],
+        disallow: [
+          "/dashboard/*",
+          "/api/*",
+          "/sign-in",
+          "/sign-up/*",
+          "/*?*", // Disallow query parameters
+        ],
+      },
+    ],
+    sitemap: `${baseUrl}/sitemap.xml`,
+  };
+}

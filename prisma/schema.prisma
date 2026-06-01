@@ -1,0 +1,511 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ============================================
+// ENUMS
+// ============================================
+
+enum Role {
+  ADMIN
+  PROVIDER
+  CUSTOMER
+}
+
+enum SchoolType {
+  PRIMARY
+  SECONDARY
+  HIGH_SCHOOL
+  VOCATIONAL
+  UNIVERSITY
+}
+
+enum EquipmentCondition {
+  NEW
+  EXCELLENT
+  GOOD
+  FAIR
+}
+
+enum ContractType {
+  RENT
+  LEASE_TO_OWN
+}
+
+enum ContractStatus {
+  DRAFT
+  PENDING_APPROVAL
+  ACTIVE
+  SUSPENDED // Temporary hold
+  COMPLETED
+  TERMINATED // Early termination
+  CANCELLED // Pre-approval cancellation
+  OVERDUE
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  OVERDUE
+  FAILED
+}
+
+enum MaintenanceStatus {
+  PENDING
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+}
+
+enum NotificationType {
+  PAYMENT_REMINDER
+  PAYMENT_OVERDUE
+  CONTRACT_APPROVED
+  CONTRACT_EXPIRING
+  MAINTENANCE_UPDATE
+  SYSTEM
+}
+
+enum BlogPostStatus {
+  DRAFT
+  SCHEDULED
+  PUBLISHED
+  ARCHIVED
+}
+
+enum BlogAuthorType {
+  USER
+  PROVIDER
+}
+
+// ============================================
+// USER & AUTH
+// ============================================
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  password      String?
+  name          String?
+  role          Role      @default(CUSTOMER)
+  phone         String?   @db.VarChar(20)
+  avatar        String?
+  emailVerified DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  provider      Provider?
+  customer      Customer?
+  accounts      Account[]
+  sessions      Session[]
+  notifications Notification[]
+  blogPosts     BlogPost[]
+  blogComments  BlogComment[]
+
+  @@index([email])
+  @@index([role])
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ============================================
+// PROVIDER (Suppliers)
+// ============================================
+
+model Provider {
+  id           String    @id @default(cuid())
+  userId       String    @unique
+  companyName  String
+  taxId        String?
+  address      String?
+  province     String?
+  bankAccount  String?
+  bankName     String?
+  description  String?
+  logo         String?
+  verified     Boolean   @default(false)
+  verifiedAt   DateTime?
+  rating       Float     @default(0)
+  totalRevenue Float     @default(0)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  equipment Equipment[]
+  contracts Contract[]
+
+  @@index([province])
+  @@index([verified])
+}
+
+// ============================================
+// CUSTOMER (Schools)
+// ============================================
+
+model Customer {
+  id           String     @id @default(cuid())
+  userId       String     @unique
+  schoolName   String
+  schoolType   SchoolType
+  address      String?
+  province     String?
+  studentCount Int?
+  budget       Float?
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  user        User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  contracts   Contract[]
+  maintenance MaintenanceRequest[]
+
+  @@index([province])
+  @@index([schoolType])
+}
+
+// ============================================
+// EQUIPMENT CATEGORIES
+// ============================================
+
+model Category {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  name        String
+  nameTh      String
+  description String?
+  icon        String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  equipment Equipment[]
+}
+
+// ============================================
+// EQUIPMENT
+// ============================================
+
+model Equipment {
+  id               String             @id @default(cuid())
+  providerId       String
+  categoryId       String
+  name             String
+  nameTh           String?
+  description      String?
+  descriptionTh    String?
+  images           String[]
+  specs            Json?
+  rentPriceMonthly Float
+  leaseToOwnPrice  Float?
+  leaseDuration    Int? // months for lease-to-own
+  depositAmount    Float              @default(0)
+  stock            Int                @default(1)
+  availableStock   Int                @default(1)
+  condition        EquipmentCondition @default(NEW)
+  curriculum       String[] // relevant curriculum areas
+  isActive         Boolean            @default(true)
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+
+  provider            Provider             @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  category            Category             @relation(fields: [categoryId], references: [id])
+  contractItems       ContractItem[]
+  maintenanceRequests MaintenanceRequest[]
+
+  @@index([providerId])
+  @@index([categoryId])
+  @@index([isActive])
+  @@index([rentPriceMonthly])
+  @@index([availableStock])
+  @@index([categoryId, isActive, rentPriceMonthly])
+}
+
+// ============================================
+// CONTRACTS
+// ============================================
+
+model Contract {
+  id             String         @id @default(cuid())
+  contractNumber String         @unique
+  providerId     String
+  customerId     String
+  type           ContractType
+  status         ContractStatus @default(DRAFT)
+  startDate      DateTime
+  endDate        DateTime
+  totalAmount    Float
+  depositAmount  Float          @default(0)
+  monthlyAmount  Float
+  notes          String?
+  pdfUrl         String?
+  signedAt       DateTime?
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  provider Provider       @relation(fields: [providerId], references: [id])
+  customer Customer       @relation(fields: [customerId], references: [id])
+  items    ContractItem[]
+  payments Payment[]
+
+  @@index([providerId])
+  @@index([customerId])
+  @@index([status])
+  @@index([startDate])
+  @@index([endDate])
+  @@index([type])
+  @@index([customerId, status])
+}
+
+model ContractItem {
+  id            String @id @default(cuid())
+  contractId    String
+  equipmentId   String
+  quantity      Int    @default(1)
+  pricePerMonth Float
+  subtotal      Float
+
+  contract  Contract  @relation(fields: [contractId], references: [id], onDelete: Cascade)
+  equipment Equipment @relation(fields: [equipmentId], references: [id], onDelete: Restrict)
+
+  @@index([contractId])
+  @@index([equipmentId])
+}
+
+// ============================================
+// PAYMENTS
+// ============================================
+
+model Payment {
+  id            String        @id @default(cuid())
+  contractId    String
+  amount        Float
+  status        PaymentStatus @default(PENDING)
+  dueDate       DateTime
+  paidAt        DateTime?
+  transactionId String? // Demo payment transaction ID
+  receiptUrl    String?
+  paymentMethod String?
+  notes         String?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  contract Contract @relation(fields: [contractId], references: [id], onDelete: Cascade)
+
+  @@index([contractId])
+  @@index([status])
+  @@index([dueDate])
+  @@index([contractId, status])
+}
+
+// ============================================
+// MAINTENANCE REQUESTS
+// ============================================
+
+model MaintenanceRequest {
+  id          String            @id @default(cuid())
+  customerId  String
+  equipmentId String?
+  title       String
+  description String
+  images      String[]
+  status      MaintenanceStatus @default(PENDING)
+  resolvedAt  DateTime?
+  resolution  String?
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  customer  Customer   @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  equipment Equipment? @relation(fields: [equipmentId], references: [id], onDelete: SetNull)
+
+  @@index([customerId])
+  @@index([status])
+  @@index([equipmentId])
+}
+
+// ============================================
+// NOTIFICATIONS
+// ============================================
+
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String
+  type      NotificationType
+  title     String
+  message   String
+  read      Boolean          @default(false)
+  data      Json?
+  createdAt DateTime         @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([read])
+  @@index([createdAt])
+}
+
+// ============================================
+// BLOG SYSTEM
+// ============================================
+
+model BlogPost {
+  id              String          @id @default(cuid())
+  slug            String          @unique
+  title           String
+  titleTh         String?
+  content         String          @db.Text
+  contentTh       String?         @db.Text
+  excerpt         String?
+  excerptTh       String?
+  featuredImage   String?
+  authorId        String
+  authorType      BlogAuthorType  @default(USER)
+  status          BlogPostStatus  @default(DRAFT)
+  isFeatured      Boolean         @default(false)
+  viewCount       Int             @default(0)
+  readingTime     Int?            // minutes
+  publishedAt     DateTime?
+  scheduledFor    DateTime?
+  metaTitle       String?
+  metaDescription String?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  author     User                @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  categories BlogPostCategory[]
+  tags       BlogPostTag[]
+  comments   BlogComment[]
+
+  @@index([authorId])
+  @@index([status])
+  @@index([publishedAt])
+  @@index([isFeatured])
+  @@index([slug])
+  @@index([status, publishedAt])
+}
+
+model BlogCategory {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  name        String
+  nameTh      String?
+  description String?
+  icon        String?
+  color       String?  @default("#3b82f6")
+  parentId    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  parent   BlogCategory?      @relation("CategoryHierarchy", fields: [parentId], references: [id], onDelete: SetNull)
+  children BlogCategory[]     @relation("CategoryHierarchy")
+  posts    BlogPostCategory[]
+
+  @@index([slug])
+  @@index([parentId])
+}
+
+model BlogTag {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+  name      String
+  nameTh    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  posts BlogPostTag[]
+
+  @@index([slug])
+}
+
+model BlogPostCategory {
+  id         String   @id @default(cuid())
+  postId     String
+  categoryId String
+  createdAt  DateTime @default(now())
+
+  post     BlogPost     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  category BlogCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, categoryId])
+  @@index([postId])
+  @@index([categoryId])
+}
+
+model BlogPostTag {
+  id        String   @id @default(cuid())
+  postId    String
+  tagId     String
+  createdAt DateTime @default(now())
+
+  post BlogPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  tag  BlogTag  @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, tagId])
+  @@index([postId])
+  @@index([tagId])
+}
+
+model BlogComment {
+  id        String    @id @default(cuid())
+  postId    String
+  authorId  String
+  content   String    @db.Text
+  isApproved Boolean  @default(false)
+  parentId  String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  post    BlogPost      @relation(fields: [postId], references: [id], onDelete: Cascade)
+  author  User          @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  parent  BlogComment?  @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies BlogComment[] @relation("CommentReplies")
+
+  @@index([postId])
+  @@index([authorId])
+  @@index([isApproved])
+  @@index([parentId])
+  @@index([postId, isApproved])
+}
+

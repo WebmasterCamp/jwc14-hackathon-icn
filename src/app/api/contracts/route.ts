@@ -1,0 +1,185 @@
+import { NextResponse } from "next/server";
+import { auth } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
+import { z } from "zod";
+
+// GET /api/contracts - List contracts
+export async function GET(request: Request) {
+  try {
+    const session = await auth();
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const { searchParams } = new URL(request.url);
+    const status = searchParams.get("status");
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = parseInt(searchParams.get("limit") || "20");
+
+    let where = {};
+
+    if (session.user.role === "PROVIDER") {
+      const provider = await prisma.provider.findUnique({
+        where: { userId: session.user.id },
+      });
+      where = { providerId: provider?.id };
+    } else if (session.user.role === "CUSTOMER") {
+      const customer = await prisma.customer.findUnique({
+        where: { userId: session.user.id },
+      });
+      where = { customerId: customer?.id };
+    }
+
+    if (status) {
+      where = { ...where, status };
+    }
+
+    const [contracts, total] = await Promise.all([
+      prisma.contract.findMany({
+        where,
+        include: {
+          provider: true,
+          customer: true,
+          items: {
+            include: {
+              equipment: true,
+            },
+          },
+        },
+        orderBy: { createdAt: "desc" },
+        skip: (page - 1) * limit,
+        take: limit,
+      }),
+      prisma.contract.count({ where }),
+    ]);
+
+    return NextResponse.json({
+      contracts,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching contracts:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch contracts" },
+      { status: 500 }
+    );
+  }
+}
+
+const createContractSchema = z.object({
+  customerId: z.string(),
+  type: z.enum(["RENT", "LEASE_TO_OWN"]),
+  startDate: z.string().transform((s) => new Date(s)),
+  endDate: z.string().transform((s) => new Date(s)),
+  items: z.array(
+    z.object({
+      equipmentId: z.string(),
+      quantity: z.number().int().positive(),
+      pricePerMonth: z.number().positive(),
+    })
+  ),
+  notes: z.string().optional(),
+});
+
+// POST /api/contracts - Create new contract (Provider only)
+export async function POST(request: Request) {
+  try {
+    const session = await auth();
+    if (!session || session.user.role !== "PROVIDER") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const provider = await prisma.provider.findUnique({
+      where: { userId: session.user.id },
+    });
+
+    if (!provider || !provider.verified) {
+      return NextResponse.json(
+        { error: "Provider not found or not verified" },
+        { status: 403 }
+      );
+    }
+
+    const body = await request.json();
+    const data = createContractSchema.parse(body);
+
+    // Calculate totals
+    const monthlyAmount = data.items.reduce(
+      (sum, item) => sum + item.pricePerMonth * item.quantity,
+      0
+    );
+    const months = Math.ceil(
+      (data.endDate.getTime() - data.startDate.getTime()) /
+        (1000 * 60 * 60 * 24 * 30)
+    );
+    const totalAmount = monthlyAmount * months;
+
+    // Calculate deposit
+    const equipmentIds = data.items.map((item) => item.equipmentId);
+    const equipment = await prisma.equipment.findMany({
+      where: { id: { in: equipmentIds } },
+    });
+    const depositAmount = data.items.reduce((sum, item) => {
+      const eq = equipment.find((e) => e.id === item.equipmentId);
+      return sum + (eq?.depositAmount || 0) * item.quantity;
+    }, 0);
+
+    // Generate contract number
+    const count = await prisma.contract.count();
+    const contractNumber = `EDU-${new Date().getFullYear()}-${String(
+      count + 1
+    ).padStart(6, "0")}`;
+
+    const contract = await prisma.contract.create({
+      data: {
+        contractNumber,
+        providerId: provider.id,
+        customerId: data.customerId,
+        type: data.type,
+        status: "DRAFT",
+        startDate: data.startDate,
+        endDate: data.endDate,
+        totalAmount,
+        depositAmount,
+        monthlyAmount,
+        notes: data.notes,
+        items: {
+          create: data.items.map((item) => ({
+            equipmentId: item.equipmentId,
+            quantity: item.quantity,
+            pricePerMonth: item.pricePerMonth,
+            subtotal: item.pricePerMonth * item.quantity,
+          })),
+        },
+      },
+      include: {
+        provider: true,
+        customer: true,
+        items: {
+          include: {
+            equipment: true,
+          },
+        },
+      },
+    });
+
+    return NextResponse.json(contract, { status: 201 });
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return NextResponse.json(
+        { error: "Validation error", details: error.issues },
+        { status: 400 }
+      );
+    }
+    console.error("Error creating contract:", error);
+    return NextResponse.json(
+      { error: "Failed to create contract" },
+      { status: 500 }
+    );
+  }
+}
