@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
 import { Metadata } from "next";
+import { ImageWithFallback } from "@/components/ui/image-with-fallback";
 
 export const revalidate = 600; // ISR: revalidate every 10 minutes
 import {
@@ -144,8 +144,8 @@ export default async function ProductDetailPage({
         <div className="lg:col-span-2 space-y-8">
           {/* Images */}
           <div className="relative aspect-video rounded-xl overflow-hidden bg-muted">
-            <Image
-              src={product.images[0] || "/images/placeholder-equipment.svg"}
+            <ImageWithFallback
+              src={product.images[0]}
               alt={displayName}
               fill
               className="object-cover"
@@ -170,7 +170,7 @@ export default async function ProductDetailPage({
                   key={index}
                   className="relative w-24 h-24 rounded-lg overflow-hidden bg-muted flex-shrink-0"
                 >
-                  <Image
+                  <ImageWithFallback
                     src={image}
                     alt={`${product.name} ${index + 1}`}
                     fill

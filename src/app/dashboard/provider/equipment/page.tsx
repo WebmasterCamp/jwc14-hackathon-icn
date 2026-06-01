@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 
 export const dynamic = 'force-dynamic';
-import Image from "next/image";
+import { ImageWithFallback } from "@/components/ui/image-with-fallback";
 import { Plus, Package } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -101,11 +101,8 @@ export default async function ProviderEquipmentPage() {
                     <TableCell>
                       <div className="flex items-center gap-3">
                         <div className="relative w-12 h-12 rounded-lg overflow-hidden bg-muted">
-                          <Image
-                            src={
-                              equipment.images[0] ||
-                              "/images/placeholder-equipment.svg"
-                            }
+                          <ImageWithFallback
+                            src={equipment.images[0]}
                             alt={equipment.name}
                             fill
                             className="object-cover"

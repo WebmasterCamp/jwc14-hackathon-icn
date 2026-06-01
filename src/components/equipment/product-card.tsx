@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { ShoppingCart, Store } from "lucide-react";
 import { formatPrice } from "@/lib/format";
+import { ImageWithFallback } from "@/components/ui/image-with-fallback";
 
 interface ProductCardProps {
   product: {
@@ -22,7 +22,6 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product }: ProductCardProps) {
-  const imageUrl = product.images[0] || "/images/placeholder-equipment.svg";
   const href = `/products/${product.slug}`;
   const title = product.nameTh || product.name;
 
@@ -41,8 +40,8 @@ export function ProductCard({ product }: ProductCardProps) {
 
       {/* Image */}
       <Link href={href} className="relative aspect-square overflow-hidden bg-muted">
-        <Image
-          src={imageUrl}
+        <ImageWithFallback
+          src={product.images[0]}
           alt={title}
           fill
           className="object-cover transition-transform duration-300 group-hover:scale-105"

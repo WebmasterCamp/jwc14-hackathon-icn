@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { ensureCustomerProfile } from "@/lib/queries";
 import { StatCard } from "@/components/dashboard/stat-card";
+import { MembershipCard } from "@/components/account/membership-card";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -57,6 +58,14 @@ export default async function CustomerDashboardPage() {
   });
 
   if (!customer) return null;
+
+  // Total settled spend across all of this customer's contracts — drives the
+  // membership tier (see @/lib/tier).
+  const paidAgg = await prisma.payment.aggregate({
+    where: { status: "PAID", contract: { customerId: customer.id } },
+    _sum: { amount: true },
+  });
+  const totalPaid = paidAgg._sum.amount ?? 0;
 
   // Calculate stats
   const activeContracts = customer.contracts.filter(
@@ -152,6 +161,9 @@ export default async function CustomerDashboardPage() {
           className={totalOverdue > 0 ? "border-destructive" : ""}
         />
       </div>
+
+      {/* Membership tier */}
+      <MembershipCard totalPaid={totalPaid} />
 
       {/* Active Contracts & Quick Actions */}
       <div className="grid gap-6 lg:grid-cols-2">
