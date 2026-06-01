@@ -256,7 +256,6 @@ function BrowseCard({
           />
           <div className="absolute left-2 top-2 flex gap-2">
             <Badge variant="secondary">{equipment.category.nameTh}</Badge>
-            {equipment.condition === "NEW" && <Badge className="bg-green-500">ใหม่</Badge>}
           </div>
           {equipment.availableStock <= 3 && equipment.availableStock > 0 && (
             <Badge variant="destructive" className="absolute right-2 top-2">
@@ -275,21 +274,6 @@ function BrowseCard({
         <p className="mb-3 line-clamp-2 text-sm text-muted-foreground">
           {equipment.description}
         </p>
-
-        <div className="mb-3 flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
-          <div className="flex items-center gap-1">
-            <MapPin className="h-4 w-4" />
-            <span>{equipment.provider.province || "ไม่ระบุ"}</span>
-          </div>
-          <div className="flex items-center gap-1">
-            <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-            <span>{equipment.provider.rating.toFixed(1)}</span>
-          </div>
-          <div className="flex items-center gap-1">
-            <Package className="h-4 w-4" />
-            <span>{conditionLabels[equipment.condition]}</span>
-          </div>
-        </div>
 
         <div className="flex items-baseline gap-1">
           <span className="text-2xl font-bold text-primary">
